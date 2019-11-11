@@ -1,0 +1,64 @@
+
+<!-- jQuery -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<!-- Materialize -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+  
+  // Evento de documento listo
+  $(function() {
+  
+      // Asignar manejador botón añadir F/C
+      
+      $('#botonCrearFC').click(on_botonCrearFC_click);
+      
+      // Asignar manejador botones (objetos de tipo 'input')
+      
+      $('input').change(on_numFilCol_change);
+      // $('#numFil').change(on_numFilCol_change);
+      // $('#numCol').change(on_numFilCol_change);
+      
+      // Inicializar select de form (realmente todos, si los hubiera)
+        
+      $('select').formSelect();
+  });
+  
+  function on_botonCrearFC_click() {
+    
+    // Desactivar botón
+    
+    $('#botonCrearFC').prop('disabled', true);
+  
+    // Devolver valores a servidor, se pasa objeto DOM form como parámetro directamente
+    
+    google.script.run
+      .withSuccessHandler(function() {
+        google.script.host.close();
+      })
+      .withFailureHandler(function() {
+        M.toast({html: '❌ Error al realizar la operación'});
+        $('#botonCrearFC').prop('disabled', false);
+      })
+      .insertarFyC_core($('#formFC').get(0));
+  }
+  
+  function on_numFilCol_change(e) {
+    
+    // Control de valores del formulario
+    
+    // this.id = e.target.id
+    
+    if ($('#numFil').val() == 0 && $('#numCol').val() == 0) {
+
+      $('#botonCrearFC').prop('disabled', true);
+    }
+    else if ($('#numFil').val() < 0 || $('#numCol').val() < 0) {
+      $('#botonCrearFC').prop('disabled', true);
+    }
+    else {
+      $('#botonCrearFC').prop('disabled', false);}
+    }
+
+</script>

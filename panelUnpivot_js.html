@@ -1,0 +1,92 @@
+
+<!-- jQuery -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<!-- Materialize -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+  
+  // Evento de documento listo
+  $(function() {
+  
+      // Asignar manejador botón consolidar e inicialización
+      
+      $('#btn_Consolidar').prop('disabled', true);
+      $('#btn_Consolidar').click(on_btn_Consolidar_click);
+      
+      // Asignar manejador controles del formulario
+      $('input').change(on_form_change);   
+      $('button.referencia').click(leerReferencia);
+      
+      $('#btn_selRango').trigger('click');
+  });
+  
+  
+  function leerReferencia(e) {
+  
+    // modo = "rango" | "celda"
+    
+    // M.toast({html: this.id});
+    
+    var modo;
+    
+    if (this.id == 'btn_selRango') {
+      modo = 'rango';
+    }
+    else {
+      modo = 'celda';
+    }
+    
+    google.script.run
+      .withSuccessHandler(function(valor, objeto) {
+        if (valor[0] == '¡') {
+          M.toast({html: valor});
+        }
+        else {
+          $(objeto).siblings([0]).val(valor);
+          $(objeto).siblings([0]).trigger('change');}})
+      .withFailureHandler(function(valor) {
+        M.toast({html: '❌ Error al realizar la operación:\n\n' + valor});
+      })
+      .withUserObject(this)
+      .unpivot_capturarRango(modo);
+  
+  }
+  
+  function on_btn_Consolidar_click() {
+    
+    // M.toast({html: 'Consolidar'})
+    
+    // Desactivar botón
+    
+    $('#btn_Consolidar').prop('disabled', true);
+  
+    // Devolver valores a servidor, se pasa objeto DOM form como parámetro directamente
+    
+    google.script.run
+      .withSuccessHandler(function() {
+        google.script.host.close();
+      })
+      .withFailureHandler(function() {
+        M.toast({html: '❌ Error al realizar la operación'});
+        $('#btn_Consolidar').prop('disabled', false);
+      })
+      .unpivot_core($('#formConsolidar').get(0));
+ 
+  }
+ 
+  
+  function on_form_change(e) {
+    
+    // M.toast({html: this.id})
+    
+    if ($('#rango').val() == '' || $('#destino').val() == '' || $('#numCol').val() < 1) {
+      $('#btn_Consolidar').prop('disabled', true);
+    }
+    else {
+      $('#btn_Consolidar').prop('disabled', false);}
+
+  }
+
+</script>

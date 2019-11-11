@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+
+    <!-- Incluir css -->
+    <?!= HtmlService.createHtmlOutputFromFile('panelLateral_css').getContent(); ?>
+    
+  </head>
+ 
+  <body>
+    <div class="row"> 
+      <form class="col s12" id="formFC">
+      
+        <div class="row">
+        <div class="input-field col s12">
+          <label for="numFil">Número de filas a añadir</label>
+          <input class="validate" type="number" name="numFil" value="2" min="0" id="numFil">
+        </div>
+        </div>
+        
+        <div class="row">
+        <div class="input-field col s12">
+          <label for="numCol">Número de columnas a añadir</label>
+          <input class="validate" type="number" name="numCol" value="2" min="0" step="1" id="numCol">
+        </div>
+        </div>
+       
+        <div class="row">
+        <div class="input-field col s12">
+          <select name="modo">
+            <option value="" disabled>Escoge una opción</option>
+            <option value="1">Al inicio de la hoja</option>
+            <option value="2">Al final de la hoja</option>
+            <option value="3">Antes de la celda actual</option>
+            <option value="4" selected>Después de la celda actual</option>
+          </select>
+          <label>Modo de inserción</label>
+        </div>
+        </div>
+        
+      </form>
+    </div>
+    
+    <div class="row">
+      <button id="botonCrearFC" class="btn waves-effect waves-light col s12">Insertar<i class="material-icons right">add</i></button>
+    </div>
+    
+    <!-- Incluir js -->
+    <?!= HtmlService.createHtmlOutputFromFile('panelCrearFyC_js').getContent(); ?>
+  
+  </body>
+
+</html>
+
+

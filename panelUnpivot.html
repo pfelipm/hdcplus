@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+
+    <!-- Incluir css -->
+    <?!= HtmlService.createHtmlOutputFromFile('panelLateral_css').getContent(); ?>
+    
+  </head>
+ 
+  <body>
+    <div class="row"> 
+      <form class="col s12" id="formConsolidar">
+      
+        <div class="row">
+        <div class="input-field col s12">
+          <input placeholder="Selecciona rango y clic en botón" id="rango" name="rango" type="text" >
+          <label for="rango">Rango a consolidar (con encabezados)</label>
+          <button id="btn_selRango" class="btn waves-effect waves-light col 6 referencia" name="action">Usar rango<i class="material-icons right">arrow_upward</i></button>
+        </div>
+        </div>
+        
+        <div class="row">
+        <div class="input-field col s12">
+          <input placeholder="Selecciona celda y clic en botón" id="destino" name="destino" type="text" >
+          <label for="destino">Celda destino</label>
+          <button id="btn_selCelda" class="btn waves-effect waves-light col 6 referencia" name="action">Usar celda<i class="material-icons right">arrow_upward</i></button>
+        </div>
+        </div>       
+        
+        <div class="row">
+        <div class="input-field col s12">
+          <label for="numCol">Nº columnas fijas a la izquierda</label>
+          <input class="validate" type="number" name="numCol" value="1" min="1" step="1" id="numCol">
+        </div>
+        </div>
+       
+        <div class="row">
+        <div class="input-field col s12">
+          <textarea id="encabezados" name="encabezados" class="materialize-textarea" placeholder="1 etiqueta por línea"></textarea>
+          <label for="encabezados">Encabezados rango consolidado</label>
+        </div>
+        </div>
+        
+      </form>
+    </div>
+    
+    <div class="row">
+      <button id="btn_Consolidar" class="btn waves-effect waves-light col s12">Consolidar<i class="material-icons right">table_chart</i></button>
+    </div>
+    
+    <!-- Incluir js -->
+    <?!= HtmlService.createHtmlOutputFromFile('panelUnpivot_js').getContent(); ?>
+  
+  </body>
+
+</html>
+
+
