@@ -6,4 +6,4 @@ HdC+ se distribuye bajo licencia CC-BY-NC-SA. Puedes acceder al código fuente e
 
 Pablo Felip Monferrer<br>
 pfelipm@gmail.com<br>
-https://twitter.com/pfelipm
+<a href="https://twitter.com/pfelipm">@pfelipm</a>
