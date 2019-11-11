@@ -5,7 +5,5 @@ HdC+ es un complemento para hojas de cálculo de Google que incorpora diversas f
 HdC+ se distribuye bajo licencia CC-BY-NC-SA. Puedes acceder al código fuente en este repositorio. También puedes consultar la página de soporte del complemento aquí: https://tictools.tk/hdcplus
 
 Pablo Felip Monferrer
-
 pfelipm@gmail.com
-
 https://twitter.com/pfelipm
