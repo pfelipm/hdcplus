@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+
+    <!-- Incluir css -->
+    <?!= HtmlService.createHtmlOutputFromFile('panelLateral_css').getContent(); ?>
+    
+  </head>
+ 
+  <body>
+    <div class="row"> 
+      <form class="col s12" id="formEliminarFC">
+       
+        <div class="row">
+        <div class="input-field col s12">
+          <select name="modo">
+            <option value="" disabled>Escoge una opción</option>
+            <option value="1">Columnas sobrantes</option>
+            <option value="2">Filas sobrantes</option>
+            <option selected="selected" value="3">Filas y columnas sobrantes</option>
+          </select>
+          <label>Modo de eliminación</label>
+        </div>
+        </div>
+        
+        <div class="row">
+        <div class="input-field col s12">
+          <label>
+            <input name = "global" type="checkbox" class="filled-in" />
+            <span>Aplicar a todas las hojas</span>
+          </label>
+        </div>
+        </div>        
+        
+      </form>
+    </div>
+    
+    <div class="row">
+      <button id="botonEliminarFC" class="btn waves-effect waves-light col s12">Eliminar<i class="material-icons right">content_cut</i></button>
+    </div>
+    
+    <div id="spinner"class="progress hide">
+      <div class="indeterminate" id="barra_actividad"></div>
+    </div>
+    
+    <!-- Incluir js -->
+    <?!= HtmlService.createHtmlOutputFromFile('panelEliminarFyC_js').getContent(); ?>
+  
+  </body>
+
+</html>
+
+

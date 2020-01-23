@@ -1,4 +1,3 @@
-
 <!-- jQuery -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
@@ -61,6 +60,10 @@
     // Desactivar botón
     
     $('#btn_Consolidar').prop('disabled', true);
+    
+    // Activar indicador de progreso de la operación
+    
+    $('#spinner').removeClass('hide');
   
     // Devolver valores a servidor, se pasa objeto DOM form como parámetro directamente
     
@@ -71,11 +74,11 @@
       .withFailureHandler(function() {
         M.toast({html: '❌ Error al realizar la operación'});
         $('#btn_Consolidar').prop('disabled', false);
+        $('#spinner').addClass('hide');
       })
       .unpivot_core($('#formConsolidar').get(0));
  
-  }
- 
+  } 
   
   function on_form_change(e) {
     

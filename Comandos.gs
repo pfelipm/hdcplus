@@ -1,10 +1,17 @@
 /**
  * HdC+
  * Una colección de pequeñas utilidades para la edición de hojas de cálculo
- * CC BY-NC-SA Pablo Felip Monferrer (@pfelipm)
+ * Copyright (C) Pablo Felip (@pfelipm) · Se distribuye bajo licencia GNU GPL v3.
  *
  * @OnlyCurrentDoc
  */
+
+var VERSION = 'Versión: 1.1 (enero 2020)';
+
+// Para mostrar / ocultar pestaña por color
+
+var COLOR_HOJA_N = "#ff9900"
+var COLOR_HOJA_A = "#0000ff"
 
 function onInstall(e) {
   
@@ -17,45 +24,111 @@ function onInstall(e) {
 function onOpen() {
 
   var ss = SpreadsheetApp.getUi().createAddonMenu()
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('Convertir')
-      .addItem('Eliminar caracteres especiales', 'latinizar')
-      .addItem('Iniciales a mayúsculas', 'inicialesMays')
-      .addItem('Todo a mayúsculas', 'mayusculas')
-      .addItem('Todo a minúsculas', 'minusculas'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('Desordenar')
-      .addItem('Elementos de columnas', 'desordenarCol')
-      .addItem('Elementos de filas', 'desordenarFil'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('Generar')
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('🔀 Barajar datos')
+      .addItem('Barajar por columnas', 'desordenarFil')
+      .addItem('Barajar por filas', 'desordenarCol'))
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('✅ Casillas de verificación')
+      .addItem('➖ Desmarcar seleccionadas', 'uncheck')
+      .addItem('✔️ Marcar seleccionadas ', 'check'))
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('🧮 Estructura datos')
+      .addItem('Consolidar dimensiones (despivotar)', 'unpivot')
+      .addItem('Transponer (☢️ destructivo)', 'transponer'))
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('📐 Estructura hoja de cálculo')
+      .addItem('Eliminar F/C sobrantes', 'eliminarFyC')
+      .addItem('Insertar F/C nuevas', 'insertarFyC')
+      .addSubMenu(SpreadsheetApp.getUi().createMenu('Manipular hojas')
+        .addItem('Ocultar resto de hojas', 'ocultarHojas')
+        .addItem('Mostrar hojas ocultas', 'mostrarHojas')
+        .addItem('Mostrar todas menos actual', 'mostrarNoActual')        
+        .addItem('Eliminar hojas ocultas', 'eliminarHojasOcultas')
+        .addItem('Eliminar todas menos actual', 'eliminarHojas')
+        .addItem('🔸Mostrar hojas color naranja', 'mostrarHojasNaranja')        
+        .addItem('🔸Ocultar hojas color naranja', 'ocultarHojasNaranja')
+        .addItem('🔹Mostrar hojas color azul', 'mostrarHojasAzul')        
+        .addItem('🔹Ocultar hojas color azul', 'ocultarHojasAzul')))
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('🧠 Generar')
       .addItem('NIFs', 'generarNIF')
       .addItem('Nombres y apellidos', 'generarNombres'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('Filas y columnas')
-      .addItem('Consolidar dimensiones (despivotar)', 'unpivot')
-      .addItem('Insertar F/C nuevas', 'insertarFyC')
-      .addSubMenu(SpreadsheetApp.getUi().createMenu('Eliminar F/C sobrantes')
-        .addItem('Columnas', 'eliminarC')
-        .addItem('Filas', 'eliminarF')
-        .addItem('Filas y columnas', 'eliminarFyC'))
-      .addItem('Transponer (☢️ destructivo)', 'transponer'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('Ofuscar')
-      .addItem('Sustituir por hash MD5 ', 'hashMD5')
-      .addItem('Sustituir por hash SHA-1', 'hashSHA1')
-      .addItem('Sustituir por hash SHA-256', 'hashSHA256'))
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('🕶️ Ofuscar')
+      .addItem('Codificar texto en base64 ', 'base64')
+      .addItem('Sustituir por hash MD2 (b64) ', 'hashMD2')
+      .addItem('Sustituir por hash MD5 (b64) ', 'hashMD5')
+      .addItem('Sustituir por hash SHA-1 (b64)', 'hashSHA1')
+      .addItem('Sustituir por hash SHA-256 (b64)', 'hashSHA256')
+      .addItem('Sustituir por hash SHA-384 (b64)', 'hashSHA384')
+      .addItem('Sustituir por hash SHA-512 (b64)', 'hashSHA512'))
+    .addSubMenu(SpreadsheetApp.getUi().createMenu('⚡ Transformar')
+      .addItem('Eliminar caracteres especiales', 'latinizar')
+      .addItem('Iniciales a mayúsculas', 'inicialesMays')
+      .addItem('Saltos de línea como espacios', 'saltosEspacios')
+      .addItem('Suprimir saltos de línea ', 'eliminarEspacios')
+      .addItem('Todo a mayúsculas', 'mayusculas')
+      .addItem('Todo a minúsculas', 'minusculas'))
     .addSeparator()
-    .addItem('Forzar recálculo de hoja', 'forzarRecalculo')
+    .addItem('🔄 Forzar recálculo de hoja', 'forzarRecalculo')
     .addSeparator()
-    .addItem('Acerca de HdC+', 'acercaDe')
+    .addItem('💡 Acerca de HdC+', 'acercaDe')
     .addToUi();
 }
 
 function acercaDe() {
 
   // Presentación del complemento
-  var panel = HtmlService.createHtmlOutputFromFile('acercaDe')
-    .setWidth(420)
-    .setHeight(220)
-  SpreadsheetApp.getUi().showModalDialog(panel, '💡 ¿Qué es HdC+?');
+  var panel = HtmlService.createTemplateFromFile('acercaDe');
+  panel.version = VERSION;
+  SpreadsheetApp.getUi().showModalDialog(panel.evaluate().setWidth(420).setHeight(220), '💡 ¿Qué es HdC+?');
 }
 
+function eliminarEspacios() {
+
+  var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  var matriz = rango.getValues();
+    
+  matriz = matriz.map(function(c) {
+  
+     return c.map(function(c) {
+    
+       return c.replace(/\s+/g, '');   
+    })
+  })
+  
+  rango.setValues(matriz);
+
+}
+
+function saltosEspacios() {
+
+  var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  var matriz = rango.getValues();
+    
+  matriz = matriz.map(function(c) {
+  
+     return c.map(function(c) {
+    
+       return c.replace(/\n/g, ' ');    
+    })
+  })
+  
+  rango.setValues(matriz);
+
+}
+
+function eliminarSaltos() {
+
+  var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  var matriz = rango.getValues();
+    
+  matriz = matriz.map(function(c) {
+ 
+     return c.map(function(c) {
+    
+       return c.replace(/\n/g, '');  
+    })
+  })
+  
+  rango.setValues(matriz);
+
+}
 
 function latinizar() {
 
@@ -77,6 +150,7 @@ function latinizar() {
   }
   
   rango.setValues(matriz);
+  
 }
 
 function unpivot() {
@@ -168,18 +242,16 @@ function unpivot_core(e) {
   
 }
 
-
 function insertarFyC() {
 
   var ui = HtmlService.createTemplateFromFile('panelCrearFyC')
       .evaluate()
       .setTitle('Insertar filas y/o columnas');
   SpreadsheetApp.getUi().showSidebar(ui);
+  
 }
 
 function insertarFyC_core(e) {
-
-  // Recoger parámetros, +entero_como cadena convierte a entero (como parseInt(cadena))
   
   var nFil = +e.numFil;
   var nCol = +e.numCol;
@@ -219,60 +291,107 @@ function insertarFyC_core(e) {
     case 4: // después de celda
       if (nFil > 0) {hdc.insertRowsAfter(fil, nFil);}
       if (nCol > 0) {hdc.insertColumnsAfter(col, nCol);}
-      break;  
-    
-  }
-}
-
-function eliminarC() {
-
-  hdc = SpreadsheetApp.getActiveSheet();
-  var nFilas = hdc.getLastRow();
-  var nMaxFilas = hdc.getMaxRows();
-  var nColumnas = hdc.getLastColumn();
-  var nMaxColumnas = hdc.getMaxColumns();
-  
-  if (nFilas == 0 || nColumnas ==0) {
-    SpreadsheetApp.getUi().alert('💡 La hoja de datos está vacía, no se eliminará nada.');
-  }
-  else {
-    if (nMaxColumnas > nColumnas) {hdc.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
-  }
-}
-
-function eliminarF() {
-
-  hdc = SpreadsheetApp.getActiveSheet();
-  var nFilas = hdc.getLastRow();
-  var nMaxFilas = hdc.getMaxRows();
-  var nColumnas = hdc.getLastColumn();
-  var nMaxColumnas = hdc.getMaxColumns();
-  
-  if (nFilas == 0 || nColumnas ==0) {
-    SpreadsheetApp.getUi().alert('💡 La hoja de datos está vacía, no se eliminará nada.');
-  }
-  else {
-    if (nMaxFilas > nFilas) {hdc.deleteRows(nFilas+1, nMaxFilas - nFilas);}
+      break;    
   }
 }
 
 function eliminarFyC() {
 
-  hdc = SpreadsheetApp.getActiveSheet();
-  var nFilas = hdc.getLastRow();
-  var nMaxFilas = hdc.getMaxRows();
-  var nColumnas = hdc.getLastColumn();
-  var nMaxColumnas = hdc.getMaxColumns();
+  var ui = HtmlService.createTemplateFromFile('panelEliminarFyC')
+      .evaluate()
+      .setTitle('Eliminar filas y/o columnas sobrantes');
+  SpreadsheetApp.getUi().showSidebar(ui);
   
-  if (nFilas == 0 || nColumnas ==0) {
-    SpreadsheetApp.getUi().alert('💡 La hoja de datos está vacía, no se eliminará nada.');
-  }
-  else {
-    if (nMaxFilas > nFilas) {hdc.deleteRows(nFilas+1, nMaxFilas - nFilas);}
-    if (nMaxColumnas > nColumnas) {hdc.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
-  }
 }
 
+function eliminarFyC_core(e) {
+  
+  var modo = +e.modo;
+  var global = e.global == 'on' ? true : false;
+    
+  var nFilas, nMaxFilas, nColumnas, nMaxColumnas;
+  var hojas = global ? SpreadsheetApp.getActiveSpreadsheet().getSheets() : SpreadsheetApp.getActiveSheet();
+    
+  if (global) { // se procesan todas las hojas de la hdc
+  
+    hojas.map(function(h) {
+      
+      nFilas = h.getLastRow();
+      nMaxFilas = h.getMaxRows();
+      nColumnas = h.getLastColumn();
+      nMaxColumnas = h.getMaxColumns();
+      if (nFilas > 0 && nColumnas > 0) {
+        
+        switch (modo) {
+        
+          case 1: // Columnas
+          
+            if (nMaxColumnas > nColumnas) {h.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
+            break;
+          
+          case 2: // Filas
+      
+            if (nMaxFilas > nFilas) {h.deleteRows(nFilas+1, nMaxFilas - nFilas);}
+            break;   
+            
+          case 3: // Filas y columnas 
+          
+            if (nMaxColumnas > nColumnas) {h.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
+            if (nMaxFilas > nFilas) {h.deleteRows(nFilas+1, nMaxFilas - nFilas);}          
+            break;
+        }      
+      }
+  })}
+  else { // solo se procesa la hoja actual
+  
+    nFilas = hojas.getLastRow();
+    nMaxFilas = hojas.getMaxRows();
+    nColumnas = hojas.getLastColumn();
+    nMaxColumnas = hojas.getMaxColumns();
+    if (nFilas == 0 || nColumnas == 0) {
+      SpreadsheetApp.getUi().alert('💡 La hoja de datos está vacía, no se eliminará nada.');
+    }
+    else {
+    
+      switch (modo) {
+      
+        case 1: // Columnas
+        
+          if (nMaxColumnas > nColumnas) {hojas.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
+          break;
+        
+        case 2: // Filas
+    
+          if (nMaxFilas > nFilas) {hojas.deleteRows(nFilas+1, nMaxFilas - nFilas);}
+          break;   
+          
+        case 3: // Filas y columnas 
+        
+          if (nMaxColumnas > nColumnas) {hojas.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
+          if (nMaxFilas > nFilas) {hojas.deleteRows(nFilas+1, nMaxFilas - nFilas);}          
+          break;
+      }
+    }
+  }
+  
+}
+
+function base64() {
+
+  var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  var matriz = rango.getValues();
+  
+  matriz = matriz.map(function(c) {
+  
+     return c.map(function(c) {
+    
+       return Utilities.base64Encode(c, Utilities.Charset.UTF_8);    
+    })
+  })
+
+  rango.setValues(matriz);
+  
+}
 
 function hashGenerico(rango, tipoHash) {
 
@@ -285,40 +404,77 @@ function hashGenerico(rango, tipoHash) {
  for (var c = 0; c < ncol; c++) {
     for (var f = 0; f < nfil; f++) {
       var valor = matriz[f][c];      
-        var rawHash = Utilities.computeDigest(tipoHash, valor);
-        var txtHash = '';
-        for (var j = 0; j <rawHash.length; j++) {
-          var hashVal = rawHash[j];
-          if (hashVal < 0)
-            hashVal += 256; 
-          if (hashVal.toString(16).length == 1)
-           txtHash += "0";
-          txtHash += hashVal.toString(16);
-        }      
-        matriz[f][c] = txtHash;
+        matriz[f][c] = Utilities.base64Encode(Utilities.computeDigest(tipoHash, valor, Utilities.Charset.UTF_8));
     }
   }
   
   rango.setValues(matriz);
+  
 }
 
+// Convierte hash binario en hexadecimal
+// Utilizada también por fx hash()
+
+function bin2hex(rawHash) {
+
+  var txtHash = '';
+  var hashVal;
+  
+  for (var j = 0; j <rawHash.length; j++) {
+  
+    hashVal = rawHash[j];
+    if (hashVal < 0)
+      hashVal += 256; 
+    if (hashVal.toString(16).length == 1)
+      txtHash += "0";
+    txtHash += hashVal.toString(16);
+  }      
+  return txtHash;
+
+}
+
+
+// Invocación de hashGenerico() para cada tipo
 
 function hashSHA256() {
   
   hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.SHA_256);    
+  
+}
+
+function hashSHA384() {
+  
+  hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.SHA_384);  
+  
+}
+
+function hashSHA512() {
+  
+  hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.SHA_512);  
+  
+}
+
+
+function hashSHA1() {
+  
+  hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.SHA_1);
+  
+}
+
+function hashMD2() {
+  
+  hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.MD2);
+  
 }
 
 function hashMD5() {
   
   hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.MD5);
-}
-
-function hashSHA1() {
   
-  hashGenerico(SpreadsheetApp.getActiveSheet().getActiveRange(), Utilities.DigestAlgorithm.SHA_1);
 }
 
 function inicialesMays() {
+
   var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
   var matriz = rango.getValues();
   var ncol = matriz[0].length;
@@ -334,74 +490,43 @@ function inicialesMays() {
   }
   
   rango.setValues(matriz);
+  
 }
 
 function transponer() {
 
   var hojaActual = SpreadsheetApp.getActiveSheet();
   var rango = hojaActual.getActiveRange();
-  var hojaA
   var matriz = rango.getValues();
-  var ncol = matriz[0].length;
-  var nfil = matriz.length;
-  var rango_t = rango.offset(0, 0, ncol, nfil);
-  var matriz_t = [];
-
-  // Almancenar temporalmente notas y validación
+  var nCol = matriz[0].length;
+  var nFil = matriz.length;
+  var filDestino = rango.getRow();
+  var colDestino = rango.getColumn();
+  var rangoLibre;
   
-  var matrizNotas = rango.getNotes();
-  var matrizValidacion = rango.getDataValidations();
-  var nota, validacion;
+  // Copiar transponiendo con todo (formato celda / número / condicional, validación, notas...
   
-  // Crear hoja temporal (oculta) para almacenar formato
+  rango.copyTo(hojaActual.getRange(filDestino, colDestino), SpreadsheetApp.CopyPasteType.PASTE_NORMAL, true)
   
-  var hojaTemporal = SpreadsheetApp.getActiveSpreadsheet().insertSheet();
-  hojaTemporal.hideSheet();
-  rango.copyFormatToRange(hojaTemporal,1,ncol, 1, nfil);
-  rangoFormato = hojaTemporal.getRange(1, 1, nfil, ncol);
-  hojaActual.activate();
+  // Ahora limpiamos el rango que queda libre al transponer
   
-  // Limpiar rango origen
+  if (nCol != nFil) {
   
-  rango.clear();
-     
-  for (var f = 0; f < ncol; f++) {
-    matriz_t[f] = [];
-    for (var c = 0; c < nfil; c++) {
-      matriz_t[f][c] = matriz[c][f];
-      
-      // Notas y validación, si hay copiar y eliminar en origen
-      
-      nota = matrizNotas[c][f];
-      if (nota) {
-        rango_t.getCell(f + 1, c + 1).setNote(nota);
-        rango.getCell(c + 1, f + 1).clearNote();
-      }
-     
-      validacion = matrizValidacion[c][f];
-      if (validacion) {
-        rango_t.getCell(f + 1, c + 1).setDataValidation(validacion);
-        rango.getCell(c + 1, f + 1).clearDataValidations();
-      }
-         
-      // Formato
-      rangoFormato.getCell(c + 1, f + 1).copyFormatToRange(hojaActual,
-                                                rango_t.getCell(f + 1, c + 1).getColumn(),
-                                                rango_t.getCell(f + 1, c + 1).getColumn(),
-                                                rango_t.getCell(f + 1, c + 1).getRow(),
-                                                rango_t.getCell(f + 1, c + 1).getRow());
-   
+      // El rango es rectangular, yay que "limpiar" el espacio libre que deja tras la transposición
+    
+    if (nCol > nFil) {
+      rangoLibre = hojaActual.getRange(filDestino, colDestino + nFil, nFil, nCol - nFil);
     }
+    else {  // nCol < nFil
+      rangoLibre = hojaActual.getRange(filDestino + nCol, colDestino, nFil - nCol, nCol);  
+    }
+    
+    rangoLibre.clear();
+    rangoLibre.clearNote();
+    rangoLibre.clearDataValidations();
   }
-  
-  // Eliminar hoja temporal para el formato y devolver matriz transpuesta
-  
-  SpreadsheetApp.getActiveSpreadsheet().deleteSheet(hojaTemporal);
-
-  rango_t.setValues(matriz_t);
-  
 }
-  
+
 function minusculas() {
 
   var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
@@ -417,6 +542,7 @@ function minusculas() {
   }
   
   rango.setValues(matriz);
+  
 }
 
 function mayusculas() {
@@ -434,9 +560,10 @@ function mayusculas() {
   }
   
   rango.setValues(matriz);
+  
 }
 
-function desordenarCol(){
+function desordenarFil(){
 
   var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
   var matriz = rango.getValues();
@@ -458,9 +585,10 @@ function desordenarCol(){
   }
   
   rango.setValues(matriz);
+  
 }
 
-function desordenarFil(){
+function desordenarCol(){
 
   var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
   var matriz = rango.getValues();
@@ -482,6 +610,7 @@ function desordenarFil(){
   }
   
   rango.setValues(matriz);
+  
 }
 
 
@@ -504,6 +633,7 @@ function generarNIF() {
   }
   
   rango.setValues(matriz);
+  
 }
 
 function generarNombres() {
@@ -567,7 +697,9 @@ function generarNombres() {
       }
     }
   } 
-rango.setValues(matriz);
+  
+  rango.setValues(matriz);
+
 }                           
 
 function forzarRecalculo() {
@@ -579,4 +711,40 @@ function forzarRecalculo() {
   SpreadsheetApp.getActiveSheet().setRowHeight(1, 1);
   SpreadsheetApp.flush();
   SpreadsheetApp.getActiveSheet().deleteRow(1);
+  
+}
+
+function check() {
+
+  procesarCheck(true);
+
+}
+
+
+function uncheck() {
+
+  procesarCheck(false);
+
+}
+
+/**
+ * Procesa el rango seleccionado, ajustando el valor de 
+ * las celdas con valores TRUE o FALSE al valor T/F indicado
+ */
+
+function procesarCheck(valor) {
+
+  var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  var matriz = rango.getValues();
+    
+  matriz = matriz.map(function(c) {
+  
+     return c.map(function(c) {
+    
+       return (typeof c == 'boolean' ? valor : c);    
+    })
+  })
+  
+  rango.setValues(matriz);
+  
 }

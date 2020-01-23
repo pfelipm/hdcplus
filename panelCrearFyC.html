@@ -10,12 +10,12 @@
  
   <body>
     <div class="row"> 
-      <form class="col s12" id="formFC">
+      <form class="col s12" id="formCrearFC">
       
         <div class="row">
         <div class="input-field col s12">
           <label for="numFil">Número de filas a añadir</label>
-          <input class="validate" type="number" name="numFil" value="2" min="0" id="numFil">
+          <input class="validate" type="number" name="numFil" value="2" min="0" step="1" id="numFil">
         </div>
         </div>
         
@@ -46,11 +46,13 @@
       <button id="botonCrearFC" class="btn waves-effect waves-light col s12">Insertar<i class="material-icons right">add</i></button>
     </div>
     
+    <div id="spinner"class="progress hide">
+      <div class="indeterminate" id="barra_actividad"></div>
+    </div>
+    
     <!-- Incluir js -->
     <?!= HtmlService.createHtmlOutputFromFile('panelCrearFyC_js').getContent(); ?>
   
   </body>
 
 </html>
-
-

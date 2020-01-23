@@ -11,22 +11,18 @@
   
       // Asignar manejador botón añadir F/C
       
-      $('#botonCrearFC').click(on_botonCrearFC_click);
-      
-      // Asignar manejador botones (objetos de tipo 'input')
-      
-      $('input').change(on_numFilCol_change);
+      $('#botonEliminarFC').click(on_botonEliminarFC_click);
       
       // Inicializar select de form (realmente todos, si los hubiera)
         
       $('select').formSelect();
   });
   
-  function on_botonCrearFC_click() {
+  function on_botonEliminarFC_click() {
     
     // Desactivar botón
     
-    $('#botonCrearFC').prop('disabled', true);
+    $('#botonEliminarFC').prop('disabled', true);
     
     // Activar indicador de progreso de la operación
     
@@ -40,26 +36,10 @@
       })
       .withFailureHandler(function() {
         M.toast({html: '❌ Error al realizar la operación'});
-        $('#botonCrearFC').prop('disabled', false);
+        $('#botonEliminarFC').prop('disabled', false);
         $('#spinner').addClass('hide');
       })
-      .insertarFyC_core($('#formCrearFC').get(0));
-  }
-  
-  function on_numFilCol_change(e) {
-    
-    // Control de valores del formulario
-    
-    // this.id = e.target.id
-    
-    if ($('#numFil').val() == 0 && $('#numCol').val() == 0) {
-      $('#botonCrearFC').prop('disabled', true);
-    }
-    else if ($('#numFil').val() < 0 || $('#numCol').val() < 0) {
-      $('#botonCrearFC').prop('disabled', true);
-    }
-    else {
-      $('#botonCrearFC').prop('disabled', false);}
+      .eliminarFyC_core($('#formEliminarFC').get(0));
   }
 
 </script>

@@ -25,7 +25,6 @@
  *
  * @customfunction
  *
- * CC BY-NC-SA Pablo Felip @pfelipm
  */
 
 function CONTARCOLOR(rango_cadena, objeto, color, celda_cadena) {
@@ -38,7 +37,7 @@ function CONTARCOLOR(rango_cadena, objeto, color, celda_cadena) {
   
   
   // Comprobaciones iniciales sobre los parámetros
-  if (rango == null) {
+  if (!rango) {
     resultado = 'Falta el rango a contar';
   } else if (objeto.toLowerCase() != 'fondo' && objeto.toLowerCase() != 'fuente') {
     resultado = 'Falta tipo de coincidencia';
