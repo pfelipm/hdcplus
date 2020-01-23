@@ -28,8 +28,9 @@ function onOpen() {
       .addItem('Barajar por columnas', 'desordenarFil')
       .addItem('Barajar por filas', 'desordenarCol'))
     .addSubMenu(SpreadsheetApp.getUi().createMenu('✅ Casillas de verificación')
-      .addItem('➖ Desmarcar seleccionadas', 'uncheck')
-      .addItem('✔️ Marcar seleccionadas ', 'check'))
+      .addItem('✔️️ Activar seleccionadas', 'check')
+      .addItem('❌ Desactivar seleccionadas ', 'uncheck')
+      .addItem('➖ Invertir seleccionadas ', 'recheck'))
     .addSubMenu(SpreadsheetApp.getUi().createMenu('🧮 Estructura datos')
       .addItem('Consolidar dimensiones (despivotar)', 'unpivot')
       .addItem('Transponer (☢️ destructivo)', 'transponer'))
@@ -742,6 +743,28 @@ function procesarCheck(valor) {
      return c.map(function(c) {
     
        return (typeof c == 'boolean' ? valor : c);    
+    })
+  })
+  
+  rango.setValues(matriz);
+  
+}
+
+/**
+ * Procesa el rango seleccionado, invirtiendo el valor de 
+ * las celdas con valores TRUE o FALSE 
+ */
+
+function recheck(valor) {
+
+  var rango = SpreadsheetApp.getActiveSheet().getActiveRange();
+  var matriz = rango.getValues();
+    
+  matriz = matriz.map(function(c) {
+  
+     return c.map(function(c) {
+    
+       return (typeof c == 'boolean' ? !c : c);    
     })
   })
   
