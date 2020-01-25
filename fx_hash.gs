@@ -1,9 +1,9 @@
 /**
- * Calcula el hash de las celdas pasadas como parámetros.
+ * Calcula el hash de los valores del intervalo.
  * @return matriz de hashes calculados
  * @param {A1:D10} valores Datos de entrada como texto.
- * @param {verdadero} base64 Codificar en Base64 (VERDADERO | FALSO).
- * @param {"SHA256"} tipo Tipo de hash (MD2| MD5 | SHA1 | SHA256 | SHA384 | SHA512).
+ * @param {verdadero} base64VoF Codificar en Base64 (VERDADERO | FALSO).
+ * @param {"SHA256"} tipo Tipo de hash (MD2 | MD5 | SHA1 | SHA256 | SHA384 | SHA512).
  *
  * @return matriz de hashes calculados codificados en base64, si procede.
  *
@@ -12,17 +12,19 @@
  * (c) Pablo Felip @pfelipm GNU GPL v3
  */ 
  
-function HASH(valores, base64, tipo) {
+function HASH(valores, base64VoF, tipo) {
 
   var algoritmo;
   
   // Comprobación de parámetros
-  
-  if (valores == '') {return "Rango de datos no especificado";}
-  if (typeof base64 != 'boolean') {return "Base64 sí/no no especificado";}
-  if (!tipo) {return "Tipo de hash no especificado";}
 
-  // Tipo de hash
+  if (typeof valores == 'undefined' || typeof base64VoF == 'undefined' || typeof tipo == 'undefined')
+    {return '!Faltan argumentos';}
+  // (hashes de cadenas vacías no son nulos) if (valores == '') {return "!Faltan valores";}
+  if (typeof base64VoF != 'boolean') {return "!Base64 V/F inválido";}
+  if (typeof tipo != 'string') {return "!Tipo de hash inválido";}
+
+  // Los parámetros parecen correctos ¡adelante!
 
   switch (tipo.toUpperCase()) {
     case 'MD2': algoritmo = Utilities.DigestAlgorithm.MD2; break;
@@ -31,7 +33,7 @@ function HASH(valores, base64, tipo) {
     case 'SHA256': algoritmo = Utilities.DigestAlgorithm.SHA_256; break;
     case 'SHA384': algoritmo = Utilities.DigestAlgorithm.SHA_384; break;
     case 'SHA512': algoritmo = Utilities.DigestAlgorithm.SHA_512; break;
-    default: return 'Tipo de hash desconocido';
+    default: return '!Tipo de hash inválido';
   }
   
   // Generar hashes
@@ -45,7 +47,7 @@ function HASH(valores, base64, tipo) {
       
         // Se recodifica en Base64
       
-        if (base64) {return Utilities.base64Encode(Utilities.computeDigest(algoritmo,c, Utilities.Charset.UTF_8));}
+        if (base64VoF) {return Utilities.base64Encode(Utilities.computeDigest(algoritmo,c, Utilities.Charset.UTF_8));}
         
         // ... o se recodifica como cadena hexadecimal
         
@@ -57,7 +59,7 @@ function HASH(valores, base64, tipo) {
   
     // Valor único, se recodifica en Base64
     
-    if (base64) {return Utilities.base64Encode(Utilities.computeDigest(algoritmo,valores, Utilities.Charset.UTF_8));}
+    if (base64VoF) {return Utilities.base64Encode(Utilities.computeDigest(algoritmo,valores, Utilities.Charset.UTF_8));}
     
     // ... o se recodifica como cadena hexadecimal
     
@@ -67,34 +69,59 @@ function HASH(valores, base64, tipo) {
 }
 
 /**
- * Recodifica en base64 el contenido de las celdas pasadas como parámetros.
+ * Recodifica en base64 el contenido del intervalo.
  * @return matriz de texto condificado en base64
  * @param {A1:D10} valores Datos de entrada como texto.
- *
- * @return matriz de hashes calculados codificados en base64, si procede.
+ * @param {falso} esHexa El valor a recodificar es una cadena binaria
+                         representada como texto hexadecimal (VERDADERO | FALSO).
+                         Si no se especifica toma el valor FALSO.
+ * @return matriz de valores codificados en base64.
  *
  * @customfunction
  *
  * (c) Pablo Felip @pfelipm GNU GPL v3
  */ 
 
-function BASE64(valores) {
+function BASE64(valores, esHexa) {
 
-  if (!valores) {return "Rango de datos no especificado";}
-  else {
+  // Comprobación de parámetros
+
+  if (typeof valores == 'undefined') {return '!Faltan argumentos';}
+  if (typeof esHexa == 'undefined') {esHexa = false;}  
+  if (typeof esHexa != 'boolean') {return 'esHexa inválido';}  
+
+  // Los parámetros parecen correctos ¡adelante!
   
-    if (valores.map) {
+  if (valores.map) {
     
-      // Vector o matriz
-
-      valores = valores.map(function(c) {
+    // Vector o matriz
+    
+    valores = valores.map(function(c) {
       
-         return c.map(function(c) {return Utilities.base64Encode(c, Utilities.Charset.UTF_8);    
-        })
-      })
-      return valores;
-    }
-    else {return Utilities.base64Encode(valores, Utilities.Charset.UTF_8);}    
+      if (!esHexa) {
+        
+        return c.map(function(c) {return Utilities.base64Encode(c, Utilities.Charset.UTF_8);})
+      }
+      else {
+        
+        return c.map(function(c) {return Utilities.base64Encode(Utilities.newBlob(hex2bytes(c).map(function(byte){
+        
+          return byte <128 ? byte : byte - 256;})).getBytes());})
+      }
+    })
+    return valores;
   }
+  else {
+    if (!esHexa) {
+      
+      return Utilities.base64Encode(valores, Utilities.Charset.UTF_8);
+    }    
+    else {
+        
+      return Utilities.base64Encode(Utilities.newBlob(hex2bytes(valores).map(function(byte){
+        
+        return byte <128 ? byte : byte - 256;})).getBytes());
+    }
+  }      
   
 }

@@ -1,5 +1,5 @@
 /**
- * Rellena una rango de celdas con un elemento determinado.
+ * Rellena un rango de celdas con un elemento determinado.
  *
  * @param {"Calificación"} elemento
  * Elemento (número, cadena o referencia a celda única) con el que rellenar rango de celdas.
@@ -18,39 +18,43 @@
  */
 
 function RELLENAR(elemento, nfilas, ncolumnas) {
-  
+    
   var resultadoC = [],
       resultado  = [],
       i;
   
   // Control de parámetros
-  
-  if (!elemento) { 
-    resultado = 'Falta elemento';
-  }
-  else if (typeof nfilas != 'number') {
-    resultado = 'Nº filas no es número';
-  }
-  else if (nfilas < 1 && typeof nfilas == 'number') {
-    resultado = 'Nº filas debe ser > 0';
-  }
-  else if (typeof ncolumnas != 'number') {
-    resultado = 'Nº columnas no es número';
-  }
-  else if (ncolumnas < 1 && typeof ncolumnas == 'number') {
-    resultado = 'Nº columnas debe ser > 0';
-  }
-  else {
-  
-    // ¡Adelante!
 
-    for (i = 0; i < ncolumnas; i++) {
-      resultadoC.push (elemento);
-    } 
-    
-    for (i = 0; i < nfilas; i++) {          
-      resultado.push (resultadoC);
-    }
+  if (typeof elemento == 'undefined' || typeof(nfilas) == 'undefined' || typeof ncolumnas == 'undefined') { 
+    return '!Faltan argumentos';
+  }
+  if (typeof elemento == 'object') {
+    return '!Elemento debe ser único';
+  }
+  if (!elemento) {
+    return null;
+  }
+  if ((typeof nfilas == 'number' && nfilas < 1) || !nfilas) { 
+    return null;
+  }
+  if ((typeof ncolumnas == 'number' && ncolumnas < 1) || !ncolumnas) { 
+    return null;
+  }
+  if (typeof nfilas != 'number') {
+    return  '!Nº filas inválido';
+  }
+  if (typeof ncolumnas != 'number') {
+    return  '!Nº columnas inválido';
+  }
+
+  // Los parámetros parecen correctos ¡adelante!
+
+  for (i = 0; i < ncolumnas; i++) {
+    resultadoC.push (elemento);
+  } 
+  
+  for (i = 0; i < nfilas; i++) {          
+    resultado.push (resultadoC);
   }
   
   return resultado;   
@@ -82,49 +86,50 @@ function REPETIRFC(elemento, veces, modo) {
   var i;
   
   // Control de parámetros
-  
-  if (!elemento) { 
-    resultado = 'Falta elemento';
+
+  if (typeof elemento == 'undefined' || typeof(veces) == 'undefined' || typeof modo == 'undefined') { 
+    return '!Faltan argumentos';
   }
-  else if (veces < 2 && typeof veces == 'number') {
-    resultado = 'Repeticiones debe ser > 1';
+  if (typeof elemento == 'object') {
+    return '!Elemento debe ser único';
   }
-  else if (typeof veces != 'number') {
-    resultado = 'Repeticiones no es número';
+  if (!elemento) {
+    return null;
   }
-  else if (!modo) {
-    resultado = 'Falta modo';
+  if ((typeof veces == 'number' && veces < 1) || !veces) { 
+    return null;
   }
-  else {
-  
-    // ¡Adelante!
+  if (typeof veces != 'number') {
+    return  '!Nº repeticiones inválido';
+  }
+ 
+  // Los parámetros parecen correctos ¡adelante!
     
-    switch (modo.toLowerCase()) {
- 
-      // extender en filas
- 
-      case 'fil':
+  switch (modo.toLowerCase()) {
       
-        resultado =[];     
-        for (i = 0; i < veces; i++) {          
-          resultado.push (elemento);
-        }
-        break;
+    // extender en filas
+      
+    case 'fil':
+      
+      resultado =[];     
+      for (i = 0; i < veces; i++) {          
+        resultado.push (elemento);
+      }
+      break;
       
       // extender en columnas
       
-      case 'col':
+    case 'col':
       
-        resultado =[[]];      
-        for (i = 0; i < veces; i++) {
-          resultado[0].push (elemento);
-        } 
-        break;
+      resultado =[[]];      
+      for (i = 0; i < veces; i++) {
+        resultado[0].push (elemento);
+      } 
+      break;
       
-      default:
+    default:
       
-        resultado = 'Modo desconocido';   
-    }
+      resultado = 'Modo desconocido';   
   }
   
   return resultado; 
