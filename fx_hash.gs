@@ -20,7 +20,6 @@ function HASH(valores, base64VoF, tipo) {
 
   if (typeof valores == 'undefined' || typeof base64VoF == 'undefined' || typeof tipo == 'undefined')
     {return '!Faltan argumentos';}
-  // (hashes de cadenas vacías no son nulos) if (valores == '') {return "!Faltan valores";}
   if (typeof base64VoF != 'boolean') {return "!Base64 V/F inválido";}
   if (typeof tipo != 'string') {return "!Tipo de hash inválido";}
 
