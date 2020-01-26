@@ -49,7 +49,7 @@ function TROCEAR(intervalo, separador) {
         }
       })
     })
-   if (resultado.length > 0){ return resultado; }
+   if (resultado.length > 0) {return resultado;}
    else {return null;}
   }
   
