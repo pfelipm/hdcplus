@@ -1,6 +1,6 @@
 /**
  * Calcula el hash de los valores del intervalo.
- * @return matriz de hashes calculados
+ * 
  * @param {A1:D10} valores Datos de entrada como texto.
  * @param {verdadero} base64VoF Codificar en Base64 (VERDADERO | FALSO).
  * @param {"SHA256"} tipo Tipo de hash (MD2 | MD5 | SHA1 | SHA256 | SHA384 | SHA512).
