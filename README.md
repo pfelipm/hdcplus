@@ -1,3 +1,4 @@
+![Creado con - Google Apps Script](https://img.shields.io/static/v1?label=Creado+con&message=Google+Apps+Script&color=blue&style=for-the-badge&logo=GAS)
 # HdC+
 
 HdC+ es un complemento para hojas de cálculo de Google desarrollado con Google Apps Script que incorpora diversas funciones personalizadas y herramientas que en algún momento u otro he necesitado implementar en mis propias hojas de cálculo y que he acabado desparramando por aquí y allá, así que me he animado a juntarlas todas en este engendro. Si alguna de ellas te resulta de utilidad, ¡estupendo!.
