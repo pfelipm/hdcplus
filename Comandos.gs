@@ -6,7 +6,7 @@
  * @OnlyCurrentDoc
  */
 
-var VERSION = 'Versión: 1.6 (febrero 2022)';
+var VERSION = 'Versión: 1.6 (febrero 2023)';
 
 // Para mostrar / ocultar pestaña por color
 
