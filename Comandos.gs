@@ -6,7 +6,7 @@
  * @OnlyCurrentDoc
  */
 
-var VERSION = 'Versión: 1.5 (enero 2020)';
+var VERSION = 'Versión: 1.6 (febrero 2022)';
 
 // Para mostrar / ocultar pestaña por color
 
@@ -658,12 +658,12 @@ function generarNIF()  {
 
 function generarNombres() {
 
-  var nombresTop = ['Guillermo','Jose Luis','Nuria','José','David','Victor','Santiago','Francisco José','Marcos','Yolanda',
+  var nombresTop = ['Guillermo','José Luis','Nuria','José','David','Victor','Santiago','Francisco José','Marcos','Yolanda',
                 'Isabel','César','Carolina','Nerea','Lucas','Alba','Gabriel','Salvador','Ignacio','Manuela','María Carmen',
                 'Domingo','Rosario','Albert','María José','Samuel','María Ángeles','Juan Antonio','Laura','Xavier','Lidia',
-                'Fatima','Paula','Jose Carlos','Joaquin','Marina','Alejandro','Juan Jose','Alicia','Jose Manuel','Pilar',
-                'Luisa','Encarnación','Alfredo','Felipe','Luis Miguel','Sergio','Antonia','Juan','Jose Ignacio','Beatriz',
-                'Alvaro','Angel','Ruben','Lucia','Luis','Rocio','Celia','Juana','Rafael','Irene','Tomas','Joan','Jose Maria',
+                'Fátima','Paula','José Carlos','Joaquin','Marina','Alejandro','Juan José','Alicia','José Manuel','Pilar',
+                'Luisa','Encarnación','Alfredo','Felipe','Luis Miguel','Sergio','Antonia','Juan','José Ignacio','Beatriz',
+                'Alvaro','Angel','Ruben','Lucía','Luis','Rocio','Celia','Juana','Rafael','Irene','Tomas','Joan','José Maria',
                 'Cristina','Aitor','Josep','Francisco','Rosa','María Mar','Veronica','Ana','Carla','María Concepción','Vicente',
                 'Fernando','Ramon','Daniel','Alex','Susana','Sofia','Alejandra','Felix','Adrian','Jorge','Silvia','Gloria','Josefa',
                 'Ana Isabel','Inmaculada','Miriam','Catalina','Hugo','José Francisco','Javier','Alfonso','Aurora','Ainhoa',
@@ -676,7 +676,7 @@ function generarNombres() {
                 'María Mercedes','Jaime','Lorena','Agustín','Julián','Raquel','Eva María','Marta','Pedro','Íker','Margarita',
                 'Mariano','Mario','Ana Belén','María Elena','Francisco Javier','Francisca','María Nieves','María Soledad','Carmen',
                 'Enrique','Julia','Teresa','Sebastián','Ángeles','Juan Carlos','Montserrat','Cristian','Jesús','María Victoria',
-                'Natalia','Jose Miguel','Eva','Eduardo','Jordi','Iván','Mohamed','Julio','Ricardo','Sonia'];
+                'Natalia','José Miguel','Eva','Eduardo','Jordi','Iván','Mohamed','Julio','Ricardo','Sonia'];
  
  var apellidosTop = ['González','Rodríguez','Fernández','López','Martínez','Sánchez','Pérez','Gómez','Martín','Jiménez','Ruíz',
                       'Hernández','Díaz','Moreno','Muñoz','Álvarez','Romero','Alonso','Gutiérrez','Navarro','Torres','Domínguez',
