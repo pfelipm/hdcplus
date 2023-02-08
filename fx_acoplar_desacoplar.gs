@@ -292,28 +292,6 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
       else filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);
     }
 
-    /*
-
-    // const noClaveSets = [];
-    // for (let col = 0; col < colNoClaveSet.size; col++) { noClaveSets.push(new Set()) }; // Vector de sets para recoger valores múltiples   
-    const noClaveSets = [...Array(colNoClaveSet.size)].map(fila => []);
-    
-    filasEntidad.forEach(fila => {
-
-      let conjunto = 0;
-      //for (const col of colNoClaveSet) { noClaveSets[conjunto++].add(String(fila[col])); } // tocar aquí para permitir duplicados
-      for (const col of colNoClaveSet) { noClaveSets[conjunto++].push(String(fila[col])); }
-
-    });
-
-    // Set >> Vector >> Cadena única con separador
-
-    let conjunto = 0;
-    // for (const col of colNoClaveSet) { filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador); }
-    for (const col of colNoClaveSet) { filaAcoplada[col] = noClaveSets[conjunto++].join(separador); }
-
-  */
-
     intervaloAcoplado.push(filaAcoplada);
 
   }
