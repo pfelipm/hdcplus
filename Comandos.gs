@@ -6,7 +6,7 @@
  * @OnlyCurrentDoc
  */
 
-var VERSION = 'Versión: 1.6 (febrero 2023)';
+var VERSION = 'Versión: 1.7 (marzo 2023)';
 
 // Para mostrar / ocultar pestaña por color
 
@@ -69,9 +69,10 @@ function onOpen() {
       .addItem('➖↩️ Espacios a saltos de línea', 'espaciosSaltos')      
       .addItem('↩️➖ Saltos de línea a espacios', 'saltosEspacios')
       .addItem('↩️🔺 Saltos de línea a comas', 'saltosComas')
-      .addItem('↗️ Iniciales a mayúsculas', 'inicialesMays')
-      .addItem('⬆️ Todo a mayúsculas', 'mayusculas')
-      .addItem('⬇️ Todo a minúsculas', 'minusculas'))
+      .addItem('↗️ Iniciales a mayúsculas', 'inicialesMays_')
+      .addItem('⬆️ Inicial a mayúsculas', 'inicialMays_')
+      .addItem('🔠 Todo a mayúsculas', 'mayusculas')
+      .addItem('🔤 Todo a minúsculas', 'minusculas'))
     .addSeparator()
     .addItem('🔄 Forzar recálculo de hoja', 'forzarRecalculo')
     .addSeparator()
@@ -84,7 +85,7 @@ function acercaDe() {
   // Presentación del complemento
   var panel = HtmlService.createTemplateFromFile('acercaDe');
   panel.version = VERSION;
-  SpreadsheetApp.getUi().showModalDialog(panel.evaluate().setWidth(420).setHeight(220), '💡 ¿Qué es HdC+?');
+  SpreadsheetApp.getUi().showModalDialog(panel.evaluate().setWidth(420).setHeight(350), '💡 ¿Qué es HdC+?');
 }
 
 // Funciones de transformación del texto
@@ -121,6 +122,7 @@ function mayusculas() {
       return c.map(function(c) {
       
         return typeof c == 'string' ? c.toUpperCase() : c;
+
       })
     
     })
@@ -129,24 +131,116 @@ function mayusculas() {
     
 }
 
-function inicialesMays() {
+/**
+ * Pasa a mayúsculas la letra inicial de las celdas de los intervalos
+ * seleccionados. Tiene en cuenta los caracteres especiales del castellano (vocales
+ * con tilda, ñ, etc.) y también el resto de signos de puntuación y
+ * caracteres especiales (que no son tratados).
+ */
+function inicialMays_() {
+  
+  try {
 
-  var rangos = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
-  var matriz;
-  
-  rangos.map(function(r) {
-  
-    matriz = r.getValues().map(function(c) {
+    const rangos = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();  
+    rangos.map(rango => {
       
-      return c.map(function(c) {
+      const matriz = rango.getValues().map(fila => {
       
-        return typeof c == 'string' ? c.toLowerCase().replace(/\b\w/gi,(function(c) {return c.toUpperCase()})) : c;
-      })
-    
-    })
-    r.setValues(matriz);
-  })
-    
+        return fila.map(celda => {
+      
+          // Solo se procesan cadenas de texto
+          if (typeof celda != 'string') return celda;
+
+          let pos = 0;
+          while (celda.charAt(pos).toLowerCase() == celda.charAt(pos).toUpperCase() && pos < celda.length) pos++;
+          if (pos < celda.length) return  celda.slice(0, pos) + celda.charAt(pos).toUpperCase() + celda.slice(pos + 1);
+          else return celda;
+          
+        });
+      
+      });
+      rango.setValues(matriz);
+
+    });
+  
+  } catch(e) { throw `HdC+ dice: Error inesperado, contacta con soporte // ${e}.`; }
+
+}
+
+/**
+ * Capitaliza las celdas de los intervalos seleccionados, pasando
+ * las iniciales de cada palabra a mayúsculas y el resto a minúsculas.
+ * Tiene en cuenta los caracteres especiales del castellano (vocales
+ * con tilda, ñ, etc.) y también el resto de signos de puntuación y
+ * caracteres especiales (que no son tratados). Pretende ser un clon
+ * de la función integrada NOMPROPIO().
+ * 03/03/23
+ */
+function inicialesMays_() {
+
+  try {
+
+    const rangos = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();  
+    rangos.map(rango => {
+      
+      const matriz = rango.getValues().map(fila => {
+      
+        return fila.map(celda => {
+      
+          // Solo se procesan cadenas de texto
+          if (typeof celda != 'string') return celda;
+
+          // [1] Se identifican los caracteres no estándar, pueden incluir vocales con tilde, eñes, etc.
+          const coincidencias = celda.matchAll(/\W/gi);
+          let noAptos = [];
+          for (let coincidencia of coincidencias) {
+            noAptos.push( { indice: coincidencia.index, caracter: coincidencia[0]});
+          }
+          // Descartar espacios
+          noAptos = noAptos.filter(noApto => noApto.caracter != ' ');
+          
+          // [2] Ahora los eliminamos todos de la cadena original a procesar, se convierte a vector
+          //     para poder modificar elementos en el siguiente paso.
+          const prep = [...celda.replaceAll(/\W/gi, ' ')];
+          
+          // [3] Antes de que split().join() hagan su magia hay que reinsertar en su lugar los caracteres que sí deseamos procesar
+          noAptos.forEach(coincidencia => {
+            // Si hay diferencia entre mayúsculas / minúsculas es que el carácter debe ser tratado y debemos reinsertarlo ahora
+            if (coincidencia.caracter.toLowerCase() != coincidencia.caracter.toUpperCase()) {
+              prep[coincidencia.indice] =  coincidencia.caracter;
+            }
+          });
+
+          // [4] Aplicamos la transformación, solo iniciales de palabras a mayúsculas, resto a minúsculas
+          const nuevoVectorCadena = [
+            ...prep.join('')
+            .toLowerCase()
+            .split(' ')
+            // split() devuelve n-1 caracteres [''] al trocear una secuencia de n espacios consecutivos
+            .map(palabra => palabra.at(0) ? palabra.at(0).toUpperCase() + palabra.slice(1) : '')
+            .join(' ')
+          ];
+
+          // [5] Resinsertar en su lugar el resto de caracteres especiales que no debían ser tenidos en cuenta
+          noAptos.forEach(caracter => {
+            // Si no hay diferencia entre mayúsculas / minúsculas es que el carácter debe ser reinsertado
+            if (caracter.caracter.toLowerCase() == caracter.caracter.toUpperCase()) {
+              nuevoVectorCadena[caracter.indice] = caracter.caracter;
+            }
+          });    
+
+          // Se transforma el vector en cadena de nuevo
+          return nuevoVectorCadena.join('');
+          
+        });
+      
+      });
+      rango.setValues(matriz);
+
+    });
+  
+  } catch(e) { throw `HdC+ dice: Error inesperado, contacta con soporte // ${e}.`; }
+
 }
 
 // Función genérica que sustituye las coincidencias de la expresión regular

@@ -28,7 +28,7 @@
  *  - Se devuelven valores numéricos cuando pueden ser convertidos a números (¡mejor parametrizar!)
  * 
  * MIT License
- * Copyright (c) 2020 Pablo Felip Monferrer (@pfelipm)
+ * Copyright (c) 2023 Pablo Felip Monferrer (@pfelipm)
  */
 function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...masColumnas) {
 
@@ -146,7 +146,7 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
         });
         // Devolver valores que pueden convertirse a números como tales (puede ser delicado, mejor parametrizar)
         // https://dev.to/sanchithasr/7-ways-to-convert-a-string-to-number-in-javascript-4l
-        return filaDesacoplada.map(valor => (isNaN(valor) || !forzarNum) ? valor : Number(+valor));
+        return filaDesacoplada.map(valor => (isNaN(valor) || !forzarNum) ? valor : Number(valor));
       });
 
       // Se desestructura (...) respuestaDesacoplada dado que combinaciones.map es [[]]
