@@ -67,7 +67,7 @@ function DISTANCIA_EDICION(
     
     // Cadena / Intervalo
     return c2.map(vectorFil => vectorFil.map(cadena => distanciaLevenshtein_(
-      c2, cadena,
+      c1, cadena,
       permiteTrans, maysImportan, fuerzaTexto, 
       costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
     )));
