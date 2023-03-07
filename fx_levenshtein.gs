@@ -190,6 +190,7 @@ function DISTANCIA_EDICION_MINIMA(
 }
 
 
+
 /**
  * Calcula la distancia de Levenshtein entre dos cadenas de texto. Soporta operaciones de sustitución, eliminación,
  * adición y transposiciones no adyacentes de caracteres (versión simple de la distancia de Damerau-Levenshtein
