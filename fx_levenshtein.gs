@@ -30,7 +30,7 @@
  */
 function DISTANCIA_EDICION(
   c1, c2,
-  permiteTrans, maysImportan, fuerzaTexto,
+  permiteTrans, distingueMayusculas, fuerzaTexto,
   costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
 ) {
 
@@ -50,7 +50,7 @@ function DISTANCIA_EDICION(
     if (c1.length != c2.length || c1[0].length != c2[0].length) throw 'Las dimensiones de los intervalos que contiene las cadenas de texto no coinciden'
     return c1.map((vectorFil, fil) => vectorFil.map((cadena, col) => distanciaLevenshtein_(
       cadena, c2[fil][col],
-      permiteTrans, maysImportan, fuerzaTexto,
+      permiteTrans, distingueMayusculas, fuerzaTexto,
       costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
     )));
 
@@ -59,7 +59,7 @@ function DISTANCIA_EDICION(
     // Intervalo / Cadena
     return c1.map(vectorFil => vectorFil.map(cadena => distanciaLevenshtein_(
       cadena, c2,
-      permiteTrans, maysImportan, fuerzaTexto,
+      permiteTrans, distingueMayusculas, fuerzaTexto,
       costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
     )));
 
@@ -68,7 +68,7 @@ function DISTANCIA_EDICION(
     // Cadena / Intervalo
     return c2.map(vectorFil => vectorFil.map(cadena => distanciaLevenshtein_(
       c1, cadena,
-      permiteTrans, maysImportan, fuerzaTexto, 
+      permiteTrans, distingueMayusculas, fuerzaTexto, 
       costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
     )));
 
@@ -77,7 +77,7 @@ function DISTANCIA_EDICION(
     // Cadena / Cadena
     return distanciaLevenshtein_(
       c1, c2,
-      permiteTrans, maysImportan, fuerzaTexto,
+      permiteTrans, distingueMayusculas, fuerzaTexto,
       costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
     );
 
@@ -111,7 +111,7 @@ function DISTANCIA_EDICION(
  */
 function DISTANCIA_EDICION_MINIMA(
   cadena, referencia, numCadenas, devuelveDistancia,
-  permiteTrans, maysImportan, fuerzaTexto,
+  permiteTrans, distingueMayusculas, fuerzaTexto,
   costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
 ) {
 
@@ -145,7 +145,7 @@ function DISTANCIA_EDICION_MINIMA(
         cadena: candidata,
         distancia: distanciaLevenshtein_(
           cadena, candidata,
-          permiteTrans, maysImportan, costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
+          permiteTrans, distingueMayusculas, costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
         )
       }
     ))).flat()
@@ -212,21 +212,21 @@ function DISTANCIA_EDICION_MINIMA(
  * 
  * Se trata de una función auxiliar privada invocada desde DISTANCIA_EDICION() y MENOR_DISTANCIA_EDICION()
  *
- * @param   {string}    c1                  La primera cadena de texto a comparar.
- * @param   {string}    c2                  La segunda cadena de texto a comparar.
- * @param   {boolean}   [permiteTrans=true] Admite operaciones de transposición de caracteres. Por defecto, verdadero.
- * @param   {boolean}   [maysImportan=true] Diferencia mayúsculas de minúsculas. Por defecto, verdadero.
- * @param   {boolean}   [fuerzaTexto=true]  Indica si se deben tratar de forzar a texto los valores numéricos ([VERDADERO] | FALSO).
- * @param   {number}    [costeIns=1]        El valor numérico que representa el coste de la operación de inserción [1].
- * @param   {number}    [costeEli=1]        El valor numérico que representa el coste de la operación de eliminación [1].
- * @param   {number}    [costeSus=1]        El valor numérico que representa el coste de la operación de sustitución [1].
- * @param   {number}    [costeTrans=1]      El valor numérico que representa el coste de la operación de transposición [1].
+ * @param   {string}    c1                          La primera cadena de texto a comparar.
+ * @param   {string}    c2                          La segunda cadena de texto a comparar.
+ * @param   {boolean}   [permiteTrans=true]         Admite operaciones de transposición de caracteres. Por defecto, verdadero.
+ * @param   {boolean}   [distingueMayusculas=true]  Diferencia mayúsculas de minúsculas. Por defecto, verdadero.
+ * @param   {boolean}   [fuerzaTexto=true]          Indica si se deben tratar de forzar a texto los valores numéricos ([VERDADERO] | FALSO).
+ * @param   {number}    [costeIns=1]                El valor numérico que representa el coste de la operación de inserción [1].
+ * @param   {number}    [costeEli=1]                El valor numérico que representa el coste de la operación de eliminación [1].
+ * @param   {number}    [costeSus=1]                El valor numérico que representa el coste de la operación de sustitución [1].
+ * @param   {number}    [costeTrans=1]              El valor numérico que representa el coste de la operación de transposición [1].
  * 
- * @return  {number}                        La distancia de Levenshtein entre las dos cadenas de texto.
+ * @return  {number}                                La distancia de Levenshtein entre las dos cadenas de texto.
  */
 function distanciaLevenshtein_(
   c1, c2,
-  permiteTrans = true, maysImportan = true, fuerzaTexto = true, 
+  permiteTrans = true, distingueMayusculas = true, fuerzaTexto = true, 
   costeIns = 1, costeEli = 1, costeSus = 1, costeTrans = 1
 ) {
 
@@ -248,7 +248,7 @@ function distanciaLevenshtein_(
     if (m == 0) return n * costeEli;
 
     // Tratamiento de mayúsculas
-    if (!maysImportan) { c1 = c1.toUpperCase(); c2 = c2.toUpperCase(); }
+    if (!distingueMayusculas) { c1 = c1.toUpperCase(); c2 = c2.toUpperCase(); }
 
     // Vectores para el cálculo, necesitamos v2 para soportar transposiciones
     const v0 = [...Array(m + 1)].map((_, i) => i);
