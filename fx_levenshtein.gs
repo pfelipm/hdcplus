@@ -95,7 +95,7 @@ function DISTANCIA_EDICION(
  *
  * @param {"Pablo"}   cadena              La primera cadena o intervalo de cadenas de texto.
  * @param {B2:B10}    referencia          El intervalo de cadenas de texto de referencia.
- * @param {3}         numCadenas          Nº de cadenas que se devolverán [1]
+ * @param {3}         numCadenas          Nº de cadenas que se devolverán, en orden creciente de distancia [1].
  * @param {FALSO}     devuelveDistancia   Indica si también se debe devolver la distancia calculada para cada valor de referencia (VERDADERO | [FALSO]).
  * @param {VERDADERO} permiteTrans        Indica si se admiten transposiciones ([VERDADERO] | FALSO).
  * @param {FALSO}     distingueMayusculas Indica si deben diferenciarse mayúsculas de minúsculas ([VERDADERO] | FALSO).
@@ -170,28 +170,6 @@ function DISTANCIA_EDICION_MINIMA(
           : resultadoFil.map((fila, nFil) => fila.concat(resultadoCadena[nFil]));
       }, [])
     ), []);
-
-    // Versión inicial con 2 forEach() anidados, ¿mejora la inteligibilidad?
-    /*
-    let resultado = [];
-    cadena.forEach(vectorFil => {
-
-      let resultadoFil = [];
-      vectorFil.forEach(cadena => {
-
-        const resultadoCadena = obtenerDistancias(cadena, referencia)
-          .map(candidata => devuelveDistancia ? [candidata.cadena, candidata.distancia] : [candidata.cadena]);  
-        // Expandir matriz resultado parcial añadiendo las columnas necesarias
-        resultadoFil = resultadoFil.length == 0
-          ? resultadoCadena
-          : resultadoFil.map((fila, nFil) => fila.concat(resultadoCadena[nFil]));
-      
-      });
-      // Expandir matriz resultado general añadiendo filas
-      resultado = resultado.concat(resultadoFil);
-
-    });
-    */
     
     return resultado;
 
@@ -203,12 +181,13 @@ function DISTANCIA_EDICION_MINIMA(
 
 }
 
+
 /**
  * Calcula la distancia de Levenshtein entre dos cadenas de texto. Soporta operaciones de sustitución, eliminación,
  * adición y transposiciones no adyacentes de caracteres (versión simple de la distancia de Damerau-Levenshtein
  * https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance#Optimal_string_alignment_distance). También puede
  * diferenciar o no mayúsculas y minúsculas. Solo utiliza 3 vectores, en lugar de una matriz completa.
- * Basada en una ensoñación de ChatGPT (aunque no sin una larga conversación previa).
+ * Basada en una ensoñación de ChatGPT (aunque no sin una muy larga y accidentada conversación previa).
  * 
  * Se trata de una función auxiliar privada invocada desde DISTANCIA_EDICION() y MENOR_DISTANCIA_EDICION()
  *
@@ -230,7 +209,7 @@ function distanciaLevenshtein_(
   costeIns = 1, costeEli = 1, costeSus = 1, costeTrans = 1
 ) {
 
-  // Se desea forzar conversión a texto de valores numéricos?
+   // Se desea forzar conversión a texto de valores numéricos?
   if (fuerzaTexto) {
     if (typeof c1 == 'number') c1 = String(c1);
     if (typeof c2 == 'number') c2 = String(c2);
@@ -239,40 +218,52 @@ function distanciaLevenshtein_(
   // Si no tenemos cadenas no devolveremos nada de manera explícita
   if (typeof c1 == 'string' && typeof c2 == 'string') {
 
-    const n = c1.length;
-    const m = c2.length;
-
-    // Casos elementales
-    if (c1 == c2) return 0;
-    if (n == 0) return m * costeIns;
-    if (m == 0) return n * costeEli;
-
     // Tratamiento de mayúsculas
     if (!distingueMayusculas) { c1 = c1.toUpperCase(); c2 = c2.toUpperCase(); }
 
-    // Vectores para el cálculo, necesitamos v2 para soportar transposiciones
-    const v0 = [...Array(m + 1)].map((_, i) => i);
-    const v1 = Array(m + 1).fill(0);
-    const v2 = Array(m + 1).fill(0);
+    // Inicializar matriz
+    const matrizDistancias = [[], [], []];
 
-    for (let i = 0; i < n; i++) {
-      v1[0] = i + 1;
-      v2[0] = i + 1;
-      for (let j = 0; j < m; j++) {
-        v1[j + 1] = Math.min(
-          v1[j] + costeIns,
-          v0[j + 1] + costeEli,
-          v0[j] + (c1[i] == c2[j] ? 0 : costeSus));
+    const l1 = c1.length;
+    const l2 = c2.length;
 
-        if (permiteTrans && i > 0 && j > 0 && c1[i] == c2[j - 1] && c1[i - 1] == c2[j]) {
-          v1[j + 1] = Math.min(v1[j + 1], v2[j - 1] + costeTrans);
-        }
-      }
-      for (let j = 0; j <= m; j++) { v0[j] = v1[j]; v1[j] = v2[j]; v2[j] = 0; }
+    // Casos base
+    if (c1 == c2) return 0;
+    if (l1 == 0) return l2 * costeIns;
+    if (l2 == 0) return l1 * costeEli;
+
+    // Inicializar primera fila de matriz distancias
+    for (let j = 0; j <= l2; j++) {
+      matrizDistancias[0][j] = j * costeIns;
     }
 
-    return v0[m];
+    // Cálculo iterativo de las matriz (reducida) de distancias
+    for (let i = 1; i <= l1; i++) {
+      // Inicialización de la primera columna
+      matrizDistancias[i % 3][0] = i * costeEli;
 
-  }
+      // Cálculo de las columnas
+      for (let j = 1; j <= l2; j++) {
+
+        // Coste mínimo sin transposición
+        let costeMin = Math.min(
+          matrizDistancias[(i-1) % 3][j] + costeEli,
+          matrizDistancias[i % 3][j-1] + costeIns,
+          matrizDistancias[(i-1) % 3][j-1] + (c1[i-1] == c2[j-1] ? 0 : costeSus),
+        );
+        
+        // Coste de transposición, si se permite esta operación
+        let costeTransposicion = Infinity;
+        if (permiteTrans && i > 1 && j > 1 && c1[i-2] == c2[j-1] && c1[i-1] == c2[j-2]) {
+          costeMin = Math.min(costeMin, matrizDistancias[(i-2) % 3][j-2] + costeTrans);
+        }
+
+        matrizDistancias[i % 3][j] = costeMin;
+      }
+    }
+
+    return matrizDistancias[l1 % 3][l2];
   
+  }
+
 }
