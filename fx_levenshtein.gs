@@ -95,7 +95,8 @@ function DISTANCIA_EDICION(
  *
  * @param {"Pablo"}   cadena              La primera cadena o intervalo de cadenas de texto.
  * @param {B2:B10}    referencia          El intervalo de cadenas de texto de referencia.
- * @param {3}         numCadenas          Nº de cadenas que se devolverán, en orden creciente de distancia [1].
+ * @param {3}         numCadenas          Nº de cadenas a devolver, en orden creciente de distancia, tiene precedencia sobre distanciaMax [1].
+ * @param {5}         distanciaMax        Distancia de edición máxima permitida a las cadenas del conjunto de referencia a devolver, si es 0 sin límite [0].
  * @param {FALSO}     devuelveDistancia   Indica si también se debe devolver la distancia calculada para cada valor de referencia (VERDADERO | [FALSO]).
  * @param {VERDADERO} permiteTrans        Indica si se admiten transposiciones ([VERDADERO] | FALSO).
  * @param {FALSO}     distingueMayusculas Indica si deben diferenciarse mayúsculas de minúsculas ([VERDADERO] | FALSO).
@@ -110,14 +111,15 @@ function DISTANCIA_EDICION(
  * @customfunction
  */
 function DISTANCIA_EDICION_MINIMA(
-  cadena, referencia, numCadenas, devuelveDistancia,
-  permiteTrans, distingueMayusculas, fuerzaTexto,
+  cadena, referencia, numCadenas, distanciaMax,
+  devuelveDistancia, permiteTrans, distingueMayusculas, fuerzaTexto,
   costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
 ) {
 
   // Comprobación de parámetros y valores por defecto, se hace de este modo para cazar el uso de [;]
   // para "saltar" parámetros (se reciben como ''),
   numCadenas = Math.abs(Math.trunc((typeof numCadenas != 'number' || numCadenas < 1 ? 1 : numCadenas)));
+  distanciaMax = Math.abs(Math.trunc((typeof distanciaMax != 'number' || distanciaMax < 1 ? 0 : distanciaMax)));
   devuelveDistancia = typeof devuelveDistancia != 'boolean' ? false : devuelveDistancia;
   permiteTrans = typeof permiteTrans != 'boolean' ? true : permiteTrans;
   distingueMayusculas = typeof distingueMayusculas != 'boolean' ? true : distingueMayusculas;
@@ -149,9 +151,15 @@ function DISTANCIA_EDICION_MINIMA(
         )
       }
     ))).flat()
-      // Ordenar por distancia (creciente) y recortar longitud de respuesta
-      .sort((cadena1, cadena2) => cadena1.distancia - cadena2.distancia)
-      .slice(0, numCadenas);
+      // Ordenar por distancia (creciente) + alfabético (ascendente)
+      .sort((cadena1, cadena2) => cadena1.distancia == cadena2.distancia
+        ? cadena1.cadena.localeCompare(cadena2.cadena)
+        : cadena1.distancia - cadena2.distancia
+      )
+      // Recortar longitud de respuesta
+      .slice(0, numCadenas)
+      // Limitar a cadenas dentro de la distancia especificada, si se ha escogido (distanciaMax > 0)
+      .filter(cadena => distanciaMax == 0 ? true : cadena.distancia <= distanciaMax);
 
   }
 
