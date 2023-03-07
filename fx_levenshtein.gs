@@ -233,16 +233,13 @@ function distanciaLevenshtein_(
     if (l2 == 0) return l1 * costeEli;
 
     // Inicializar primera fila de matriz distancias
-    for (let j = 0; j <= l2; j++) {
-      matrizDistancias[0][j] = j * costeIns;
-    }
+    for (let j = 0; j <= l2; j++) matrizDistancias[0][j] = j * costeIns;
 
     // Cálculo iterativo de las matriz (reducida) de distancias
     for (let i = 1; i <= l1; i++) {
+      
       // Inicialización de la primera columna
       matrizDistancias[i % 3][0] = i * costeEli;
-
-      // Cálculo de las columnas
       for (let j = 1; j <= l2; j++) {
 
         // Coste mínimo sin transposición
@@ -252,14 +249,15 @@ function distanciaLevenshtein_(
           matrizDistancias[(i-1) % 3][j-1] + (c1[i-1] == c2[j-1] ? 0 : costeSus),
         );
         
-        // Coste de transposición, si se permite esta operación
-        let costeTransposicion = Infinity;
+        // Tratamiento de transposiciones, si se permiten
         if (permiteTrans && i > 1 && j > 1 && c1[i-2] == c2[j-1] && c1[i-1] == c2[j-2]) {
           costeMin = Math.min(costeMin, matrizDistancias[(i-2) % 3][j-2] + costeTrans);
         }
 
         matrizDistancias[i % 3][j] = costeMin;
+    
       }
+    
     }
 
     return matrizDistancias[l1 % 3][l2];
