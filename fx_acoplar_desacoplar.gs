@@ -9,7 +9,7 @@
  * @param {A1:D10}    intervalo       Intervalo de datos.
  * @param {VERDADERO} encabezado      Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
  * @param {", "}      separador       Secuencia de caracteres que separa los valores múltiples. Opcional, si se omite se utiliza ", " (coma espacio).
- * @param {VERDADERO} forzarNum       Indica si los valores identificados como numéricos se devolverán como números en lugar de texto ([VERDADERO] | FALSO).
+ * @param {VERDADERO} forzarNum       Indica si los valores múltiples identificados como numéricos se devolverán como números en lugar de texto ([VERDADERO] | FALSO).
  * @param {2}         columna         Número de orden, desde la izquierda, de la columna dentro del intervalo que contiene valores múltiples a descoplar,
  *                                    si se indican valores negativos para las columnas se generarán filas desacopladas también para los valores duplicados.
  * @param {4}         [más_columnas]  Columnas adicionales, opcionales, que contienen valores múltiples a desacoplar, separadas por ";".
@@ -144,9 +144,9 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
           else filaDesacoplada.push(combinacion[colOpciones++]);
 
         });
-        // Devolver valores que pueden convertirse a números como tales (puede ser delicado, mejor parametrizar)
+        // Devolver valores encontrados en las columnas a desacoplar que pueden convertirse a números como tales (puede ser delicado, se ha parametrizado)
         // https://dev.to/sanchithasr/7-ways-to-convert-a-string-to-number-in-javascript-4l
-        return filaDesacoplada.map(valor => (isNaN(valor) || !forzarNum) ? valor : Number(valor));
+        return filaDesacoplada.map((valor, columna) => (isNaN(valor) || !forzarNum || !colArray.find(col => Math.abs(col) == columna + 1)) ? valor : Number(valor));
       });
 
       // Se desestructura (...) respuestaDesacoplada dado que combinaciones.map es [[]]
