@@ -6,12 +6,13 @@
  * @OnlyCurrentDoc
  */
 
-var VERSION = 'Versión: 1.7 (marzo 2023)';
+const VERSION = 'Versión: 1.8 (enero 2024)';
 
-// Para mostrar / ocultar pestaña por color
-
-var COLOR_HOJA_N = "#ff9900"
-var COLOR_HOJA_A = "#0000ff"
+// Para mostrar / ocultar pestañas por color
+const COLORES_HOJAS = {
+  naranja: { nombre: 'naranja', hex:'#ff9900' },
+  azul: { nombre: 'azul', hex:'#0000ff' }
+};
 
 function onInstall(e) {
   
@@ -23,34 +24,38 @@ function onInstall(e) {
 
 function onOpen() {
 
-  var ss = SpreadsheetApp.getUi().createAddonMenu()
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('🔀 Barajar datos')
+  const ui = SpreadsheetApp.getUi();
+  ui.createAddonMenu()
+    .addSubMenu(ui.createMenu('🔀 Barajar datos')
       .addItem('Barajar por columnas', 'desordenarFil')
       .addItem('Barajar por filas', 'desordenarCol'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('✅ Casillas de verificación')
+    .addSubMenu(ui.createMenu('✅ Casillas de verificación')
       .addItem('✔️️ Activar seleccionadas', 'check')
       .addItem('❌ Desactivar seleccionadas ', 'uncheck')
       .addItem('➖ Invertir seleccionadas ', 'recheck'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('🧮 Estructura datos')
+    .addSubMenu(ui.createMenu('🧮 Estructura datos')
       .addItem('Consolidar dimensiones (despivotar)', 'unpivot')
       .addItem('Transponer (☢️ destructivo)', 'transponer'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('📐 Estructura hoja de cálculo')
+    .addSubMenu(ui.createMenu('📐 Estructura hoja de cálculo')
       .addItem('Eliminar F/C sobrantes', 'eliminarFyC')
-      .addItem('Insertar F/C nuevas', 'insertarFyC')
-      .addSubMenu(SpreadsheetApp.getUi().createMenu('Manipular hojas')
-        .addItem('Ocultar resto de hojas', 'ocultarHojas')
-        .addItem('Mostrar hojas ocultas', 'mostrarHojas')
-        .addItem('Mostrar todas menos actual', 'mostrarNoActual')        
-        .addItem('Eliminar hojas ocultas', 'eliminarHojasOcultas')
-        .addItem('Eliminar todas menos actual', 'eliminarHojas')
-        .addItem('🔸Mostrar hojas color naranja', 'mostrarHojasNaranja')        
-        .addItem('🔸Ocultar hojas color naranja', 'ocultarHojasNaranja')
-        .addItem('🔹Mostrar hojas color azul', 'mostrarHojasAzul')        
-        .addItem('🔹Ocultar hojas color azul', 'ocultarHojasAzul')))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('🧠 Generar')
+      .addItem('Eliminar F/C no seleccionadas', 'eliminarFyCNoSeleccionadas')
+      .addItem('Insertar F/C nuevas', 'insertarFyC'))
+    .addSubMenu(ui.createMenu('👁️‍🗨️ Gestión hojas')
+      .addItem('Ocultar resto de hojas', 'ocultarHojas')
+      .addItem('Mostrar hojas ocultas', 'mostrarHojas')
+      .addItem('Mostrar todas excepto activa', 'mostrarTodasMenosActual')
+      .addSeparator()
+      .addItem('🔹Mostrar hojas color azul', 'mostrarHojasAzul')        
+      .addItem('🔹Ocultar hojas color azul', 'ocultarHojasAzul')        
+      .addItem('🔸Mostrar hojas color naranja', 'mostrarHojasNaranja')        
+      .addItem('🔸Ocultar hojas color naranja', 'ocultarHojasNaranja')
+      .addSeparator()
+      .addItem('Eliminar hojas ocultas', 'eliminarHojasOcultas')
+      .addItem('Eliminar todas excepto activa', 'eliminarHojas'))
+    .addSubMenu(ui.createMenu('🧠 Generar')
       .addItem('NIFs', 'generarNIF')
       .addItem('Nombres y apellidos', 'generarNombres'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('🕶️ Ofuscar')
+    .addSubMenu(ui.createMenu('🕶️ Ofuscar')
       .addItem('Codificar texto en base64 ', 'base64')
       .addItem('Sustituir por hash MD2 (b64) ', 'hashMD2')
       .addItem('Sustituir por hash MD5 (b64) ', 'hashMD5')
@@ -58,7 +63,7 @@ function onOpen() {
       .addItem('Sustituir por hash SHA-256 (b64)', 'hashSHA256')
       .addItem('Sustituir por hash SHA-384 (b64)', 'hashSHA384')
       .addItem('Sustituir por hash SHA-512 (b64)', 'hashSHA512'))
-    .addSubMenu(SpreadsheetApp.getUi().createMenu('⚡ Transformar')
+    .addSubMenu(ui.createMenu('⚡ Transformar')
       .addItem('❌👽 Eliminar caracteres especiales', 'latinizar')
       .addItem('❌➖ Eliminar espacios', 'eliminarEspacios')
       .addItem('❌🔺➖ Eliminar espacios tras comas', 'eliminarEspaciosComas')
@@ -520,6 +525,53 @@ function eliminarFyC_core(e) {
   }
   
 }
+
+/**
+ * Elimina las filas y columnas de la hoja actual que quedan fuera del intervalo (único) de celdas seleccionado
+ */
+function eliminarFyCNoSeleccionadas() {
+
+  const ui = SpreadsheetApp.getUi();
+  const hoja = SpreadsheetApp.getActiveSheet();
+  const rangosSeleccionados = hoja.getActiveRangeList().getRanges();
+  
+  console.info(rangosSeleccionados.length);
+
+  if (rangosSeleccionados.length > 1) {
+    ui.alert('Selecciona un único intervalo de datos.');
+  } else {
+
+    const filSup = rangosSeleccionados[0].getRow();
+    const colIzq = rangosSeleccionados[0].getColumn();
+    const numFil = rangosSeleccionados[0].getNumRows();
+    const numCol = rangosSeleccionados[0].getNumColumns();
+
+    try {
+
+      // Eliminar filas anteriores sobrantes
+      if (filSup > 1) hoja.deleteRows(1, filSup - 1);
+
+      // Eliminar filas posteriores sobrantes
+      if (numFil < hoja.getMaxRows()) hoja.deleteRows(numFil + 1, hoja.getMaxRows() - numFil);
+
+      // Eliminar columnas a la izquierda sobrantes
+      if (colIzq > 1) hoja.deleteColumns(1, colIzq - 1);
+
+      // Eliminar columnas a la derecha sobrantes
+      if (numCol < hoja.getMaxColumns()) hoja.deleteColumns(numCol + 1, hoja.getMaxColumns() - numCol);
+
+      // Deseleccionar intervalo (hace activa la celda A1 a piñón fijo)
+      hoja.setActiveRange(hoja.getRange('A1'));
+    
+    } catch (e) {
+      ui.alert(`Se ha producido un error inesperado al ajustar eliminar las filas y columnas no seleccionadas.
+        
+        ⚠️ ${e.message}`, ui.ButtonSet.OK);
+    }
+  }
+
+}
+
 
 function base64()  {
 
