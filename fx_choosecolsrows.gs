@@ -24,9 +24,9 @@
  * matriz devuelta por la función. También se admite el cambio de orden de las filas y columnas con respecto
  * a sus posiciones en el intervalo de datos original.
  * 
- * IMPORTANTE: Los caracteres " [ " y " ] " que se muestran en la fórmula de EJEMPLO deben sustituirse por los
+ * ⚠️IMPORTANTE⚠️: Los caracteres " [ " y " ] " que se muestran en la fórmula de EJEMPLO deben sustituirse por los
  * símbolos " { " y " } " propios de la sintaxis de matrices de Google Sheets.
- * de Google.
+ * de Google.</pre>
  * 
  * @param {A2:P20}                intervalo       Intervalo de datos del que extraer un subconjunto de filas y columnas.
  * @param {VERDADERO}             usa_etiquetas   Activa el modo de selección de columnas usando las etiquetas de la fila de encabezado del intervalo. 
