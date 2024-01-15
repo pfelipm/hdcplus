@@ -1,13 +1,25 @@
 /**
- * Cuenta las celdas con un color de texto o fondo
- * determinado.
+ * Envoltorio para invocar la función como HDCP_...()
  *
+ * Realiza un recuento o calcula la suma o el promedio de los valores de las celdas
+ * que tienen un color de texto o fondo determinado. Versión modificada de la función
+ * CONTARCOLOR incluida en HdCPlus (https://workspace.google.com/marketplace/app/hdc+/410659432888),
+ * ahora:
+ * 
+ *   - Admite, además del recuento, la suma y el promedio de valores de celda según color.
+ *   - Se usa el método getFontColorObject() para obtener el color de fuente, en lugar del obsoleto getFontColor().
+ *   - Se admite la indicación del color con el que buscar coincidencias sin el "#" inicial.
+ *   - Se generaliza la comprobación de colores HEX añadiendo "FF" como valor de transparencia si asHexString() no la devuelve.
+ *   - Algunos cambios estéticos en el código (bucle de cálculo, fundamentalmente).
+ * 
+ * ¡No rompe la sintaxis de la función CONTARCOLOR() original!
+ *  
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
- * con / sin indicación de la hoja (Ej: "Hoja 2!A2:C20").
+ * con o sin indicación de la hoja (Ej: "Hoja 2!A2:C20").
  * 
- * @param {"fondo" | "fuente"} objeto
- * Indicación de cuenta de color de "fondo" o "fuente" de la celda.
+ * @param {"fondo" | "fuente"} modo_color
+ * Modo de coincidencia de color: "FONDO" o "FUENTE" de la celda.
  *
  * @param {"#FF0000" | "como"} color
  * Indicación del color en hexadecimal #RRGGBB (#FF0000)
@@ -18,70 +30,172 @@
  * @param {"A1"} celda_cadena
  * (Opcional) Referencia a la celda, entre comillas
  * dobles, cuyo atributo de color de fuente o fondo se
- * utilizará como modelo, con / sin indicación de la
+ * utilizará como modelo, con o sin indicación de la
  * hoja (Ej: "Hoja 2!A1").
+ * 
+ * @param {string} tipo_calculo
+ * (Opcional) RECUENTO: recuento de celdas, SUMA: suma de los valores de las celdas,
+ * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO.
  *
- * @return nº de celdas del color indicado
+ * @return nº de celdas, suma o promedio de los valores de las celdas del color indicado
+ *
+ * @customfunction
+ */
+function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo = 'RECUENTO') {
+   return CONTARCOLOR(...arguments);
+}
+
+/**
+ * Realiza un recuento o calcula la suma o el promedio de los valores de las celdas
+ * que tienen un color de texto o fondo determinado. Versión modificada de la función
+ * CONTARCOLOR incluida en HdCPlus (https://workspace.google.com/marketplace/app/hdc+/410659432888),
+ * ahora:
+ * 
+ *   - Admite, además del recuento, la suma y el promedio de valores de celda según color.
+ *   - Se usa el método getFontColorObject() para obtener el color de fuente, en lugar del obsoleto getFontColor().
+ *   - Se admite la indicación del color con el que buscar coincidencias sin el "#" inicial.
+ *   - Se generaliza la comprobación de colores HEX añadiendo "FF" como valor de transparencia si asHexString() no la devuelve.
+ *   - Algunos cambios estéticos en el código (bucle de cálculo, fundamentalmente).
+ * 
+ * ¡No rompe la sintaxis de la función CONTARCOLOR() original!
+ *  
+ * @param {"A2:C20"} rango_cadena
+ * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
+ * con o sin indicación de la hoja (Ej: "Hoja 2!A2:C20").
+ * 
+ * @param {"fondo" | "fuente"} modo_color
+ * Modo de coincidencia de color: "FONDO" o "FUENTE" de la celda.
+ *
+ * @param {"#FF0000" | "como"} color
+ * Indicación del color en hexadecimal #RRGGBB (#FF0000)
+ * o "como", lo que supone facilitar en el siguiente parámetro
+ * la referencia a una celda de la que tomar el formato
+ * para realizar el recuento.
+ * 
+ * @param {"A1"} celda_cadena
+ * (Opcional) Referencia a la celda, entre comillas
+ * dobles, cuyo atributo de color de fuente o fondo se
+ * utilizará como modelo, con o sin indicación de la
+ * hoja (Ej: "Hoja 2!A1").
+ * 
+ * @param {string} tipo_calculo
+ * (Opcional) RECUENTO: recuento de celdas, SUMA: suma de los valores de las celdas,
+ * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO.
+ *
+ * @return nº de celdas, suma o promedio de los valores de las celdas del color indicado
  *
  * @customfunction
  */
 
-function CONTARCOLOR(rango_cadena, objeto, color, celda_cadena) {
+function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo = 'RECUENTO') {
+
+  const TIPOS_CALCULO = {
+    recuento: 'RECUENTO',
+    suma: 'SUMA',
+    promedio: 'PROMEDIO'
+  };
+
+  const MODOS_COLOR = {
+    fuente: 'FUENTE',
+    fondo: 'FONDO',
+  }
+
+  const COMO = 'COMO';
+
+  /**
+   * Devuelve una representación de texto para el color del objeto,
+   * como #RRGGBB o una enumeración de tipo ThemeColorType. Cuando
+   * un objeto de color es de tipo Theme al parecer puede tener una
+   * representación hexadecimal o de tipo ThemeColorType ¿?
+   * @param {SpreadSheetApp.color} color Objeto de color
+   * @return {string}
+   */
+  function obtenerColorObjeto(color) {
+
+    // Según la documentación, asHexString() puede devolver una cadena hexadecimal tipo CSS de 7 caracteres (#rrggbb) o de 9 caracteres
+    // con canal alfa (#aarrggbb), en mis pruebas solo me ha ocurrido con el negro puro (#FF000000), así que siempre rellenaremos por la izq.
+    if(color.getColorType() == SpreadsheetApp.ColorType.RGB) return color.asRgbColor().asHexString().toUpperCase().slice(1).padStart(9, '#FF');
+    else if (color.getColorType() == SpreadsheetApp.ColorType.THEME)  {
+      color = color.asThemeColor();
+      switch(color.getColorType()) {
+        case SpreadsheetApp.ColorType.RGB: return color.asRgasHexString().asHexString().toUpperCase().slice(1).padStart(9, '#FF'); break;
+        case SpreadsheetApp.ColorType.THEME: return color.getThemeColorType().toString(); break;
+        default: return undefined;
+      }
+    } else return undefined;
+    
+  }
 
   // Control de parámetros
   
-  if (typeof rango_cadena == 'undefined' || typeof(objeto) == 'undefined' || typeof color == 'undefined') { 
-    return '!Faltan argumentos';
-  }
-  if (typeof rango_cadena != 'string') {
-    return '!El rango debe ser una cadena de texto';
-  }
-  if (typeof objeto != 'string' ||
-      (typeof objeto == 'string' && (objeto.toLowerCase() != 'fondo' && objeto.toLowerCase() != 'fuente'))) {
-    return '!Objeto para tipo coincidencia inválido';
-  }
-  if (typeof color != 'string') {
-    return '!Color inválido';
-  }
-  if (color.toLowerCase() == 'como' && (typeof celda_cadena != 'string'
-      || (typeof celda_cadena == 'string' && !celda_cadena))) {
-    return '!Celda modelo incorrecta o falta';
-  }
-  
+  if (rango_cadena == undefined || modo_color == undefined || color == undefined) throw 'Faltan argumentos';
+  if (typeof rango_cadena != 'string') throw 'El rango debe ser una cadena de texto';
+  modo_color = modo_color.toUpperCase?.();
+  if (!modo_color || !Object.values(MODOS_COLOR).includes(modo_color.toUpperCase())) throw 'Modo de coincidencia de color inválido';
+  color = color.toUpperCase?.();
+  if (!color) throw 'Color de coincidencia no especificado';
+  if (color == COMO && (typeof celda_cadena != 'string' || celda_cadena == '')) throw 'Celda modelo incorrecta o no indicada';
+  tipo_calculo = tipo_calculo.toUpperCase?.();
+  if (!Object.values(TIPOS_CALCULO).includes(tipo_calculo)) throw 'Tipo de cálculo no admitido';
+
   // Los parámetros parecen correctos ¡adelante!
 
-  var resultado;
-  var rango = SpreadsheetApp.getActiveSpreadsheet().getRange(rango_cadena);
-  var nf = rango.getNumRows();
-  var nc = rango.getNumColumns();
-  var cuenta = 0;
-  var f, c, colores;
-  var cuenta;
+  let resultado;
+  let recuento = 0;
+  let suma = 0;
+  const rango = SpreadsheetApp.getActiveSpreadsheet().getRange(rango_cadena);
+  const valores = rango.getValues();
+  const nf = rango.getNumRows();
+  const nc = rango.getNumColumns();
+  let f, c, colores;
   
   // ¿Fondo o fuente?
-  if (objeto.toLowerCase() == 'fondo') {
-    colores = rango.getBackgrounds();
+  if (modo_color == MODOS_COLOR.fondo) {
+    // Aún no se indica que getBackground() esté obsoleto, pero uso ya en su lugar el método que devuelve objeto de color
+    colores = rango.getBackgroundObjects()
+      .map(colorObjectRow => colorObjectRow.map(colorObject => obtenerColorObjeto(colorObject)));
   } else { // objeto == 'fuente'
-    colores = rango.getFontColors();
+    colores = rango.getFontColorObjects()
+      .map(colorObjectRow => colorObjectRow.map(colorObject => obtenerColorObjeto(colorObject)));
   }
-  
+
   // ¿Color específico o referencia a celda?
   
-  if (color.toLowerCase() == 'como') {   
-    if (objeto.toLowerCase() == 'fondo') {
-      color = SpreadsheetApp.getActiveSpreadsheet().getRange(celda_cadena).getBackground();
+  try {
+    if (color == COMO) {
+      // De nuevo prefiero el método que devuelve objeto de color
+      if (modo_color == MODOS_COLOR.fondo) color = obtenerColorObjeto(SpreadsheetApp.getActiveSpreadsheet().getRange(celda_cadena).getBackgroundObject());
+      else color = obtenerColorObjeto(SpreadsheetApp.getActiveSpreadsheet().getRange(celda_cadena).getFontColorObject());
+      // Añadir '#' si el usuario no la ha usado al especificar el color
+    } else color = (color.charAt(0) != '#' ? '#' + color : color).slice(1).padStart(9, '#FF');
+  } catch { throw 'La referencia al intervalo de celdas o a la celda modelo es inválida.'; }
+ 
+  // Cálculo sobre el intervalo de celdas: recuento, suma o promedio
+    
+  colores.map((coloresFila, fila) => coloresFila.map((colorCelda, columna) => {
+    if (colorCelda == color && colorCelda != undefined && color != undefined) {
+      switch(tipo_calculo) {
+        case TIPOS_CALCULO.recuento: recuento++; break;
+        case TIPOS_CALCULO.suma:
+        case TIPOS_CALCULO.promedio:  {
+          if (typeof valores[fila][columna] == 'number') {
+            recuento++;
+            suma+= valores[fila][columna];
+          }
+        }
+      }
     }
-    else { // objeto = 'fuente'
-      color = SpreadsheetApp.getActiveSpreadsheet().getRange(celda_cadena).getFontColor();
+  }));
+
+  switch (tipo_calculo) {
+    case TIPOS_CALCULO.recuento: resultado = recuento; break;
+    case TIPOS_CALCULO.suma: resultado = suma; break;
+    case TIPOS_CALCULO.promedio: {
+      if (recuento == 0) throw '#¡DIV/0! La evaluación de la función CONTARCOLOR ha provocado un error de división por cero.';
+      resultado = suma / recuento;  
     }
-  }
-  
-  for (f = 0; f < nf; f++) {
-    for (c = 0; c < nc; c++) {
-      if (colores[f][c] == color.toLowerCase()) {cuenta++;}
-    }
-  }
-  resultado = cuenta; 
+  } 
     
   return resultado;
+
 }

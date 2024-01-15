@@ -6,8 +6,6 @@
  * Copyright (c) 2023 Pablo Felip Monferrer (@pfelipm)
  */
 
-
-
 /**
  * Calcula la distancia de Levenshtein entre dos cadenas de texto. Opcionalmente, puede
  * diferenciar o no mayúsculas y minúsculas, asi como permitir transposiciones de caracteres
