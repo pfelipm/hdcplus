@@ -1,5 +1,5 @@
 /**
- * Consolida los datos reagrupando por dimensión (despivotar)
+ * Consolida los datos reagrupando por dimensión (despivotaje).
  *
  * @return Datos agrupados (disposición horizontal >> vertical)
  * @param {A1:D10} intervalo Intervalo de datos bidimensional, con fila de encabezado.

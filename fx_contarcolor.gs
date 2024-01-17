@@ -1,18 +1,7 @@
+// Envoltorio para invocar la función como HDCP_...()
 /**
- * Envoltorio para invocar la función como HDCP_...()
- *
- * Realiza un recuento o calcula la suma o el promedio de los valores de las celdas
- * que tienen un color de texto o fondo determinado. Versión modificada de la función
- * CONTARCOLOR incluida en HdCPlus (https://workspace.google.com/marketplace/app/hdc+/410659432888),
- * ahora:
- * 
- *   - Admite, además del recuento, la suma y el promedio de valores de celda según color.
- *   - Se usa el método getFontColorObject() para obtener el color de fuente, en lugar del obsoleto getFontColor().
- *   - Se admite la indicación del color con el que buscar coincidencias sin el "#" inicial.
- *   - Se generaliza la comprobación de colores HEX añadiendo "FF" como valor de transparencia si asHexString() no la devuelve.
- *   - Algunos cambios estéticos en el código (bucle de cálculo, fundamentalmente).
- * 
- * ¡No rompe la sintaxis de la función CONTARCOLOR() original!
+ * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
+ * que tienen un color de texto o fondo determinado. 
  *  
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
@@ -46,18 +35,8 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
 }
 
 /**
- * Realiza un recuento o calcula la suma o el promedio de los valores de las celdas
- * que tienen un color de texto o fondo determinado. Versión modificada de la función
- * CONTARCOLOR incluida en HdCPlus (https://workspace.google.com/marketplace/app/hdc+/410659432888),
- * ahora:
- * 
- *   - Admite, además del recuento, la suma y el promedio de valores de celda según color.
- *   - Se usa el método getFontColorObject() para obtener el color de fuente, en lugar del obsoleto getFontColor().
- *   - Se admite la indicación del color con el que buscar coincidencias sin el "#" inicial.
- *   - Se generaliza la comprobación de colores HEX añadiendo "FF" como valor de transparencia si asHexString() no la devuelve.
- *   - Algunos cambios estéticos en el código (bucle de cálculo, fundamentalmente).
- * 
- * ¡No rompe la sintaxis de la función CONTARCOLOR() original!
+ * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
+ * que tienen un color de texto o fondo determinado. 
  *  
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
@@ -73,7 +52,7 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
  * para realizar el recuento.
  * 
  * @param {"A1"} celda_cadena
- * (Opcional) Referencia a la celda, entre comillas
+ * Referencia a la celda, entre comillas
  * dobles, cuyo atributo de color de fuente o fondo se
  * utilizará como modelo, con o sin indicación de la
  * hoja (Ej: "Hoja 2!A1").
@@ -128,15 +107,15 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
 
   // Control de parámetros
   
-  if (rango_cadena == undefined || modo_color == undefined || color == undefined) throw 'Faltan argumentos';
-  if (typeof rango_cadena != 'string') throw 'El rango debe ser una cadena de texto';
+  if (rango_cadena == undefined || modo_color == undefined || color == undefined) throw 'Faltan argumentos.';
+  if (typeof rango_cadena != 'string') throw 'El rango debe ser una cadena de texto.';
   modo_color = modo_color.toUpperCase?.();
-  if (!modo_color || !Object.values(MODOS_COLOR).includes(modo_color.toUpperCase())) throw 'Modo de coincidencia de color inválido';
+  if (!modo_color || !Object.values(MODOS_COLOR).includes(modo_color.toUpperCase())) throw 'Modo de coincidencia de color inválido.';
   color = color.toUpperCase?.();
-  if (!color) throw 'Color de coincidencia no especificado';
-  if (color == COMO && (typeof celda_cadena != 'string' || celda_cadena == '')) throw 'Celda modelo incorrecta o no indicada';
+  if (!color) throw 'Color de coincidencia no especificado.';
+  if (color == COMO && (typeof celda_cadena != 'string' || celda_cadena == '')) throw 'Celda modelo incorrecta o no indicada.';
   tipo_calculo = tipo_calculo.toUpperCase?.();
-  if (!Object.values(TIPOS_CALCULO).includes(tipo_calculo)) throw 'Tipo de cálculo no admitido';
+  if (!Object.values(TIPOS_CALCULO).includes(tipo_calculo)) throw 'Tipo de cálculo no admitido.';
 
   // Los parámetros parecen correctos ¡adelante!
 

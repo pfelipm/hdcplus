@@ -2,7 +2,7 @@
  * Rellena un rango de celdas con un elemento determinado.
  *
  * @param {"Calificación"} elemento
- * Elemento (número, cadena o referencia a celda única) con el que rellenar rango de celdas.
+ * Elemento (valor numérico, cadena o referencia a celda única) con el que rellenar rango de celdas.
  * 
  * @param {5} nfilas
  * Nº de filas a rellenar.
@@ -62,7 +62,7 @@ function RELLENAR(elemento, nfilas, ncolumnas) {
 }
 
 /**
- * Repite un elemento el nº de veces indicado en filas y columnas contiguas.
+ * Repite un elemento el nº de veces indicado sobre un número de filas y/o columnas contiguas designado.
  *
  * @param {"Calificación"} elemento
  * Elemento a repetir (numérico, cadena o referencia a celda única).

@@ -4,7 +4,7 @@
  * que se omite en las subcadenas resultantes, y las organiza en un vector columna.
  *
  * @param {B2:B20} intervalo
- * Intervalo con valores de texto cuyo contenido se desea trocear.
+ * Intervalo de datos con valores de texto cuyo contenido se desea trocear.
  * 
  * @param {", "} separador
  * Subcadena empleada como delimitador.

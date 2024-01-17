@@ -8,7 +8,7 @@
 
 /**
  * Calcula la distancia de Levenshtein entre dos cadenas de texto. Opcionalmente, puede
- * diferenciar o no mayúsculas y minúsculas, asi como permitir transposiciones de caracteres
+ * diferenciar o no mayúsculas y minúsculas, así como permitir transposiciones de caracteres
  * no adyacentes (versión simple de la distancia de Damerau-Levenshtein
  * https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance#Optimal_string_alignment_distance).
 
@@ -45,7 +45,7 @@ function DISTANCIA_EDICION(
   if (Array.isArray(c1) && Array.isArray(c2)) {
     
     // Intervalo / Intervalo
-    if (c1.length != c2.length || c1[0].length != c2[0].length) throw 'Las dimensiones de los intervalos que contiene las cadenas de texto no coinciden'
+    if (c1.length != c2.length || c1[0].length != c2[0].length) throw 'Las dimensiones de los intervalos que contiene las cadenas de texto no coinciden.'
     return c1.map((vectorFil, fil) => vectorFil.map((cadena, col) => distanciaLevenshtein_(
       cadena, c2[fil][col],
       permiteTrans, distingueMayusculas, fuerzaTexto,
@@ -79,15 +79,15 @@ function DISTANCIA_EDICION(
       costeInsercion, costeEliminacion, costeSustitucion, costeTransposicion
     );
 
-  } else throw 'Error en los parámetros, revisa las cadenas o intervalos de cadenas de texto cuyas distancias deseas medir';
+  } else throw 'Error en los parámetros, revisa las cadenas o intervalos de cadenas de texto cuyas distancias deseas medir.';
 
 }
 
 
 
 /**
- * Devuelve la cadena o cadenas más próximas a una o más específicas, de acuerdo con la distancia de Levenshtein,
- * de entre un conjunto de secuencias de texto de referencia candidatas. Opcionalmente, puede diferenciar o no mayúsculas
+ * Devuelve la cadena o cadenas más próximas, de acuerdo con la distancia de Levenshtein,
+ * a un conjunto de secuencias de texto de referencia candidatas. Opcionalmente, puede diferenciar o no mayúsculas
  * y minúsculas, así como permitir transposiciones de caracteres no adyacentes, (versión simple de la distancia de Damerau-Levenshtein
  * https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance#Optimal_string_alignment_distance).
  *
@@ -183,7 +183,7 @@ function DISTANCIA_EDICION_MINIMA(
     // Intervalo / Intervalo
     return obtenerDistancias(cadena, referencia).map(candidata => devuelveDistancia ? [candidata.cadena, candidata.distancia] : candidata.cadena);
 
-  } else throw 'Error en los parámetros, revisa las cadenas o intervalos de cadenas de texto cuyas distancias deseas medir';
+  } else throw 'Error en los parámetros, revisa las cadenas o intervalos de cadenas de texto cuyas distancias deseas medir.';
 
 }
 

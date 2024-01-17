@@ -2,7 +2,7 @@
  * Calcula el hash de los valores del intervalo.
  * @param {A1:D10} valores Datos de entrada como texto.
  * @param {verdadero} base64VoF Codificar en Base64 (VERDADERO | FALSO).
- * @param {"SHA256"} tipo Tipo de hash (MD2 | MD5 | SHA1 | SHA256 | SHA384 | SHA512).
+ * @param {"SHA256"} tipo Función de hash a utilizar (MD2 | MD5 | SHA1 | SHA256 | SHA384 | SHA512).
  *
  * @return matriz de hashes calculados codificados en base64, si procede.
  *
@@ -67,7 +67,7 @@ function HASH(valores, base64VoF, tipo) {
 }
 
 /**
- * Recodifica en base64 el contenido del intervalo.
+ * Recodifica en Base64 el contenido del intervalo.
  * @param {A1:D10} valores Datos de entrada como texto.
  * @param {falso} esHexa El valor a recodificar es una cadena binaria
                          representada como texto hexadecimal (VERDADERO | FALSO).

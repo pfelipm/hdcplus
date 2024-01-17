@@ -1,6 +1,6 @@
 /**
  * Esta función desacopla las filas de un intervalo de datos que contiene valores múltiples, delimitados por la 
- * secuencia de caracteres indicada, en algunas de sus columnas.Se ha diseñado principalmente para facilitar el
+ * secuencia de caracteres indicada, en algunas de sus columnas. Se ha diseñado principalmente para facilitar el
  * tratamiento estadístico de las respuestas a un formulario cuando algunas de sus preguntas admiten múltiples opciones 
  * (casillas de verificación), que en ese caso están separadas por la secuencia delimitadora ", " (coma espacio).
  * Tras ser desacopladas, las respuestas (filas) se repiten en el intervalo resultante para cada combinación posible

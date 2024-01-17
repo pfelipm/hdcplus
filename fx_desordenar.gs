@@ -1,7 +1,7 @@
 /**
- * Ordena aleatoriamente las *columnas* de un intervalo de modo
- * que los datos de distintas *filas* queden desemparejados
- * utilizando el algoritmo de Durstenfeld (coste O(n)).
+ * Ordena aleatoriamente los datos contenidos en cada una de las *filas* de un intervalo
+ * de manera independiente, utilizando el algoritmo de Durstenfeld (coste O(n)),
+ * para entremezclar (barajar) la información.
  *
  * @param {A2:C20} intervalo
  * Intervalo de datos a barajar (ofuscar)
@@ -36,12 +36,12 @@ function BARAJARDATOSFIL(intervalo){
 }
 
 /**
- * Ordena aleatoriamente las *filas* de un intervalo de modo
- * que los datos de distintas *columnas* queden desemparejados
- * utilizando el algoritmo de Durstenfeld (coste O(n)).
+ * Ordena aleatoriamente los datos contenidos en cada una de las *columnas* de un intervalo
+ * de manera independiente, utilizando el algoritmo de Durstenfeld (coste O(n)),
+ * para entremezclar (barajar) la información.
  *
  * @param {A2:C20} intervalo
- * Rango de datos a barajar (ofuscar)
+ * Intervalo de datos a barajar (ofuscar)
  *
  * @return rango de datos barajado
  *
