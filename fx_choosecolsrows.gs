@@ -33,12 +33,13 @@
  * 
  * @param {A2:P20}                intervalo           Intervalo de datos del que extraer un subconjunto de filas y columnas.
  * @param {["-3";6;7;"10-12"]}    columnas            Vector ({..\.. } o {..;..}) de índices de columnas, comenzando por 1, intervalos de índices como cadenas de
- *                                                    texto ("..-..") o etiquetas de encabezado (requiere usa_etiquetas = VERDADERO).
+ *                                                    texto ("..-..") o etiquetas de encabezado de columna en la 1ª fila (requiere usa_etiquetas_col = VERDADERO).
  *                                                    Se seleccionarán todas las columnas si se omite.
  * @param {VERDADERO}             usa_etiquetas_col   Activa el modo de selección de columnas usando las etiquetas de la fila de encabezado del intervalo. 
  *                                                    La comparación es estricta y diferencia mayúsculas de minúsculas (VERDADERO o [FALSO]).
  * @param {["1-5";6;7;"-12"]}     filas               Vector ({..\.. } o {..;..}) de índices de filas, comenzando por 1, o intervalos de índices como cadenas de
- *                                                    texto ("..-.."). Se seleccionarán todas las filas si se omite.
+ *                                                    texto ("..-..") o etiquetas de encabezado de fila en la 1ª columna (requiere usa_etiquetas_fil = VERDADERO).
+ *                                                    Se seleccionarán todas las filas si se omite.
  * @param {VERDADERO}             usa_etiquetas_fil   Activa el modo de selección de filas usando las etiquetas de la 1ª columna del intervalo. 
  *                                             
  * @return Matriz de datos compuesta únicamente por las filas y columnas seleccionadas.
