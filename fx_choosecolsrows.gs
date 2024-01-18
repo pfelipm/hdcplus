@@ -12,9 +12,9 @@
  * "3-12" (desde la fila/columna 3 a la 12), "-12" (desde la fila/columna 1 hasta la 12), "3-" o simplemente "3"
  * (desde la fila/columna 3 hasta la última).
  * 
- * Para seleccionar las columnas también es posible [III] utilizar una lista de etiquetas de texto, que se
- * cotejarán con las que se encuentran en la fila de encabezado del intervalo de datos. Estas etiquetas pueden
- * ser valores literales, referencias a otras celdas o una combinación de ambas cosas, por ejemplo:
+ * Para seleccionar columnas y filas también es posible [III] utilizar una lista de etiquetas de texto, que se
+ * cotejarán con las que se encuentran en la fila o columna de encabezado, respectivamente, del intervalo de datos.
+ * Estas etiquetas pueden ser valores literales, referencias a otras celdas o una combinación de ambas cosas, por ejemplo:
  * {"Nombre";"Edad";"Grupo"} o {B1:D1\I1:K1\"Grupo"}.
  * 
  * Las listas de elementos de tipo [I] y [II] y [I] y [III] puede combinarse entre sí, pero [II] y [III] son
@@ -32,15 +32,15 @@
  * de Google.
  * 
  * @param {A2:P20}                intervalo           Intervalo de datos del que extraer un subconjunto de filas y columnas.
- * @param {["-3";6;7;"10-12"]}    columnas            Vector ({..\.. } o {..;..}) de índices de columnas, comenzando por 1, intervalos de índices como cadenas de
- *                                                    texto ("..-..") o etiquetas de encabezado de columna en la 1ª fila (requiere usa_etiquetas_col = VERDADERO).
+ * @param {["-3";6;7;"10-12"]}    columnas            Vector ({...\...} o {...;...}) de índices de columnas, comenzando por 1, intervalos de índices como cadenas de
+ *                                                    texto ("..-..") o etiquetas de encabezado de columna (1ª fila). Requiere que usa_etiquetas_col sea VERDADERO.
  *                                                    Se seleccionarán todas las columnas si se omite.
- * @param {VERDADERO}             usa_etiquetas_col   Activa el modo de selección de columnas usando las etiquetas de la fila de encabezado del intervalo. 
+ * @param {VERDADERO}             usa_etiquetas_col   Activa el modo de selección de columnas usando las etiquetas en los encabezados de columna (1ª fila) del intervalo. 
  *                                                    La comparación es estricta y diferencia mayúsculas de minúsculas (VERDADERO o [FALSO]).
- * @param {["1-5";6;7;"-12"]}     filas               Vector ({..\.. } o {..;..}) de índices de filas, comenzando por 1, o intervalos de índices como cadenas de
- *                                                    texto ("..-..") o etiquetas de encabezado de fila en la 1ª columna (requiere usa_etiquetas_fil = VERDADERO).
+ * @param {["1-5";6;7;"-12"]}     filas               Vector ({...\... } o {...;...}) de índices de filas, comenzando por 1, o intervalos de índices como cadenas de
+ *                                                    texto ("...-...") o etiquetas de encabezado de fila (1ª columna). Requiere que usa_etiquetas_fil sea VERDADERO.
  *                                                    Se seleccionarán todas las filas si se omite.
- * @param {VERDADERO}             usa_etiquetas_fil   Activa el modo de selección de filas usando las etiquetas de la 1ª columna del intervalo. 
+ * @param {VERDADERO}             usa_etiquetas_fil   Activa el modo de selección de filas usando las etiquetas en los encabezados de filas (1ª columna) del intervalo. 
  *                                             
  * @return Matriz de datos compuesta únicamente por las filas y columnas seleccionadas.
  * 
