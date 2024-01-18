@@ -36,7 +36,8 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
 
 /**
  * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
- * que tienen un color de texto o fondo determinado. 
+ * que tienen un color de texto o fondo determinado. Esta función es un alias de
+ * la función HDCP_CONTARCOLOR().
  *  
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
