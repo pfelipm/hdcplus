@@ -1,7 +1,7 @@
 /**
  * HdC+
  * Una colección de pequeñas utilidades para la edición de hojas de cálculo
- * Copyright (C) Pablo Felip (@pfelipm) · Se distribuye bajo licencia GNU GPL v3.
+ * Copyright (C) Pablo Felip (@pfelipm). Se distribuye bajo licencia GNU GPL v3.
  *
  * @OnlyCurrentDoc
  */
