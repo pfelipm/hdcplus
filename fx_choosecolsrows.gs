@@ -49,9 +49,9 @@
 function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_etiquetas_fil) {
 
   // Comprobaciones iniciales sobre los argumentos
-  if (!intervalo.map) throw "Intervalo no válido.";
-  if (columnas?.map && columnas.length > 1 && columnas[0].length > 1) throw 'El argumento «columnas» debe ser un valor único o un vector fila o columna.';
-  if (filas?.map && filas.length > 1 && filas[0].length > 1) throw 'El argumento «filas» debe ser un valor único o un vector fila o columna.';
+  if (!intervalo.map) throw "Intervalo no válido";
+  if (columnas?.map && columnas.length > 1 && columnas[0].length > 1) throw 'El argumento «columnas» debe ser un valor único o un vector fila o columna';
+  if (filas?.map && filas.length > 1 && filas[0].length > 1) throw 'El argumento «filas» debe ser un valor único o un vector fila o columna';
   // Conmutadores de selección por etiquetas, si no son booleanos (porque se ha introducido otra cosa o se han omitido), se asumen a falso
   usa_etiquetas_col = typeof usa_etiquetas_col == 'boolean' ? usa_etiquetas_col : false;
   usa_etiquetas_fil = typeof usa_etiquetas_fil == 'boolean' ? usa_etiquetas_fil : false;
@@ -80,7 +80,7 @@ function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_
 
         // ### El selector de fila/columna es un valor numérico positivo o negativo ###
 
-        if(Math.abs(indice) > longitud) throw `Índice ${indice} fuera de rango en argumento «${contexto}».`;
+        if(Math.abs(indice) > longitud) throw `Índice ${indice} fuera de rango en argumento «${contexto}»`;
         // Índices negativos suponen comenzar a contar desde la última fila o columna del intervalo
         else return resultado.concat(indice < 0 ? longitud + indice + 1 : indice);
         
@@ -100,13 +100,13 @@ function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_
         // [inicio, fin] = [Math.min(inicio, fin), Math.max(inicio, fin)];
         
         // Excepción si índices fuera de rango
-        if (inicio < 1 || inicio > longitud) throw `Índice inicial ${inicio} fuera de rango en expresión de intervalo "${indice}" de argumento «${contexto}».`;
-        if (fin < 1 || fin > longitud) throw `Índice final ${fin} fuera de rango en expresión de intervalo "${indice}" de argumento «${contexto}».`;
-        if (inicio > fin) throw `El índice final ${fin} es anterior al inicial ${inicio} en expresión de intervalo "${indice}" de argumento «${contexto}».`;
+        if (inicio < 1 || inicio > longitud) throw `Índice inicial ${inicio} fuera de rango en expresión de intervalo "${indice}" de argumento «${contexto}»`;
+        if (fin < 1 || fin > longitud) throw `Índice final ${fin} fuera de rango en expresión de intervalo "${indice}" de argumento «${contexto}»`;
+        if (inicio > fin) throw `El índice final ${fin} es anterior al inicial ${inicio} en expresión de intervalo "${indice}" de argumento «${contexto}»`;
 
         // Excepción si no han podido determinarse índices numéricos a apartir de la expresión del selector de fila/columna
-        if(Number.isNaN(inicio)) throw `El índice inicial en expresión de intervalo "${indice}" de argumento «${contexto}» no es un número.`;
-        if(Number.isNaN(fin)) throw `El índice final en expresión de intervalo "${indice}" de argumento «${contexto}» no es un número.`;
+        if(Number.isNaN(inicio)) throw `El índice inicial en expresión de intervalo "${indice}" de argumento «${contexto}» no es un número`;
+        if(Number.isNaN(fin)) throw `El índice final en expresión de intervalo "${indice}" de argumento «${contexto}» no es un número`;
 
         // Devolver secuencia de índices consecutivos entre inicio y fin
         return resultado.concat([...Array(fin - inicio + 1).keys()].map(indiceIntervalo => inicio + indiceIntervalo));
@@ -117,7 +117,7 @@ function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_
 
         // Identificar la posición de la columna cuyo texto de encabezado es coincidente con el valor de la variable "indice"
         const indiceColumna = intervalo[0].indexOf(indice);
-        if (indiceColumna == -1) throw `La etiqueta de encabezado de columna ${indice} no se encuentra en la primera fila del intervalo.`;
+        if (indiceColumna == -1) throw `La etiqueta de encabezado de columna ${indice} no se encuentra en la primera fila del intervalo`;
         else return resultado.concat(indiceColumna + 1);
 
       } else if (typeof indice == 'string' && contexto == 'filas' && usa_etiquetas_fil) {
@@ -126,10 +126,10 @@ function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_
 
         // Identificar la posición de la fila cuyo texto de encabezado es coincidente con el valor de la variable "indice"
         const indiceFila = intervalo.map(fila => fila[0]).indexOf(indice);
-        if (indiceFila == -1) throw `La etiqueta de encabezado de fila ${indice} no se encuentra en la primera columna del intervalo.`;
+        if (indiceFila == -1) throw `La etiqueta de encabezado de fila ${indice} no se encuentra en la primera columna del intervalo`;
         else return resultado.concat(indiceFila + 1);
 
-      } else throw `Error inesperado, revisa el argumento «${contexto}».`;
+      } else throw `Error inesperado, revisa el argumento «${contexto}»`;
 
     }, []);
 
@@ -152,7 +152,7 @@ function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_
     throw typeof e == 'string'
       ? e
       : `Error: "${e}". Puede que hayas combinado los símbolos ";" y "\\"
-        de manera incorrecta en los argumentos de selección de columnas y filas {..}.`;
+        de manera incorrecta en los argumentos de selección de columnas y filas {..}`;
   }
 
 }

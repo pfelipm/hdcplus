@@ -169,7 +169,7 @@ function inicialMays_() {
 
     });
   
-  } catch(e) { throw `HdC+ dice: Error inesperado, contacta con soporte // ${e}.`; }
+  } catch(e) { throw `HdC+ dice: Error inesperado, contacta con soporte // ${e}`; }
 
 }
 
@@ -245,7 +245,7 @@ function inicialesMays_() {
 
     });
   
-  } catch(e) { throw `HdC+ dice: Error inesperado, contacta con soporte // ${e}.`; }
+  } catch(e) { throw `HdC+ dice: Error inesperado, contacta con soporte // ${e}`; }
 
 }
 

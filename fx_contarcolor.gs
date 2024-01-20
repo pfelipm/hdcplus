@@ -108,15 +108,15 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
 
   // Control de parámetros
   
-  if (rango_cadena == undefined || modo_color == undefined || color == undefined) throw 'Faltan argumentos.';
-  if (typeof rango_cadena != 'string') throw 'El rango debe ser una cadena de texto.';
+  if (rango_cadena == undefined || modo_color == undefined || color == undefined) throw 'Faltan argumentos';
+  if (typeof rango_cadena != 'string') throw 'El rango debe ser una cadena de texto';
   modo_color = modo_color.toUpperCase?.();
-  if (!modo_color || !Object.values(MODOS_COLOR).includes(modo_color.toUpperCase())) throw 'Modo de coincidencia de color inválido.';
+  if (!modo_color || !Object.values(MODOS_COLOR).includes(modo_color.toUpperCase())) throw 'Modo de coincidencia de color inválido';
   color = color.toUpperCase?.();
-  if (!color) throw 'Color de coincidencia no especificado.';
-  if (color == COMO && (typeof celda_cadena != 'string' || celda_cadena == '')) throw 'Celda modelo incorrecta o no indicada.';
+  if (!color) throw 'Color de coincidencia no especificado';
+  if (color == COMO && (typeof celda_cadena != 'string' || celda_cadena == '')) throw 'Celda modelo incorrecta o no indicada';
   tipo_calculo = tipo_calculo.toUpperCase?.();
-  if (!Object.values(TIPOS_CALCULO).includes(tipo_calculo)) throw 'Tipo de cálculo no admitido.';
+  if (!Object.values(TIPOS_CALCULO).includes(tipo_calculo)) throw 'Tipo de cálculo no admitido';
 
   // Los parámetros parecen correctos ¡adelante!
 
@@ -148,7 +148,7 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
       else color = obtenerColorObjeto(SpreadsheetApp.getActiveSpreadsheet().getRange(celda_cadena).getFontColorObject());
       // Añadir '#' si el usuario no la ha usado al especificar el color
     } else color = (color.charAt(0) != '#' ? '#' + color : color).slice(1).padStart(9, '#FF');
-  } catch { throw 'La referencia al intervalo de celdas o a la celda modelo es inválida.'; }
+  } catch { throw 'La referencia al intervalo de celdas o a la celda modelo es inválida'; }
  
   // Cálculo sobre el intervalo de celdas: recuento, suma o promedio
     
@@ -171,7 +171,7 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
     case TIPOS_CALCULO.recuento: resultado = recuento; break;
     case TIPOS_CALCULO.suma: resultado = suma; break;
     case TIPOS_CALCULO.promedio: {
-      if (recuento == 0) throw '#¡DIV/0! La evaluación de la función CONTARCOLOR ha provocado un error de división por cero.';
+      if (recuento == 0) throw '#¡DIV/0! La evaluación de la función CONTARCOLOR ha provocado un error de división por cero';
       resultado = suma / recuento;  
     }
   } 

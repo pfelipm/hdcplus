@@ -34,20 +34,20 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
 
   // Control de parámetros inicial
 
-  if (typeof intervalo == 'undefined' || !Array.isArray(intervalo)) throw 'No se ha indicado un intervalo.';
+  if (typeof intervalo == 'undefined' || !Array.isArray(intervalo)) throw 'No se ha indicado un intervalo';
   if (typeof encabezado != 'boolean') encabezado = true;
-  if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas.';
+  if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas';
   separador = separador || ', ';
-  if (typeof separador != 'string') throw 'El separador no es del tipo correcto.';
+  if (typeof separador != 'string') throw 'El separador no es del tipo correcto';
   if (typeof forzarNum != 'boolean') forzarNum = true;
   
   // Montar vector de columnas, truncar números no enteros, si los hay
   const columnas = (typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas])
     .map(columna => typeof columna == 'number' ? Math.trunc(columna) : columna);
-  if (columnas.length == 0) throw 'No se han indicado columnas a descoplar.';
-  if (columnas.some(col => typeof col != 'number' || col == 0)) throw 'Las columnas deben indicarse mediante números enteros distintos de cero.';
+  if (columnas.length == 0) throw 'No se han indicado columnas a descoplar';
+  if (columnas.some(col => typeof col != 'number' || col == 0)) throw 'Las columnas deben indicarse mediante números enteros distintos de cero';
   if (Math.max(...columnas) > intervalo[0].length
-    || Math.min(...columnas) < -intervalo[0].length) throw 'Al menos una columna está fuera del intervalo de datos a desacoplar.';
+    || Math.min(...columnas) < -intervalo[0].length) throw 'Al menos una columna está fuera del intervalo de datos a desacoplar';
 
   // En la fx original se utiliza un Set para evitar duplicados, pero ahora el nº de columna puede ser positivo o negativo,
   // lo que cuando hay valores de columna (+/-) podría hacer que la función devolviera las columnas desordenadas.
@@ -191,19 +191,19 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
 
   // Control de parámetros inicial
 
-  if (typeof intervalo == 'undefined' || !Array.isArray(intervalo)) throw 'No se ha indicado un intervalo.';
+  if (typeof intervalo == 'undefined' || !Array.isArray(intervalo)) throw 'No se ha indicado un intervalo';
   if (typeof encabezado != 'boolean') encabezado = true;
-  if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas.';
+  if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas';
   separador = separador || ', ';
-  if (typeof separador != 'string') throw 'El separador no es del tipo correcto.';
+  if (typeof separador != 'string') throw 'El separador no es del tipo correcto';
   if (typeof permitirRepetidos != 'boolean') forzarNum = false;
   
   // Montar vector de columnas, truncar números no enteros, si los hay
   const columnas = (typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas])
     .map(columna => typeof columna == 'number' ? Math.trunc(columna) : columna);
-  if (columnas.length == 0) throw 'No se han indicado columnas clave.';
-  if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas clave deben indicarse mediante números enteros positivos.';
-  if (Math.max(...columnas) > intervalo[0].length) throw 'Al menos una columna clave está fuera del intervalo de datos a acoplar.';
+  if (columnas.length == 0) throw 'No se han indicado columnas clave';
+  if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas clave deben indicarse mediante números enteros positivos';
+  if (Math.max(...columnas) > intervalo[0].length) throw 'Al menos una columna clave está fuera del intervalo de datos a acoplar';
 
   // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas CLAVE
 
