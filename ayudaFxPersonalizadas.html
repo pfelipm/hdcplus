@@ -4,7 +4,10 @@
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
   </head>
   <body>
-    <div id="mensaje" style="visibility:hidden;">Haz clic <a href="<?= url; ?>" target="_blank">aquí</a> si la página no se abre.</div>
+    <div id="mensaje" style="visibility:hidden;">
+      <p>Parece que tu navegador está bloqueando ventanas emergentes, considera 
+         modificar sus ajustes para permitirlas en este sitio.</p>
+      <p>Haz clic <a href="<?= url; ?>" target="_blank">aquí</a> para abrir la página de ayuda.</p>
   </body>
   <script>
     const windowReference = window.open('<?= url; ?>', '_blank');

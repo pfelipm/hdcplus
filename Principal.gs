@@ -106,7 +106,7 @@ function abrirWebExterna() {
   const htmlTemplate = HtmlService.createTemplateFromFile('ayudaFxPersonalizadas.html');
   htmlTemplate.url = urlAyudaFxPersonalizadas;
   SpreadsheetApp.getUi().showModelessDialog(
-    htmlTemplate.evaluate().setHeight(20).setWidth(300),
+    htmlTemplate.evaluate().setHeight(85).setWidth(400),
     '🌐 Abriendo sitio web...'
   );
   // No parece ser necesario
