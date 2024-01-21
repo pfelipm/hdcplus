@@ -14,6 +14,8 @@ const COLORES_HOJAS = {
   azul: { nombre: 'azul', hex:'#0000ff' }
 };
 
+const urlAyudaFxPersonalizadas = 'https://bit.ly/funciones-hdcplus';
+
 function onInstall(e) {
   
   // Otras cosas que se deben hacer siempre
@@ -82,10 +84,13 @@ function onOpen() {
     .addSeparator()
     .addItem('🔄 Forzar recálculo de hoja', 'forzarRecalculo')
     .addSeparator()
+    .addItem('🛟 Ayuda fx personalizadas (sitio externo)', 'abrirWebExterna')
+    .addSeparator()
     .addItem('💡 Acerca de HdC+', 'acercaDe')
     .addToUi();
 }
 
+// Abre el cuadro de diálogo de información de HdC+
 function acercaDe() {
 
   // Presentación del complemento
@@ -93,6 +98,21 @@ function acercaDe() {
   panel.version = VERSION;
   SpreadsheetApp.getUi().showModalDialog(panel.evaluate().setWidth(420).setHeight(350), '💡 ¿Qué es HdC+?');
 }
+
+// Abre la web externa de documentación de las funciones personalizadas de HdC+
+// https://www.labnol.org/open-webpage-google-sheets-220507
+function abrirWebExterna() {
+
+  const htmlTemplate = HtmlService.createTemplateFromFile('ayudaFxPersonalizadas.html');
+  htmlTemplate.url = urlAyudaFxPersonalizadas;
+  SpreadsheetApp.getUi().showModelessDialog(
+    htmlTemplate.evaluate().setHeight(20).setWidth(300),
+    '🌐 Abriendo sitio web...'
+  );
+  // No parece ser necesario
+  Utilities.sleep(2000);
+
+};
 
 // Funciones de transformación del texto
 

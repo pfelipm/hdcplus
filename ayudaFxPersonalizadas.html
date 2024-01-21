@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  </head>
+  <body>
+    <div id="mensaje" style="visibility:hidden;">Haz clic <a href="<?= url; ?>" target="_blank">aquí</a> si la página no se abre.</div>
+  </body>
+  <script>
+    const windowReference = window.open('<?= url; ?>', '_blank');
+    if (windowReference != null) google.script.host.close();
+    // Se hace visible el enlace en el caso de que el navegador haya bloqueado la apertura
+    document.getElementById("mensaje").style.visibility = 'visible'; 
+  </script>
+</html>
