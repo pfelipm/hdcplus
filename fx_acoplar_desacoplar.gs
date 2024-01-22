@@ -1,3 +1,5 @@
+// Envoltorios para invocar las funciónes ACOPLAR/DESACOPLAR como HDCP_...()
+
 /**
  * Esta función desacopla las filas de un intervalo de datos que contiene valores múltiples, delimitados por la 
  * secuencia de caracteres indicada, en algunas de sus columnas. Se ha diseñado principalmente para facilitar el
@@ -5,6 +7,78 @@
  * (casillas de verificación), que en ese caso están separadas por la secuencia delimitadora ", " (coma espacio).
  * Tras ser desacopladas, las respuestas (filas) se repiten en el intervalo resultante para cada combinación posible
  * de los valores múltiples únicos que se encuentran en las columnas especificadas.
+ *  
+ * @param {A1:D10}    intervalo       Intervalo de datos.
+ * @param {VERDADERO} encabezado      Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
+ * @param {", "}      separador       Secuencia de caracteres que separa los valores múltiples. Opcional, si se omite se utiliza ", " (coma espacio).
+ * @param {VERDADERO} forzarNum       Indica si los valores múltiples identificados como numéricos se devolverán como números en lugar de texto ([VERDADERO] | FALSO).
+ * @param {2}         columna         Número de orden, desde la izquierda, de la columna dentro del intervalo que contiene valores múltiples a descoplar,
+ *                                    si se indican valores negativos para las columnas se generarán filas desacopladas también para los valores duplicados.
+ * @param {4}         [más_columnas]  Columnas adicionales, opcionales, que contienen valores múltiples a desacoplar, separadas por ";".
+ *
+ * @return                            Intervalo de datos desacoplados
+ *
+ * @customfunction
+ *
+ * Artículo:    https://pablofelip.online/desacoplar-acoplar/
+ * Repositorio: https://github.com/pfelipm/fxdesacoplar-acoplar
+ *
+ * MODIFICADO 22/01/24:
+ *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
+ * 
+ * MODIFICADO 01/02/23:
+ *  - Si el nº de columna es positivo únicamente se duplicarán filas para los valores únicos, si es negativo
+ *    también se generarán duplicados para cada elemento repetido.
+ *  - Se ignoran las filas del intervalo de entrada que están totalmente vacías.
+ *  - Se devuelven valores numéricos cuando pueden ser convertidos a números (¡mejor parametrizar!)
+ * 
+ * MIT License
+ * Copyright (c) 2023 Pablo Felip Monferrer (@pfelipm)
+ */
+function HDCP_DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...masColumnas) {
+   return DESACOPLAR(...arguments);
+}
+
+/**
+ * Esta función acopla (combina) las filas de un intervalo de datos que corresponden a una misma entidad. Para ello, 
+ * se debe indicar la columna (o columnas) *clave* que identifican los datos de cada entidad única. Los valores registrados
+ * en el resto de columnas se agruparán, para cada una de ellas, utilizando como delimitador la secuencia de caracteres 
+ * indicada. Se trata de una función que realiza una operación complementaria a DESACOPLAR(), aunque no perfectamente simétrica.
+ *  
+ * @param {A1:D10}    intervalo         Intervalo de datos.
+ * @param {VERDADERO} encabezado        Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
+ * @param {", "}      separador         Secuencia de caracteres a emplear como separador de los valores múltiples. Opcional, si se omite se utiliza ", " (coma espacio).
+ * @param {VERDADERO} permitirRepetidos Indica si se permitirán valores consolidados repetidos dentro de las celdas de una fila (VERDADERO | [FALSO]).
+ * @param {1}         columna           Número de orden, desde la izquierda, de la columna clave que identifica los datos de la fila como únicos.
+ * @param {2}         [más_columnas]    Columnas clave adicionales, opcionales, que actúan como identificadores únicos, separadas por ";".
+ *
+ * @return                              Intervalo de datos desacoplados
+ *
+ * @customfunction
+ *
+ * MODIFICADO 22/01/24:
+ *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
+ * 
+ * MODIFICADO 06/02/23:
+ *  - Se añade un parámetro para agrupar o no los valores repetidos dentro de una celda con datos consolidados.
+ *  - Se ignoran las filas del intervalo de entrada s que están totalmente vacías.
+ *
+ * MIT License
+ * Copyright (c) 2020 Pablo Felip Monferrer (@pfelipm)
+ */
+function HDCP_ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, ...masColumnas) {
+   return ACOPLAR(...arguments);
+}
+
+/**
+ * Esta función desacopla las filas de un intervalo de datos que contiene valores múltiples, delimitados por la 
+ * secuencia de caracteres indicada, en algunas de sus columnas. Se ha diseñado principalmente para facilitar el
+ * tratamiento estadístico de las respuestas a un formulario cuando algunas de sus preguntas admiten múltiples opciones 
+ * (casillas de verificación), que en ese caso están separadas por la secuencia delimitadora ", " (coma espacio).
+ * Tras ser desacopladas, las respuestas (filas) se repiten en el intervalo resultante para cada combinación posible
+ * de los valores múltiples únicos que se encuentran en las columnas especificadas.
+ * 
+ * Esta función es un alias de la función DESACOPLAR().
  * 
  * @param {A1:D10}    intervalo       Intervalo de datos.
  * @param {VERDADERO} encabezado      Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
@@ -20,11 +94,14 @@
  *
  * Artículo:    https://pablofelip.online/desacoplar-acoplar/
  * Repositorio: https://github.com/pfelipm/fxdesacoplar-acoplar
+ *
+ * MODIFICADO 22/01/24:
+ *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
  * 
  * MODIFICADO 01/02/23:
  *  - Si el nº de columna es positivo únicamente se duplicarán filas para los valores únicos, si es negativo
  *    también se generarán duplicados para cada elemento repetido.
- *  - Se ignoran las filas del intervalo de entrada s que están totalmente vacías.
+ *  - Se ignoran las filas del intervalo de entrada que están totalmente vacías.
  *  - Se devuelven valores numéricos cuando pueden ser convertidos a números (¡mejor parametrizar!)
  * 
  * MIT License
@@ -150,15 +227,19 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
       });
 
       // Se desestructura (...) respuestaDesacoplada dado que combinaciones.map es [[]]
-
       intervaloDesacoplado.push(...respuestaDesacoplada);
 
     }
 
   });
 
-  // Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
+  // Excepción si no hay nada que mostrar
+  if (
+    (intervaloDesacoplado.length == 0 && !Array.isArray(encabezado)) || // No hay filas desacopladas ni tampoco fila de encabezado
+    (intervaloDesacoplado.length == 0 && Array.isArray(encabezado) && encabezado.join('').length == 0) // No hay filas desacopladas y el vector en encabezado está vacío
+  ) throw 'No se han encontrado filas que desacoplar';
 
+  // Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
   return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacoplado;
 
 }
@@ -168,6 +249,8 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
  * se debe indicar la columna (o columnas) *clave* que identifican los datos de cada entidad única. Los valores registrados
  * en el resto de columnas se agruparán, para cada una de ellas, utilizando como delimitador la secuencia de caracteres 
  * indicada. Se trata de una función que realiza una operación complementaria a DESACOPLAR(), aunque no perfectamente simétrica.
+ * 
+ * Esta función es un alias de la función DESACOPLAR().
  * 
  * @param {A1:D10}    intervalo         Intervalo de datos.
  * @param {VERDADERO} encabezado        Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
@@ -179,6 +262,9 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
  * @return                              Intervalo de datos desacoplados
  *
  * @customfunction
+ *
+ * MODIFICADO 22/01/24:
+ *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
  * 
  * MODIFICADO 06/02/23:
  *  - Se añade un parámetro para agrupar o no los valores repetidos dentro de una celda con datos consolidados.
@@ -296,6 +382,13 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
 
   }
 
+  // Excepción si no hay nada que mostrar
+  if (
+    (intervaloAcoplado.length == 0 && !Array.isArray(encabezado)) || // No hay filas desacopladas ni tampoco fila de encabezado
+    (intervaloAcoplado.length == 0 && Array.isArray(encabezado) && encabezado.join('').length == 0) // No hay filas desacopladas y el vector en encabezado está vacío
+  ) throw 'No se han encontrado filas que acoplar';
+
+  // Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
   return encabezado.map ? [encabezado, ...intervaloAcoplado] : intervaloAcoplado;
 
 }

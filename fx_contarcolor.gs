@@ -1,4 +1,4 @@
-// Envoltorio para invocar la función como HDCP_...()
+// Envoltorio para invocar la función CONTARCOLOR como HDCP_...()
 /**
  * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
  * que tienen un color de texto o fondo determinado. También puede simplemente devolver
@@ -31,7 +31,7 @@
  * VALORES: contenido de las celdas que cumplen la condición de color.
  * Si se omite se asume RECUENTO.
  *
- * @return nº de celdas, suma o promedio de los valores de las celdas del color indicado
+ * @return Nº de celdas, suma o promedio de los valores de las celdas del color indicado
  *         o contenido de las celdas que cumplen la condición de color.
  *
  * @customfunction
@@ -72,8 +72,9 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
  * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO,
  * VALORES: contenido de las celdas que cumplen la condición de color.
  *
- * @return nº de celdas, suma o promedio de los valores de las celdas del color indicado
- *
+ * @return Nº de celdas, suma o promedio de los valores de las celdas del color indicado
+ *         o contenido de las celdas que cumplen la condición de color.
+ * 
  * @customfunction
  */
 
