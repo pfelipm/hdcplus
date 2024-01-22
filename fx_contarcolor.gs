@@ -200,7 +200,8 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
     case TIPOS_CALCULO.valores: resultado = matrizResultado;
   } 
   
-  if (tipo_calculo = TIPOS_CALCULO.valores && resultado.length == 0) throw 'No se han encontrado celdas que cumplan la condición de color';
+  // Evitar excepción tipo "no se ha encontrado el intervalo"
+  if (tipo_calculo == TIPOS_CALCULO.valores && resultado.length == 0) throw 'No se han encontrado celdas que cumplan la condición de color';
   return resultado;
 
 }
