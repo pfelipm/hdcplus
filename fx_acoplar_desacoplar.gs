@@ -271,7 +271,7 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
 
     const filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
     
-    // Para identificar los valores a consolidar usaremos un array si se admiten duplciados o un conjunto en caso contrario
+    // Para identificar los valores a consolidar usaremos un array si se admiten duplicados o un conjunto en caso contrario
     const noClaveSets = [...Array(colNoClaveSet.size)].map(fila => permitirRepetidos ? [] : new Set());
     
     filasEntidad.forEach(fila => {

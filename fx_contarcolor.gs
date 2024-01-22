@@ -1,7 +1,9 @@
 // Envoltorio para invocar la función como HDCP_...()
 /**
  * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
- * que tienen un color de texto o fondo determinado. 
+ * que tienen un color de texto o fondo determinado. También puede simplemente devolver
+ * los valores que cumplan la condición de color para que puedan ser utilizados en
+ * cualquier fórmula.
  *  
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
@@ -22,11 +24,15 @@
  * utilizará como modelo, con o sin indicación de la
  * hoja (Ej: "Hoja 2!A1").
  * 
- * @param {string} tipo_calculo
- * (Opcional) RECUENTO: recuento de celdas, SUMA: suma de los valores de las celdas,
- * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO.
+ * @param {"PROMEDIO"} tipo_calculo
+ * (Opcional) RECUENTO: recuento de celdas. 
+ * SUMA: suma de los valores de las celdas.
+ * PROMEDIO: promedio de los valores de las celdas.
+ * VALORES: contenido de las celdas que cumplen la condición de color.
+ * Si se omite se asume RECUENTO.
  *
  * @return nº de celdas, suma o promedio de los valores de las celdas del color indicado
+ *         o contenido de las celdas que cumplen la condición de color.
  *
  * @customfunction
  */
@@ -36,8 +42,11 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
 
 /**
  * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
- * que tienen un color de texto o fondo determinado. Esta función es un alias de
- * la función HDCP_CONTARCOLOR().
+ * que tienen un color de texto o fondo determinado. También puede simplemente devolver
+ * los valores que cumplan la condición de color para que puedan ser utilizados en
+ * cualquier fórmula.
+ * 
+ * Esta función es un alias de la función HDCP_CONTARCOLOR().
  *  
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
@@ -53,14 +62,15 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
  * para realizar el recuento.
  * 
  * @param {"A1"} celda_cadena
- * Referencia a la celda, entre comillas
+ * (Opcional) Referencia a la celda, entre comillas
  * dobles, cuyo atributo de color de fuente o fondo se
  * utilizará como modelo, con o sin indicación de la
  * hoja (Ej: "Hoja 2!A1").
  * 
- * @param {string} tipo_calculo
+ * @param {"PROMEDIO"} tipo_calculo
  * (Opcional) RECUENTO: recuento de celdas, SUMA: suma de los valores de las celdas,
- * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO.
+ * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO,
+ * VALORES: contenido de las celdas que cumplen la condición de color.
  *
  * @return nº de celdas, suma o promedio de los valores de las celdas del color indicado
  *
@@ -72,7 +82,8 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
   const TIPOS_CALCULO = {
     recuento: 'RECUENTO',
     suma: 'SUMA',
-    promedio: 'PROMEDIO'
+    promedio: 'PROMEDIO',
+    valores: 'VALORES'
   };
 
   const MODOS_COLOR = {
@@ -120,9 +131,12 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
 
   // Los parámetros parecen correctos ¡adelante!
 
+  // Variables para almacenar el resultado de la función
   let resultado;
   let recuento = 0;
   let suma = 0;
+  const matrizResultado = []; 
+
   const rango = SpreadsheetApp.getActiveSpreadsheet().getRange(rango_cadena);
   const valores = rango.getValues();
   const nf = rango.getNumRows();
@@ -151,31 +165,41 @@ function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo
   } catch { throw 'La referencia al intervalo de celdas o a la celda modelo es inválida'; }
  
   // Cálculo sobre el intervalo de celdas: recuento, suma o promedio
-    
-  colores.map((coloresFila, fila) => coloresFila.map((colorCelda, columna) => {
-    if (colorCelda == color && colorCelda != undefined && color != undefined) {
-      switch(tipo_calculo) {
-        case TIPOS_CALCULO.recuento: recuento++; break;
-        case TIPOS_CALCULO.suma:
-        case TIPOS_CALCULO.promedio:  {
-          if (typeof valores[fila][columna] == 'number') {
-            recuento++;
-            suma+= valores[fila][columna];
+
+  let resultadoFila;
+  colores.forEach((coloresFila, fila) => {
+      resultadoFila = [];
+      coloresFila.forEach((colorCelda, columna) => {
+      if (colorCelda == color && colorCelda != undefined && color != undefined) {
+        switch(tipo_calculo) {
+          case TIPOS_CALCULO.recuento: recuento++; break;
+          case TIPOS_CALCULO.suma:
+          case TIPOS_CALCULO.promedio:  {
+            if (typeof valores[fila][columna] == 'number') {
+              recuento++;
+              suma+= valores[fila][columna];
+            }
+            break;
           }
+          case TIPOS_CALCULO.valores: resultadoFila.push(valores[fila][columna]);
         }
       }
-    }
-  }));
+    });
+    if (resultadoFila.length > 0) matrizResultado.push(resultadoFila);
+  });
 
   switch (tipo_calculo) {
     case TIPOS_CALCULO.recuento: resultado = recuento; break;
     case TIPOS_CALCULO.suma: resultado = suma; break;
     case TIPOS_CALCULO.promedio: {
       if (recuento == 0) throw '#¡DIV/0! La evaluación de la función CONTARCOLOR ha provocado un error de división por cero';
-      resultado = suma / recuento;  
+      resultado = suma / recuento;
+      break;
     }
+    case TIPOS_CALCULO.valores: resultado = matrizResultado;
   } 
-    
+  
+  if (tipo_calculo = TIPOS_CALCULO.valores && resultado.length == 0) throw 'No se han encontrado celdas que cumplan la condición de color';
   return resultado;
 
 }
