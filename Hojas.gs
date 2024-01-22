@@ -1,8 +1,8 @@
 // Funciones invocadas por menú mostrar / ocultar hojas por color
-function mostrarHojasNaranja() {conmutarHojasColor(COLORES_HOJAS.naranja,true);}
-function mostrarHojasAzul() {conmutarHojasColor(COLORES_HOJAS.azul, true);}
-function ocultarHojasNaranja() {conmutarHojasColor(COLORES_HOJAS.naranja, false);}
-function ocultarHojasAzul() {conmutarHojasColor(COLORES_HOJAS.azul, false);}
+function mostrarHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja,true); }
+function mostrarHojasAzul() { conmutarHojasColor(COLORES_HOJAS.azul, true); }
+function ocultarHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja, false); }
+function ocultarHojasAzul() { conmutarHojasColor(COLORES_HOJAS.azul, false); }
 
 /**
  * Hace visible u oculta las hojas de uno de los colores parametrizados
