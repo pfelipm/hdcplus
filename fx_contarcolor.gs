@@ -1,4 +1,7 @@
-// Envoltorio para invocar la función CONTARCOLOR como HDCP_...()
+////////////////////////////////////////////////////////////////////
+// Envoltorio para invocar la funciónes CONTARCOLOR como HDCP_... //
+////////////////////////////////////////////////////////////////////
+
 /**
  * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
  * que tienen un color de texto o fondo determinado. También puede simplemente devolver
@@ -40,6 +43,10 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
    return CONTARCOLOR(...arguments);
 }
 
+/////////////////////////////////////////////////////////////////
+// Implementación de la función original, que pasa a ser alias //
+/////////////////////////////////////////////////////////////////
+
 /**
  * Realiza un recuento, calcula la suma o el promedio de los valores de las celdas
  * que tienen un color de texto o fondo determinado. También puede simplemente devolver
@@ -47,7 +54,7 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
  * cualquier fórmula.
  * 
  * Esta función es un alias de la función HDCP_CONTARCOLOR().
- *  
+ *   
  * @param {"A2:C20"} rango_cadena
  * Rango de celdas sobre el que realizar la cuenta, entre comillas dobles,
  * con o sin indicación de la hoja (Ej: "Hoja 2!A2:C20").
@@ -68,16 +75,17 @@ function HDCP_CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_ca
  * hoja (Ej: "Hoja 2!A1").
  * 
  * @param {"PROMEDIO"} tipo_calculo
- * (Opcional) RECUENTO: recuento de celdas, SUMA: suma de los valores de las celdas,
- * PROMEDIO: promedio de los valores de las celdas. Si se omite se asume RECUENTO,
+ * (Opcional) RECUENTO: recuento de celdas. 
+ * SUMA: suma de los valores de las celdas.
+ * PROMEDIO: promedio de los valores de las celdas.
  * VALORES: contenido de las celdas que cumplen la condición de color.
+ * Si se omite se asume RECUENTO.
  *
  * @return Nº de celdas, suma o promedio de los valores de las celdas del color indicado
  *         o contenido de las celdas que cumplen la condición de color.
- * 
+ *
  * @customfunction
  */
-
 function CONTARCOLOR(rango_cadena, modo_color, color, celda_cadena, tipo_calculo = 'RECUENTO') {
 
   const TIPOS_CALCULO = {

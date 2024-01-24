@@ -6,7 +6,7 @@
  * @OnlyCurrentDoc
  */
 
-const VERSION = 'Versión: 1.8.005 (enero 2024)';
+const VERSION = 'Versión: 1.8.006 (enero 2024)';
 
 // Para mostrar / ocultar pestañas por color
 const COLORES_HOJAS = {

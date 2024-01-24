@@ -1,4 +1,6 @@
-// Envoltorios para invocar las funciónes ACOPLAR/DESACOPLAR como HDCP_...()
+/////////////////////////////////////////////////////////////////////////////
+// Envoltorios para invocar las funciónes ACOPLAR/DESACOPLAR como HDCP_... //
+/////////////////////////////////////////////////////////////////////////////
 
 /**
  * Esta función desacopla las filas de un intervalo de datos que contiene valores múltiples, delimitados por la 
@@ -13,18 +15,18 @@
  * @param {", "}      separador       Secuencia de caracteres que separa los valores múltiples. Opcional, si se omite se utiliza ", " (coma espacio).
  * @param {VERDADERO} forzarNum       Indica si los valores múltiples identificados como numéricos se devolverán como números en lugar de texto ([VERDADERO] | FALSO).
  * @param {2}         columna         Número de orden, desde la izquierda, de la columna dentro del intervalo que contiene valores múltiples a descoplar,
- *                                    si se indican valores negativos para las columnas se generarán filas desacopladas también para los valores duplicados.
+ *                                    si se utilizan índices negativos se generarán filas desacopladas también para los valores duplicados.
  * @param {4}         [más_columnas]  Columnas adicionales, opcionales, que contienen valores múltiples a desacoplar, separadas por ";".
  *
  * @return                            Intervalo de datos desacoplados
  *
  * @customfunction
  *
- * Artículo:    https://pablofelip.online/desacoplar-acoplar/
- * Repositorio: https://github.com/pfelipm/fxdesacoplar-acoplar
+ * Artículo:              https://pablofelip.online/desacoplar-acoplar/
+ * Repositorio original:  https://github.com/pfelipm/fxdesacoplar-acoplar
  *
  * MODIFICADO 22/01/24:
- *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
+ *  - Se controla la situación en la que no se devuelve ningún resultado (throw).
  * 
  * MODIFICADO 01/02/23:
  *  - Si el nº de columna es positivo únicamente se duplicarán filas para los valores únicos, si es negativo
@@ -57,7 +59,7 @@ function HDCP_DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, .
  * @customfunction
  *
  * MODIFICADO 22/01/24:
- *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
+ *  - Se controla la situación en la que no se devuelve ningún resultado (throw).
  * 
  * MODIFICADO 06/02/23:
  *  - Se añade un parámetro para agrupar o no los valores repetidos dentro de una celda con datos consolidados.
@@ -70,6 +72,10 @@ function HDCP_ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, colum
    return ACOPLAR(...arguments);
 }
 
+///////////////////////////////////////////////////////////////////////
+// Implementación de las funciones originales, que pasan a ser alias //
+///////////////////////////////////////////////////////////////////////
+
 /**
  * Esta función desacopla las filas de un intervalo de datos que contiene valores múltiples, delimitados por la 
  * secuencia de caracteres indicada, en algunas de sus columnas. Se ha diseñado principalmente para facilitar el
@@ -78,25 +84,25 @@ function HDCP_ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, colum
  * Tras ser desacopladas, las respuestas (filas) se repiten en el intervalo resultante para cada combinación posible
  * de los valores múltiples únicos que se encuentran en las columnas especificadas.
  * 
- * Esta función es un alias de la función DESACOPLAR().
+ * Esta función es un alias de la función HDCP_DESACOPLAR().
  * 
  * @param {A1:D10}    intervalo       Intervalo de datos.
  * @param {VERDADERO} encabezado      Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
  * @param {", "}      separador       Secuencia de caracteres que separa los valores múltiples. Opcional, si se omite se utiliza ", " (coma espacio).
  * @param {VERDADERO} forzarNum       Indica si los valores múltiples identificados como numéricos se devolverán como números en lugar de texto ([VERDADERO] | FALSO).
  * @param {2}         columna         Número de orden, desde la izquierda, de la columna dentro del intervalo que contiene valores múltiples a descoplar,
- *                                    si se indican valores negativos para las columnas se generarán filas desacopladas también para los valores duplicados.
+ *                                    si se utilizan índices negativos se generarán filas desacopladas también para los valores duplicados.
  * @param {4}         [más_columnas]  Columnas adicionales, opcionales, que contienen valores múltiples a desacoplar, separadas por ";".
  *
  * @return                            Intervalo de datos desacoplados
  *
  * @customfunction
  *
- * Artículo:    https://pablofelip.online/desacoplar-acoplar/
- * Repositorio: https://github.com/pfelipm/fxdesacoplar-acoplar
+ * Artículo:              https://pablofelip.online/desacoplar-acoplar/
+ * Repositorio original:  https://github.com/pfelipm/fxdesacoplar-acoplar
  *
  * MODIFICADO 22/01/24:
- *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
+ *  - Se controla la situación en la que no se devuelve ningún resultado (throw).
  * 
  * MODIFICADO 01/02/23:
  *  - Si el nº de columna es positivo únicamente se duplicarán filas para los valores únicos, si es negativo
@@ -250,8 +256,8 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
  * en el resto de columnas se agruparán, para cada una de ellas, utilizando como delimitador la secuencia de caracteres 
  * indicada. Se trata de una función que realiza una operación complementaria a DESACOPLAR(), aunque no perfectamente simétrica.
  * 
- * Esta función es un alias de la función DESACOPLAR().
- * 
+ * Esta función es un alias de la función HDCP_ACOPLAR().
+ *  
  * @param {A1:D10}    intervalo         Intervalo de datos.
  * @param {VERDADERO} encabezado        Indica si el rango tiene una fila de encabezado con etiquetas para cada columna ([VERDADERO] | FALSO).
  * @param {", "}      separador         Secuencia de caracteres a emplear como separador de los valores múltiples. Opcional, si se omite se utiliza ", " (coma espacio).
@@ -264,7 +270,7 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
  * @customfunction
  *
  * MODIFICADO 22/01/24:
- *  - Se controla la situación en la que no se devuelve ninún resultado (throw).
+ *  - Se controla la situación en la que no se devuelve ningún resultado (throw).
  * 
  * MODIFICADO 06/02/23:
  *  - Se añade un parámetro para agrupar o no los valores repetidos dentro de una celda con datos consolidados.
