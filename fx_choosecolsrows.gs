@@ -156,38 +156,3 @@ function HDCP_CHOOSECOLSROWS(intervalo, columnas, usa_etiquetas_col, filas, usa_
   }
 
 }
-
-/**
- * ¡Primer intento!
- * Devuelve las columnas indicadas de un intervalo, soporta expresiones con "-",
- * admite cambio de orden, pero no columnas repetidas.
- * 
- * @param {A2:P20}    intervalo   Intervalo de datos
- * @param {3; 5; 1}   columnas    Columnas a mostrar (múltiples argumentos)
- * 
- * @customfunction
- */
-function SUPERCHOOSECOLS(intervalo, ...columnas) {
-
-  const columnasConjunto = new Set();
-  columnas.forEach(columna => {
-    if (typeof columna == 'number') {
-      columnasConjunto.add(columna);
-      console.info('Añadiendo: ' + columna);
-    }
-    else if (typeof columna == 'string') {
-      const inicio = columna.split('-')[0];
-      const fin = columna.split('-')[1];
-      for (let i = Number(inicio); i <= Number(fin); i++) columnasConjunto.add(i);
-    }
-  });
-
-  const columnasVector = [...columnasConjunto];
-
-  return intervalo.map(fila => {
-    const filaResultado = [];
-    for (let i of columnasVector) filaResultado.push(fila[i - 1]);
-    return filaResultado;
-  });
-
-}

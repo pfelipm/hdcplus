@@ -23,10 +23,10 @@ function conmutarHojasColor(color, visible) {
       hoja.getTabColorObject().asRgbColor().asHexString().toUpperCase().slice(1).padStart(9, '#FF') == colorHex
     );
   
-  if (hojasColor.length == 0) ui.alert(`No hay hojas ${visible ? 'ocultas' : 'visibles'} de color ${color.nombre}.`, SpreadsheetApp.getUi().ButtonSet.OK);
+  if (hojasColor.length == 0) ui.alert(`No hay hojas ${visible ? 'ocultas' : 'visibles'} de color ${color.nombre}.`, ui.ButtonSet.OK);
   else try {
       hojasColor.forEach(hoja => visible ? hoja.showSheet() : hoja.hideSheet());
-      ui.alert(`Se han ${visible ? 'hecho visibles' : 'ocultado'} ${hojasColor.length} hoja(s) de color ${color.nombre}.`, SpreadsheetApp.getUi().ButtonSet.OK);
+      ui.alert(`Se han ${visible ? 'hecho visibles' : 'ocultado'} ${hojasColor.length} hoja(s) de color ${color.nombre}.`, ui.ButtonSet.OK);
   } catch (e) {
       ui.alert(`Se ha producido un error inesperado al ajustar la visibilidad de las hojas, inténtalo de nuevo.
         
@@ -44,15 +44,15 @@ function eliminarHojasOcultas() {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojasEliminar = hdc.getSheets().filter(hoja => hoja.isSheetHidden());
   
-  if (hojasEliminar.length == 0) ui.alert('No hay hojas ocultas que eliminar.', SpreadsheetApp.getUi().ButtonSet.OK);
+  if (hojasEliminar.length == 0) ui.alert('No hay hojas ocultas que eliminar.', ui.ButtonSet.OK);
   else try {
     // Se usa try para fallar graciosamente cuando en un escenario de concurrencia se eliminan
     // algunas de las hojas mientras el usuario visualiza la alerta de confirmación
-    if (SpreadsheetApp.getUi().alert('⚠️ ¿Eliminar hojas?',
+    if (ui.alert('⚠️ ¿Eliminar hojas ocultas?',
       `Se van a eliminar ${hojasEliminar.length} hoja(s) de la hoja de cálculo.
 
       Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
-    ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
+      ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
   } catch (e) {
     ui.alert(`Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
       
@@ -71,13 +71,13 @@ function eliminarHojas() {
   const idHojaActual = hdc.getActiveSheet().getSheetId();
   const hojasEliminar = hdc.getSheets().filter(hoja => hoja.getSheetId()!= idHojaActual);
 
-  if (hojasEliminar.length == 0) ui.alert('No hay más hojas que puedan eliminarse.', SpreadsheetApp.getUi().ButtonSet.OK);
+  if (hojasEliminar.length == 0) ui.alert('No hay más hojas que puedan eliminarse.', ui.ButtonSet.OK);
   else try {
-    if (SpreadsheetApp.getUi().alert('⚠️ ¿Eliminar hojas?',
+    if (ui.alert('⚠️ ¿Eliminar otras hojas?',
       `Se van a eliminar ${hojasEliminar.length} hoja(s) de la hoja de cálculo.
 
       Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
-    ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
+      ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
   } catch (e) {
     ui.alert(`Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
       
@@ -94,14 +94,14 @@ function ocultarHojas() {
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
 
-  if (hdc.getSheets().length == 1) ui.alert('No hay más hojas que puedan ocultarse.', SpreadsheetApp.getUi().ButtonSet.OK);
+  if (hdc.getSheets().length == 1) ui.alert('No hay más hojas que puedan ocultarse.', ui.ButtonSet.OK);
   else {
     const idHojaActual = SpreadsheetApp.getActiveSheet().getSheetId();
     const hojasVisibles = SpreadsheetApp.getActiveSpreadsheet().getSheets().filter(hoja => !hoja.isSheetHidden() && hoja.getSheetId() != idHojaActual);
-    if (hojasVisibles.length == 0) ui.alert('No hay más hojas visibles que ocultar.', SpreadsheetApp.getUi().ButtonSet.OK);
+    if (hojasVisibles.length == 0) ui.alert('No hay más hojas visibles que ocultar.', ui.ButtonSet.OK);
     else try {
       hojasVisibles.forEach(hoja => hoja.hideSheet());
-      ui.alert(`Se han ocultado ${hojasVisibles.length} hoja(s).`, SpreadsheetApp.getUi().ButtonSet.OK);
+      ui.alert(`Se han ocultado ${hojasVisibles.length} hoja(s).`, ui.ButtonSet.OK);
     } catch (e) {
       ui.alert(`Se ha producido un error inesperado al ajustar la visibilidad de las hojas, inténtalo de nuevo.
         
@@ -120,10 +120,10 @@ function mostrarHojas() {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojasOcultas = SpreadsheetApp.getActiveSpreadsheet().getSheets().filter(hoja => hoja.isSheetHidden());
   
-  if (hojasOcultas.length == 0) ui.alert('No hay hojas ocultas que mostrar.', SpreadsheetApp.getUi().ButtonSet.OK);
+  if (hojasOcultas.length == 0) ui.alert('No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
   else try {
     hojasOcultas.forEach(hoja => hoja.showSheet());
-    ui.alert(`Se han hecho visibles ${hojasOcultas.length} hoja(s).`, SpreadsheetApp.getUi().ButtonSet.OK);
+    ui.alert(`Se han hecho visibles ${hojasOcultas.length} hoja(s).`, ui.ButtonSet.OK);
   } catch (e) {
     ui.alert(`Se ha producido un error inesperado al ajustar la visibilidad de las hojas, inténtalo de nuevo.
       
@@ -147,7 +147,7 @@ function mostrarTodasMenosActual() {
     try {
       hojasOcultas.forEach(hoja => hoja.showSheet());
       hojaActual.hideSheet();
-      if (hojasOcultas.length > 0) ui.alert(`Se han hecho visibles ${hojasOcultas.length} hoja(s).`, SpreadsheetApp.getUi().ButtonSet.OK);
+      if (hojasOcultas.length > 0) ui.alert(`Se han hecho visibles ${hojasOcultas.length} hoja(s).`, ui.ButtonSet.OK);
     } catch (e) {
       ui.alert(`Se ha producido un error inesperado al ajustar la visibilidad de las hojas, inténtalo de nuevo.
         
