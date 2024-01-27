@@ -15,8 +15,6 @@ function conmutarHojasColor(color, visible) {
   const colorHex = color.hex.toUpperCase().slice(1).padStart(9, '#FF');
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
-  const idHojaActual = SpreadsheetApp.getActiveSheet().getSheetId();
-  const numHojas = hdc.getSheets().length;
   const hojasColor = hdc.getSheets()
     .filter(hoja => (hoja.isSheetHidden() ^ !visible) && // XOR para invertir resultado booleano de isSheetHidden()
       hoja.getTabColorObject().getColorType() == SpreadsheetApp.ColorType.RGB  && 
@@ -118,7 +116,7 @@ function mostrarHojas() {
 
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
-  const hojasOcultas = SpreadsheetApp.getActiveSpreadsheet().getSheets().filter(hoja => hoja.isSheetHidden());
+  const hojasOcultas = hdc.getSheets().filter(hoja => hoja.isSheetHidden());
   
   if (hojasOcultas.length == 0) ui.alert('No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
   else try {
