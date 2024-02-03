@@ -29,7 +29,6 @@
  * 
  * ⚠️IMPORTANTE⚠️: Los caracteres " [ " y " ] " que se muestran en la fórmula de EJEMPLO deben sustituirse por los
  * símbolos " { " y " } " propios de la sintaxis de matrices de Google Sheets.
- * de Google.
  * 
  * @param {A2:P20}                intervalo           Intervalo de datos del que extraer un subconjunto de filas y columnas.
  * @param {["-3";6;7;"10-12"]}    columnas            Vector ({...\...} o {...;...}) de índices de columnas, comenzando por 1, intervalos de índices como cadenas de
