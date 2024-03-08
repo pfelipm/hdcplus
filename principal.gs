@@ -6,12 +6,21 @@
  * @OnlyCurrentDoc
  */
 
-const VERSION = 'Versión: 1.8.006 (enero 2024)';
+const VERSION = 'Versión: 1.9 (marzo 2024)';
 
 // Para mostrar / ocultar pestañas por color
 const COLORES_HOJAS = {
-  naranja: { nombre: 'naranja', hex:'#ff9900' },
-  azul: { nombre: 'azul', hex:'#0000ff' }
+  azul: { nombre: 'azul', hex:'#0000ff', icono: '🟦' },
+  morado: { nombre: 'morado', hex:'#9900ff', icono: '🟪'  },
+  verde: { nombre: 'verde', hex:'#00ff00', icono: '🟩'  },
+  naranja: { nombre: 'naranja', hex:'#ff9900', icono: '🟧'  },
+  rojo: { nombre: 'rojo', hex:'#ff0000', icono: '🟥'  }
+};
+
+// Constantes utilizadas en las funciones de protección de celdas con fórmulas
+const PROTECCION = {
+  modo: { advertencia: 'advertencia', soloYo: 'soloyo' },
+  descripcion: '~Protegido por HdC+'
 };
 
 const urlAyudaFxPersonalizadas = 'https://bit.ly/funciones-hdcplus';
@@ -28,45 +37,76 @@ function onOpen() {
 
   const ui = SpreadsheetApp.getUi();
   ui.createAddonMenu()
-    .addSubMenu(ui.createMenu('🔀 Barajar datos')
-      .addItem('Barajar por columnas', 'desordenarFil')
-      .addItem('Barajar por filas', 'desordenarCol'))
-    .addSubMenu(ui.createMenu('✅ Casillas de verificación')
+    .addSubMenu(ui.createMenu('⚡ Ajustar casillas de verificación')
       .addItem('✔️️ Activar seleccionadas', 'check')
       .addItem('❌ Desactivar seleccionadas ', 'uncheck')
       .addItem('➖ Invertir seleccionadas ', 'recheck'))
-    .addSubMenu(ui.createMenu('🧮 Estructura datos')
+    .addSubMenu(ui.createMenu('📝 Anotar celdas')
+      .addItem('Insertar nota con fecha', 'notaFecha')
+      .addItem('Insertar nota con usuario', 'notaUsuario')
+      .addItem('Insertar nota con fecha y hora', 'notaFechaHora')
+      .addItem('Insertar nota con fecha y usuario', 'notaFechaUsuario')
+      .addItem('Insertar nota con fecha, hora y usuario', 'notaFechaHoraUsuario'))
+    .addSubMenu(ui.createMenu('🔀 Barajar datos')
+      .addItem('Barajar por columnas', 'desordenarFil')
+      .addItem('Barajar por filas', 'desordenarCol'))
+    .addSubMenu(ui.createMenu('📐 Estructurar datos')
       .addItem('Consolidar dimensiones (despivotar)', 'unpivot')
-      .addItem('Transponer (☢️ destructivo)', 'transponer'))
-    .addSubMenu(ui.createMenu('📐 Estructura hoja de cálculo')
-      .addItem('Eliminar celdas no seleccionadas', 'eliminarFyCNoSeleccionadas')
-      .addItem('Eliminar F/C sobrantes', 'eliminarFyC')
+      .addItem('Transponer (destructivo)', 'transponer'))
+    .addSubMenu(ui.createMenu('📋 Gestionar hojas')
+      .addItem('Ordenar hojas (A → Z)', 'ordenarHojasAsc')
+      .addItem('Ordenar hojas (Z → A)', 'ordenarHojasDesc')
       .addSeparator()
-      .addItem('Insertar F/C nuevas', 'insertarFyC'))
-    .addSubMenu(ui.createMenu('👁️‍🗨️ Gestión hojas')
       .addItem('Ocultar todas excepto activa', 'ocultarHojas')
       .addItem('Mostrar todas excepto activa', 'mostrarTodasMenosActual')
-      .addItem('Mostrar hojas ocultas', 'mostrarHojas')
+      .addItem('Conmutar visibilidad hojas', 'conmutarVisibilidadHojas')
+      .addItem('Mostrar todas las hojas', 'mostrarHojas')
       .addSeparator()
-      .addItem('🔹Mostrar hojas color azul', 'mostrarHojasAzul')        
-      .addItem('🔹Ocultar hojas color azul', 'ocultarHojasAzul')        
-      .addItem('🔸Mostrar hojas color naranja', 'mostrarHojasNaranja')        
-      .addItem('🔸Ocultar hojas color naranja', 'ocultarHojasNaranja')
+      .addSubMenu(ui.createMenu('🟦 Hojas color azul')
+        .addItem('Ocultar hojas color azul', 'ocultarHojasAzul')        
+        .addItem('Mostrar hojas color azul', 'mostrarHojasAzul')
+        .addItem('Mostrar solo hojas color azul', 'mostrarSoloHojasAzul'))
+      .addSubMenu(ui.createMenu('🟪 Hojas color morado')
+        .addItem('Ocultar hojas color morado', 'ocultarHojasMorado')
+        .addItem('Mostrar hojas color moradao', 'mostrarHojasMorado')
+        .addItem('Mostrar solo hojas color moradao', 'mostrarSoloHojasMorado'))
+      .addSubMenu(ui.createMenu('🟩 Hojas color verde')
+        .addItem('Ocultar hojas color verde', 'ocultarHojasVerde')
+        .addItem('Mostrar hojas color verde', 'mostrarHojasVerde')
+        .addItem('Mostrar solo hojas color verde', 'mostrarSoloHojasVerde'))
+      .addSubMenu(ui.createMenu('🟧 Hojas color naranja')
+        .addItem('Ocultar hojas color naranja', 'ocultarHojasNaranja')
+        .addItem('Mostrar hojas color naranja', 'mostrarHojasNaranja')
+        .addItem('Mostrar solo hojas color naranja', 'mostrarSoloHojasNaranja'))
+      .addSubMenu(ui.createMenu('🟥 Hojas color rojo')
+        .addItem('Ocultar hojas color rojo', 'ocultarHojasRojo')
+        .addItem('Mostrar hojas color rojo', 'mostrarHojasRojo')
+        .addItem('Mostrar solo hojas color rojo', 'mostrarSoloHojasRojo'))
       .addSeparator()
       .addItem('Eliminar hojas ocultas', 'eliminarHojasOcultas')
       .addItem('Eliminar todas excepto activa', 'eliminarHojas'))
-    .addSubMenu(ui.createMenu('🧠 Generar')
+    .addSubMenu(ui.createMenu('🗜️ Insertar y eliminar celdas')
+      .addItem('Eliminar celdas no seleccionadas', 'eliminarFyCNoSeleccionadas')
+      .addItem('Eliminar fil/col sobrantes', 'eliminarFyC')
+      .addSeparator()
+      .addItem('Insertar F/C nuevas', 'insertarFyC'))
+    .addSubMenu(ui.createMenu('✨ Generar datos falsos')
       .addItem('NIFs', 'generarNIF')
       .addItem('Nombres y apellidos', 'generarNombres'))
-    .addSubMenu(ui.createMenu('🕶️ Ofuscar')
-      .addItem('Codificar texto en base64 ', 'base64')
+    .addSubMenu(ui.createMenu('🕶️ Ofuscar información')
+      .addItem('Codificar texto en base64 ', 'base64_')
       .addItem('Sustituir por hash MD2 (b64) ', 'hashMD2')
       .addItem('Sustituir por hash MD5 (b64) ', 'hashMD5')
       .addItem('Sustituir por hash SHA-1 (b64)', 'hashSHA1')
       .addItem('Sustituir por hash SHA-256 (b64)', 'hashSHA256')
       .addItem('Sustituir por hash SHA-384 (b64)', 'hashSHA384')
       .addItem('Sustituir por hash SHA-512 (b64)', 'hashSHA512'))
-    .addSubMenu(ui.createMenu('⚡ Transformar')
+    .addSubMenu(ui.createMenu('🔏 Proteger celdas con fórmulas')
+      .addItem('Proteger fx hoja (advertencia)', 'protegerFxHojaAdvertencia')
+      .addItem('Proteger fx hoja (solo tú)', 'protegerFxHojaSoloYo')
+      .addSeparator()
+      .addItem('Eliminar protecciones HdC+ de hoja', 'eliminarProteccionesFx'))
+    .addSubMenu(ui.createMenu('🔤 Transformar texto')
       .addItem('❌👽 Eliminar caracteres especiales', 'latinizar')
       .addItem('❌➖ Eliminar espacios', 'eliminarEspacios')
       .addItem('❌🔺➖ Eliminar espacios tras comas', 'eliminarEspaciosComas')
@@ -82,10 +122,9 @@ function onOpen() {
       .addItem('🔠 Todo a mayúsculas', 'mayusculas')
       .addItem('🔤 Todo a minúsculas', 'minusculas'))
     .addSeparator()
-    .addItem('🔄 Forzar recálculo de hoja', 'forzarRecalculo')
+    .addItem('🔄 Forzar recálculo de fórmulas hoja', 'forzarRecalculo')
     .addSeparator()
     .addItem('🛟 Ayuda fx personalizadas (sitio externo)', 'abrirWebExterna')
-    .addSeparator()
     .addItem('💡 Acerca de HdC+', 'acercaDe')
     .addToUi();
 }
@@ -594,7 +633,7 @@ function eliminarFyCNoSeleccionadas() {
 }
 
 
-function base64()  {
+function base64_()  {
 
   var rangos = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
   var matriz;
