@@ -169,7 +169,6 @@ function conmutarHojasColor(color, visible, ocultarResto) {
 
 }
 
-
 /**
  * Elimina todas la hojas ocultas
  */
@@ -184,7 +183,7 @@ function eliminarHojasOcultas() {
     // Se usa try para fallar graciosamente cuando en un escenario de concurrencia se eliminan
     // algunas de las hojas mientras el usuario visualiza la alerta de confirmación
     if (ui.alert('⚠️ ¿Eliminar hojas ocultas?',
-      `Se van a eliminar ${hojasEliminar.length} hojas de la hoja de cálculo.
+      `Se van a eliminar ${hojasEliminar.length} hojas no visibles de la hoja de cálculo.
 
       Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
