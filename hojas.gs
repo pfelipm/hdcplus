@@ -223,7 +223,7 @@ function eliminarHojas() {
 /**
  * Oculta todas las hojas de la hdc excepto la activa
  */
-function ocultarHojas() {
+function mostrarSoloActiva() {
 
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
