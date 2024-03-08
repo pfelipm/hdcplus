@@ -104,7 +104,7 @@ function onOpen() {
       .addItem('NIFs', 'generarNIF')
       .addItem('Nombres y apellidos', 'generarNombres'))
     .addSubMenu(ui.createMenu('🕶️ Ofuscar información')
-      .addItem('Codificar texto en base64 ', 'base64_')
+      .addItem('Codificar texto en Base64 ', 'base64_')
       .addItem('Sustituir por hash MD2 (b64) ', 'hashMD2')
       .addItem('Sustituir por hash MD5 (b64) ', 'hashMD5')
       .addItem('Sustituir por hash SHA-1 (b64)', 'hashSHA1')
