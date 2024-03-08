@@ -66,7 +66,6 @@ function ordenarHojasServicio(ascendente = true) {
 
 }
 
-
 /**
  * Ordena las hojas alfabéticamente en sentido ascendente o descendente usando la API de Sheets.
  * Mucho más rapido, pero ***NO USADO*** por el momento, dado que requiere https://www.googleapis.com/auth/spreadsheets.
@@ -141,7 +140,7 @@ function conmutarHojasColor(color, visible, ocultarResto) {
     } else if (ocultarResto && !hoja.isSheetHidden()) otrasHojasOcultar.push(hoja);
   });
 
-  if (!visible && (hojasColorProcesar.length == numHojasVisibles)) ui.alert('No puedes ocultar todas las hojas existentes.', ui.ButtonSet.OK)
+  if (!visible && (hojasColorProcesar.length == numHojasVisibles)) ui.alert('No puedes ocultar todas las hojas visibles.', ui.ButtonSet.OK)
   else if (numHojasColor == 0) ui.alert(`${color.icono} No hay hojas de color ${color.nombre}.`, ui.ButtonSet.OK);
   else if (hojasColorProcesar.length == 0 && otrasHojasOcultar.length == 0) ui.alert(`${color.icono} No hay hojas ${visible ? 'ocultas' : 'visibles'} de color ${color.nombre}.`, ui.ButtonSet.OK);
   else try {
@@ -158,7 +157,7 @@ function conmutarHojasColor(color, visible, ocultarResto) {
         otrasHojasOcultar.forEach(hoja => hoja.hideSheet());
         mensajeResultado.push(`Se han ocultado ${otrasHojasOcultar.length} hojas de color distinto al ${color.nombre}.`);
       }
-      
+
       SpreadsheetApp.flush();
       ui.alert(`${color.icono} ${mensajeResultado.join(' ')}`, ui.ButtonSet.OK);
 
