@@ -66,7 +66,7 @@ function onOpen() {
       .addItem('Barajar por columnas', 'desordenarFil')
       .addItem('Barajar por filas', 'desordenarCol'))
     .addSubMenu(ui.createMenu('📐 Estructurar datos')
-      .addItem('Consolidar dimensiones (despivotar)', 'unpivot')
+      .addItem('Consolidar dimensiones (despivotar)', 'unpivot_')
       .addItem('Transponer (destructivo)', 'transponer'))
     .addSubMenu(ui.createMenu('📋 Gestionar hojas')
       .addItem('Ordenar hojas (A → Z)', 'ordenarHojasAsc')
@@ -375,7 +375,7 @@ function latinizar() {
     
 }
 
-function unpivot() {
+function unpivot_() {
 
   var ui = HtmlService.createTemplateFromFile('panelUnpivot')
       .evaluate()
