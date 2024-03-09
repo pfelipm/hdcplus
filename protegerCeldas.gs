@@ -250,16 +250,3 @@ function eliminarProteccionesFx() {
 
 
 }
-
-function muchasFormulas() {
-
-  const num = 100000;
-  const hoja = SpreadsheetApp.getActiveSheet();
-  for (let i = 0; i < num; i++) {
-    hoja.getRange(
-      Math.ceil(Math.random() * 1000),
-      Math.ceil(Math.random() * 100)
-    ).setFormula("=1+1");
-  }
-
-}

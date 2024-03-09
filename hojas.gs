@@ -21,7 +21,7 @@ function ocultarHojasRojo() { conmutarHojasColor(COLORES_HOJAS.rojo, false, fals
 
 // Envoltorios para funciones invocadas por menú eliminar hojas por color
 function eliminarHojasAzul() {eliminarHojasColor(COLORES_HOJAS.azul); }
-function eliminarojasMorado() { eliminarHojasColor(COLORES_HOJAS.morado); }
+function eliminarHojasMorado() { eliminarHojasColor(COLORES_HOJAS.morado); }
 function eliminarHojasVerde() { eliminarHojasColor(COLORES_HOJAS.verde); }
 function eliminarHojasNaranja() { eliminarHojasColor(COLORES_HOJAS.naranja); }
 function eliminarHojasRojo() { eliminarHojasColor(COLORES_HOJAS.rojo); }
