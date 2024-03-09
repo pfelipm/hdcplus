@@ -228,7 +228,7 @@ function eliminarProteccionesFx(soloHdCPlus = true) {
   let protecciones = SpreadsheetApp.getActiveSheet().getProtections(SpreadsheetApp.ProtectionType.RANGE);
   if (soloHdCPlus) protecciones = protecciones.filter(regla => regla.getDescription().substring(0, PROTECCION.descripcion.length) == PROTECCION.descripcion);
   
-  if (protecciones.length == 0) ui.alert('En esta hoja no hay intervalos protegidos creados por HdC+ que eliminar.', ui.ButtonSet.OK);
+  if (protecciones.length == 0) ui.alert(`En esta hoja no hay intervalos protegidos ${soloHdCPlus ? 'creados por HdC+ ' : ''}que eliminar.`, ui.ButtonSet.OK);
   else try {
     if (ui.alert('⚠️ ¿Eliminar intervalos protegidos por HdC+?',
       `Se van a eliminar ${protecciones.length} intervalos protegidos en la hoja actual.`,
