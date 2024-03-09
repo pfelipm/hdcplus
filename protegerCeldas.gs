@@ -2,6 +2,10 @@
 function protegerFxHojaAdvertencia() { protegerFxHoja(PROTECCION.modo.advertencia) }
 function protegerFxHojaSoloYo() { protegerFxHoja(PROTECCION.modo.soloYo) }
 
+// Envoltorios para eliminarProteccionesFx()
+function eliminarProteccionesFxHdCPlus() { eliminarProteccionesFx(true) }
+function eliminarProteccionesFxTodas() { eliminarProteccionesFx(false) }
+
 /**
  * Protege las celdas que contienen fórmulas, tratando de agruparlas
  * en un número mínimo de intervalos (reglas de protección)
@@ -208,9 +212,10 @@ function protegerFxHoja(modoProteccion) {
 }
 
 /**
- * Eliminar todos los intervalos protegidos previamente por HdC+
+ * Eliminar todos los intervalos protegidos previamente por HdC+ (o todos los existentes) de la hoja activa
+ * @param {boolean} [soloHdCPlus]
  */
-function eliminarProteccionesFx() {
+function eliminarProteccionesFx(soloHdCPlus = true) {
 
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
@@ -220,8 +225,8 @@ function eliminarProteccionesFx() {
 
   hdc.toast('Buscando intervalos protegidos...', '👀 HdC+ dice:', -1);
   
-  const protecciones = SpreadsheetApp.getActiveSheet().getProtections(SpreadsheetApp.ProtectionType.RANGE)
-    .filter(regla => regla.getDescription().substring(0, PROTECCION.descripcion.length) == PROTECCION.descripcion)
+  let protecciones = SpreadsheetApp.getActiveSheet().getProtections(SpreadsheetApp.ProtectionType.RANGE);
+  if (soloHdCPlus) protecciones = protecciones.filter(regla => regla.getDescription().substring(0, PROTECCION.descripcion.length) == PROTECCION.descripcion);
   
   if (protecciones.length == 0) ui.alert('En esta hoja no hay intervalos protegidos creados por HdC+ que eliminar.', ui.ButtonSet.OK);
   else try {
