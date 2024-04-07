@@ -1,15 +1,15 @@
 // Envoltorios para funciones invocadas por menú mostrar hojas por color
 function mostrarHojasAzul() { conmutarHojasColor(COLORES_HOJAS.azul, true, false); }
 function mostrarHojasMorado() { conmutarHojasColor(COLORES_HOJAS.morado, true, false); }
-function mostrarHojasVerde() { conmutarHojasColor(COLORES_HOJAS.verde,true, false); }
-function mostrarHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja,true, false); }
+function mostrarHojasVerde() { conmutarHojasColor(COLORES_HOJAS.verde, true, false); }
+function mostrarHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja, true, false); }
 function mostrarHojasRojo() { conmutarHojasColor(COLORES_HOJAS.rojo, true, false); }
 
 // Envoltorios para funciones invocadas por menú mostrar solo hojas por color
 function mostrarSoloHojasAzul() { conmutarHojasColor(COLORES_HOJAS.azul, true, true); }
 function mostrarSoloHojasMorado() { conmutarHojasColor(COLORES_HOJAS.morado, true, true); }
-function mostrarSoloHojasVerde() { conmutarHojasColor(COLORES_HOJAS.verde,true, true); }
-function mostrarSoloHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja,true, true); }
+function mostrarSoloHojasVerde() { conmutarHojasColor(COLORES_HOJAS.verde, true, true); }
+function mostrarSoloHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja, true, true); }
 function mostrarSoloHojasRojo() { conmutarHojasColor(COLORES_HOJAS.rojo, true, true); }
 
 // Envoltorios para funciones invocadas por menú ocultar hojas por color
@@ -20,7 +20,7 @@ function ocultarHojasNaranja() { conmutarHojasColor(COLORES_HOJAS.naranja, false
 function ocultarHojasRojo() { conmutarHojasColor(COLORES_HOJAS.rojo, false, false); }
 
 // Envoltorios para funciones invocadas por menú eliminar hojas por color
-function eliminarHojasAzul() {eliminarHojasColor(COLORES_HOJAS.azul); }
+function eliminarHojasAzul() { eliminarHojasColor(COLORES_HOJAS.azul); }
 function eliminarHojasMorado() { eliminarHojasColor(COLORES_HOJAS.morado); }
 function eliminarHojasVerde() { eliminarHojasColor(COLORES_HOJAS.verde); }
 function eliminarHojasNaranja() { eliminarHojasColor(COLORES_HOJAS.naranja); }
@@ -48,7 +48,7 @@ function ordenarHojasServicio(ascendente = true) {
 
   const hojasPorOcultar = [];
   const hojaActual = hdc.getActiveSheet();
-  
+
   try {
 
     hojasOrdenadas.forEach((hoja, pos) => {
@@ -60,11 +60,11 @@ function ordenarHojasServicio(ascendente = true) {
     SpreadsheetApp.flush();
     // Sin esta pausa en ocasiones alguna hoja oculta queda visible
     Utilities.sleep(1000);
-    if (hojasPorOcultar.length > 0) hojasPorOcultar.forEach(hoja => hoja.hideSheet())
+    if (hojasPorOcultar.length > 0) hojasPorOcultar.forEach(hoja => hoja.hideSheet());
     hdc.setActiveSheet(hojaActual);
     SpreadsheetApp.flush();
     ui.alert(`Se han ordenado alfabéticamente ${hojasOrdenadas.length} hojas en sentido ${ascendente ? 'ascendente' : 'descendente'}.`, ui.ButtonSet.OK);
- 
+
   } catch (e) {
     ui.alert(`Se ha producido un error inesperado al ordenar las hojas, inténtalo de nuevo.
       
@@ -128,7 +128,7 @@ function conmutarHojasColor(color, visible, ocultarResto) {
   const colorHex = color.hex.toUpperCase().slice(1).padStart(9, '#FF');
   const ui = SpreadsheetApp.getUi();
   const hojas = SpreadsheetApp.getActiveSpreadsheet().getSheets();
-  
+
   // Se ignora ocultarResto en operaciones de ocultación de hojas de color
   ocultarResto = ocultarResto && visible;
 
@@ -140,11 +140,11 @@ function conmutarHojasColor(color, visible, ocultarResto) {
   // Identificar hojas a procesar y elementos auxiliares
   hojas.forEach(hoja => {
     if (!hoja.isSheetHidden()) numHojasVisibles++;
-    if (hoja.getTabColorObject().getColorType() == SpreadsheetApp.ColorType.RGB  && 
-        hoja.getTabColorObject().asRgbColor().asHexString().toUpperCase().slice(1).padStart(9, '#FF') == colorHex) {
-          numHojasColor++;
-          // XOR (^) para invertir resultado booleano de isSheetHidden() 
-          if (hoja.isSheetHidden() ^ !visible) hojasColorProcesar.push(hoja);
+    if (hoja.getTabColorObject().getColorType() == SpreadsheetApp.ColorType.RGB &&
+      hoja.getTabColorObject().asRgbColor().asHexString().toUpperCase().slice(1).padStart(9, '#FF') == colorHex) {
+      numHojasColor++;
+      // XOR (^) para invertir resultado booleano de isSheetHidden() 
+      if (hoja.isSheetHidden() ^ !visible) hojasColorProcesar.push(hoja);
     } else if (ocultarResto && !hoja.isSheetHidden()) otrasHojasOcultar.push(hoja);
   });
 
@@ -152,30 +152,30 @@ function conmutarHojasColor(color, visible, ocultarResto) {
   else if (numHojasColor == 0) ui.alert(`${color.icono} No hay hojas de color ${color.nombre}.`, ui.ButtonSet.OK);
   else if (hojasColorProcesar.length == 0 && otrasHojasOcultar.length == 0) ui.alert(`${color.icono} No hay hojas ${visible ? 'ocultas' : 'visibles'} de color ${color.nombre}.`, ui.ButtonSet.OK);
   else try {
-      
-      // Vector utilizado para construir el mensaje de estado al finalizar
-      let mensajeResultado = [];
 
-      // Ajustar visibilidad de hojas del color designado
-      if (hojasColorProcesar.length > 0) {
-          hojasColorProcesar.forEach(hoja => visible ? hoja.showSheet() : hoja.hideSheet());
-          mensajeResultado.push(`Se han ${visible ? 'hecho visibles' : 'ocultado'} ${hojasColorProcesar.length} hojas de color ${color.nombre}.`);
-      }
-            
-      // Ocultar en su caso el resto de hojas
-      if (otrasHojasOcultar.length > 0) {
-        otrasHojasOcultar.forEach(hoja => hoja.hideSheet());
-        mensajeResultado.push(`Se han ocultado ${otrasHojasOcultar.length} hojas de color distinto al ${color.nombre}.`);
-      }
+    // Vector utilizado para construir el mensaje de estado al finalizar
+    let mensajeResultado = [];
 
-      SpreadsheetApp.flush();
-      ui.alert(`${color.icono} ${mensajeResultado.join(' ')}`, ui.ButtonSet.OK);
+    // Ajustar visibilidad de hojas del color designado
+    if (hojasColorProcesar.length > 0) {
+      hojasColorProcesar.forEach(hoja => visible ? hoja.showSheet() : hoja.hideSheet());
+      mensajeResultado.push(`Se han ${visible ? 'hecho visibles' : 'ocultado'} ${hojasColorProcesar.length} hojas de color ${color.nombre}.`);
+    }
+
+    // Ocultar en su caso el resto de hojas
+    if (otrasHojasOcultar.length > 0) {
+      otrasHojasOcultar.forEach(hoja => hoja.hideSheet());
+      mensajeResultado.push(`Se han ocultado ${otrasHojasOcultar.length} hojas de color distinto al ${color.nombre}.`);
+    }
+
+    SpreadsheetApp.flush();
+    ui.alert(`${color.icono} ${mensajeResultado.join(' ')}`, ui.ButtonSet.OK);
 
   } catch (e) {
-      ui.alert(`Se ha producido un error inesperado al ajustar la visibilidad de las hojas, inténtalo de nuevo.
+    ui.alert(`Se ha producido un error inesperado al ajustar la visibilidad de las hojas, inténtalo de nuevo.
         
         ⚠️ ${e.message}`, ui.ButtonSet.OK);
-  }  
+  }
 
 }
 
@@ -199,12 +199,12 @@ function eliminarHojasColor(color) {
   // Identificar hojas a procesar y elementos auxiliares
   hdc.getSheets().forEach(hoja => {
     if (!hoja.isSheetHidden()) numHojasVisibles++;
-    if (hoja.getTabColorObject().getColorType() == SpreadsheetApp.ColorType.RGB  && 
-        hoja.getTabColorObject().asRgbColor().asHexString().toUpperCase().slice(1).padStart(9, '#FF') == colorHex) {
-          if (hoja.isSheetHidden()) numHojasColorOcultas++; 
-          else numHojasColorVisibles++;
-          hojasColorEliminar.push(hoja);
-        }
+    if (hoja.getTabColorObject().getColorType() == SpreadsheetApp.ColorType.RGB &&
+      hoja.getTabColorObject().asRgbColor().asHexString().toUpperCase().slice(1).padStart(9, '#FF') == colorHex) {
+      if (hoja.isSheetHidden()) numHojasColorOcultas++;
+      else numHojasColorVisibles++;
+      hojasColorEliminar.push(hoja);
+    }
   });
 
   if (hojasColorEliminar.length == 0) ui.alert(`${color.icono} No hay hojas de color ${color.nombre} que eliminar.`, ui.ButtonSet.OK);
@@ -221,13 +221,13 @@ function eliminarHojasColor(color) {
 
       Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasColorEliminar.forEach(hoja => hdc.deleteSheet(hoja));
-  
+
   } catch (e) {
     ui.alert(`Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
       
       ⚠️ ${e.message}`, ui.ButtonSet.OK);
-  }    
-   
+  }
+
 }
 
 /**
@@ -238,7 +238,7 @@ function eliminarHojasOcultas() {
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojasEliminar = hdc.getSheets().filter(hoja => hoja.isSheetHidden());
-  
+
   if (hojasEliminar.length == 0) ui.alert('No hay hojas ocultas que eliminar.', ui.ButtonSet.OK);
   else try {
     // Se usa try para fallar graciosamente cuando en un escenario de concurrencia se eliminan
@@ -252,8 +252,8 @@ function eliminarHojasOcultas() {
     ui.alert(`Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
       
       ⚠️ ${e.message}`, ui.ButtonSet.OK);
-  }    
-   
+  }
+
 }
 
 /**
@@ -264,7 +264,7 @@ function eliminarHojas() {
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const idHojaActual = hdc.getActiveSheet().getSheetId();
-  const hojasEliminar = hdc.getSheets().filter(hoja => hoja.getSheetId()!= idHojaActual);
+  const hojasEliminar = hdc.getSheets().filter(hoja => hoja.getSheetId() != idHojaActual);
 
   if (hojasEliminar.length == 0) ui.alert('No hay más hojas que puedan eliminarse.', ui.ButtonSet.OK);
   else try {
@@ -315,7 +315,7 @@ function mostrarHojas() {
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojasOcultas = hdc.getSheets().filter(hoja => hoja.isSheetHidden());
-  
+
   if (hojasOcultas.length == 0) ui.alert('No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
   else try {
     hojasOcultas.forEach(hoja => hoja.showSheet());
@@ -326,7 +326,7 @@ function mostrarHojas() {
       
       ⚠️ ${e.message}`, ui.ButtonSet.OK);
   }
-  
+
 }
 
 /**
@@ -337,7 +337,7 @@ function mostrarTodasMenosActual() {
   const ui = SpreadsheetApp.getUi();
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojaActual = SpreadsheetApp.getActiveSheet();
-  
+
   if (hdc.getSheets().length == 1) ui.alert('No es posible ocultar la única hoja existente.', ui.ButtonSet.OK);
   else {
     const hojasOcultas = SpreadsheetApp.getActiveSpreadsheet().getSheets().filter(hoja => hoja.isSheetHidden());
@@ -369,9 +369,9 @@ function conmutarVisibilidadHojas() {
   const hojasOcultas = hojas.filter(hoja => hoja.isSheetHidden());
   const hojasVisibles = hojas.filter(hoja => !hoja.isSheetHidden());
 
-  if (hojasVisibles.length == 1 && hojasOcultas.length == 0)  ui.alert('No es posible ocultar la única hoja existente.', ui.ButtonSet.OK);
-  if (hojasOcultas.length == 0)  ui.alert('No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
-  
+  if (hojasVisibles.length == 1 && hojasOcultas.length == 0) ui.alert('No es posible ocultar la única hoja existente.', ui.ButtonSet.OK);
+  if (hojasOcultas.length == 0) ui.alert('No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
+
   else try {
     hojasOcultas.forEach(hoja => hoja.showSheet());
     hojasVisibles.forEach(hoja => hoja.hideSheet());
