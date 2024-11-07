@@ -196,7 +196,7 @@ function DISTANCIA_EDICION_MINIMA(
  * diferenciar o no mayúsculas y minúsculas. Solo utiliza 3 vectores, en lugar de una matriz completa.
  * Basada en una ensoñación de ChatGPT (aunque no sin una muy larga y accidentada conversación previa).
  * 
- * Se trata de una función auxiliar privada invocada desde DISTANCIA_EDICION() y MENOR_DISTANCIA_EDICION()
+ * Se trata de una función auxiliar privada invocada desde DISTANCIA_EDICION() y DISTANCIA_EDICION_MINIMA()
  *
  * @param   {string}    c1                          La primera cadena de texto a comparar.
  * @param   {string}    c2                          La segunda cadena de texto a comparar.
