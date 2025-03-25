@@ -42,7 +42,7 @@ function ordenarHojasServicio(ascendente = true) {
   const collator = new Intl.Collator(hdc.getSpreadsheetLocale().split('_')[0], { numeric: true, sensitivity: 'base' });
 
   // Vector { hoja, nombre } para evitar múltiples llamadas a getName() en la función del sort().
-  hojasOrdenadas = hdc.getSheets()
+  const hojasOrdenadas = hdc.getSheets()
     .map(hoja => ({ objeto: hoja, nombre: hoja.getName() }))
     .sort((hoja1, hoja2) => Math.pow(-1, !ascendente) * collator.compare(hoja1.nombre, hoja2.nombre));
 
