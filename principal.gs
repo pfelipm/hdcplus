@@ -6,7 +6,7 @@
  * @OnlyCurrentDoc
  */
 
-const VERSION = 'Versión: 1.91 (abril 2025)';
+const VERSION = 'Versión: 2.0 (mayo 2026)';
 
 const ENCABEZADO_ALERTAS = 'HdC+';
 
@@ -143,12 +143,20 @@ function onOpen() {
       .addItem('Sustituir por hash SHA-512 (b64)', 'hashSHA512'))
     // Proteger celdas
     .addSubMenu(ui.createMenu('🔏 Proteger celdas con fórmulas')
-      .addItem('Proteger fx hoja (advertencia)', 'protegerFxHojaAdvertencia')
-      .addItem('Proteger fx hoja (solo tú)', 'protegerFxHojaSoloYo')
+      .addSubMenu(ui.createMenu('📄 Hoja actual')
+        .addItem('Proteger (advertencia)', 'protegerFxHojaAdvertencia')
+        .addItem('Proteger (solo tú)', 'protegerFxHojaSoloYo')
+        .addSeparator()
+        .addItem('Eliminar protecciones HdC+', 'eliminarProteccionesFxHdCPlus')
+        .addItem('Eliminar todas las protecciones', 'eliminarProteccionesFxTodas'))
+      .addSubMenu(ui.createMenu('📚 Todas las hojas')
+        .addItem('Proteger (advertencia)', 'protegerFxLibroAdvertencia')
+        .addItem('Proteger (solo tú)', 'protegerFxLibroSoloYo')
+        .addSeparator()
+        .addItem('Eliminar protecciones HdC+', 'eliminarProteccionesFxLibroHdCPlus')
+        .addItem('Eliminar todas las protecciones', 'eliminarProteccionesFxLibroTodas'))
       .addSeparator()
-      .addItem('Eliminar protecciones HdC+ de hoja', 'eliminarProteccionesFxHdCPlus')
-      .addSeparator()
-      .addItem('Eliminar todas las protecciones de hoja', 'eliminarProteccionesFxTodas'))
+      .addItem('🛡️ Seleccionar hojas...', 'abrirPanelProteccion'))
     .addSeparator()
     // Otros
     .addItem('⚙️ Forzar recálculo de fórmulas hoja', 'forzarRecalculo')

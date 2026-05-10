@@ -115,9 +115,8 @@ function ordenarHojasApi(ascendente = true) {
   }
 
 }
-
 /**
- * Desordena las hojas de un libro de cálculo de forma aleatoria
+ * Desordena las hojas de una hoja de cálculo de forma aleatoria
  * utilizando el servicio integrado de hojas de cálculo.
  * Mantiene el estado de visibilidad de las hojas y restaura la hoja activa.
  *

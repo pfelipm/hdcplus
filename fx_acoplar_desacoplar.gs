@@ -147,7 +147,7 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
 
   const intervaloDesacoplado = [];
 
-  // Recorramos el intervalo fila a fila
+  // Recorremos el intervalo fila a fila
 
   intervalo.forEach(fila => {
 
@@ -269,6 +269,9 @@ function DESACOPLAR(intervalo, encabezado, separador, forzarNum, columna, ...mas
  *
  * @customfunction
  *
+ * MODIFICADO 10/05/26:
+ *  - Optimización de rendimiento: se sustituye la doble pasada O(N²) por una agrupación basada en un objeto Map O(N).
+ * 
  * MODIFICADO 22/01/24:
  *  - Se controla la situación en la que no se devuelve ningún resultado (throw).
  * 
@@ -288,7 +291,7 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
   if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas';
   separador = separador || ', ';
   if (typeof separador != 'string') throw 'El separador no es del tipo correcto';
-  if (typeof permitirRepetidos != 'boolean') forzarNum = false;
+  if (typeof permitirRepetidos != 'boolean') permitirRepetidos = false;
   
   // Montar vector de columnas, truncar números no enteros, si los hay
   const columnas = (typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas])
@@ -317,15 +320,16 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
 
   const intervaloAcoplado = [];
 
-  // 1ª pasada: recorremos el intervalo fila a fila para identificar entidades (concatenación de columnas clave) únicas
+  // Recorremos el intervalo en una sola pasada para agrupar filas por su entidad clave única (O(N))
+  
+  const mapaEntidades = new Map();
 
-  const entidadesClave = new Set();
   intervalo.forEach(fila => {
   
     // No trataremos filas en blanco
     if (fila.some(celda => celda != '')) {
 
-      const clave = [];
+      const claveArr = [];
       // ⚠️ A la hora de diferenciar dos entidades únicas (filas) usando una serie de columnas clave:
       //    a) No basta con concatenar los valores de las columnas clave como cadenas y simplemente compararlas. Ejemplo:
       //       clave fila 1 → col1 = 'pablo' col2 = 'felip'     >> Clave compuesta: 'pablofelip'
@@ -335,58 +339,52 @@ function ACOPLAR(intervalo, encabezado, separador, permitirRepetidos, columna, .
       //       clave fila 1 → col1 = 'pablo/' col2 = 'felip'    >> Clave compuesta: 'pablo//felip' 
       //       clave fila 2 → col1 = 'pablo'  col2 = '/felip'   >> Clave compuesta: 'pablo//felip'
       //       ✖️ Misma clave compuesta, pero entidades diferentes
-      //    c) No es totalmente apropiado eliminar espacios antes y después de valores clave y unirlos usando un espacio delimitador (' '):
-      //       clave fila 1 → col1 = ' pablo' col2 = 'felip'    >> Clave compuesta: 'pablo felip'
-      //       clave fila 2 → col1 = 'pablo'  col2 = 'felip'    >> Clave compuesta: 'pablo felip'
-      //       ✖️ Misma clave compuesta, pero entidades estrictamente diferentes (a menos que espacios anteriores y posteriores no importen)
-      // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformadas en cadenas JSON.
-      for (const col of colSet) clave.push(String(fila[col]))
-      entidadesClave.add(JSON.stringify(clave));
+      // 💡 En su lugar, se genera un vector con valores de columnas clave y se comparan sus versiones transformadas en cadenas JSON.
+      for (const col of colSet) claveArr.push(String(fila[col]));
+      const clave = JSON.stringify(claveArr);
+
+      if (!mapaEntidades.has(clave)) {
+        mapaEntidades.set(clave, []);
+      }
+      mapaEntidades.get(clave).push(fila);
     
     }
 
   });
 
-  // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
+  // Procesamos cada grupo de filas acumuladas para cada clave única
 
-  for (const clave of entidadesClave) {
-
-    const filasEntidad = intervalo.filter(fila => {
-
-      const claveActual = [];
-      for (const col of colSet) claveActual.push(String(fila[col]));
-      return clave == JSON.stringify(claveActual);
-
-    });
+  mapaEntidades.forEach((filasEntidad, clave) => {
 
     // Acoplar todas las filas de cada entidad, concatenando valores en columnas no-clave con separador indicado
 
-    const filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
+    const filaAcoplada = [...filasEntidad[0]];  // Se toma la 1ª fila del grupo como base (copia para evitar mutar original)
     
     // Para identificar los valores a consolidar usaremos un array si se admiten duplicados o un conjunto en caso contrario
-    const noClaveSets = [...Array(colNoClaveSet.size)].map(fila => permitirRepetidos ? [] : new Set());
+    const noClaveStorage = [...Array(colNoClaveSet.size)].map(() => permitirRepetidos ? [] : new Set());
     
     filasEntidad.forEach(fila => {
 
-      let conjunto = 0;
+      let i = 0;
       for (const col of colNoClaveSet) {
-        if (permitirRepetidos) noClaveSets[conjunto++].push(String(fila[col]));
-        else noClaveSets[conjunto++].add(String(fila[col]));
+        const valor = String(fila[col]);
+        if (permitirRepetidos) noClaveStorage[i++].push(valor);
+        else noClaveStorage[i++].add(valor);
       }
 
     });
 
-    // Set >> Vector >> Cadena única con separador
+    // Unir los valores acumulados en cada columna no-clave usando el separador indicado
 
-    let conjunto = 0;
+    let i = 0;
     for (const col of colNoClaveSet) {
-      if (permitirRepetidos) filaAcoplada[col] = noClaveSets[conjunto++].join(separador);
-      else filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);
+      if (permitirRepetidos) filaAcoplada[col] = noClaveStorage[i++].join(separador);
+      else filaAcoplada[col] = [...noClaveStorage[i++]].join(separador);
     }
 
     intervaloAcoplado.push(filaAcoplada);
 
-  }
+  });
 
   // Excepción si no hay nada que mostrar
   if (
