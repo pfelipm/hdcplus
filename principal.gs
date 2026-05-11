@@ -180,8 +180,7 @@ function acercaDe() {
   // Presentación del complemento
   var panel = HtmlService.createTemplateFromFile('acercaDe');
   panel.version = VERSION;
-  SpreadsheetApp.getUi().showModalDialog(panel.evaluate().setWidth(420).setHeight(350), '💡 ¿Qué es HdC+?');
-}
+  SpreadsheetApp.getUi().showModalDialog(panel.evaluate().setWidth(420).setHeight(600), '💡 ¿Qué es HdC+?');}
 
 
 // Comandos de menú de apertura de sitios externos
