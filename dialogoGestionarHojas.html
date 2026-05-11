@@ -64,7 +64,7 @@
       
       /* Footer de Acciones */
       .footer { padding: 10px 20px; border-top: 1px solid #e0e0e0; background: #f5f5f5; display: flex; align-items: center; justify-content: space-between; }
-      .action-btns { display: flex; gap: 8px; }
+      .action-btns { display: flex; gap: 15px; align-items: center; }
       .btn-flat-small { height: 32px; line-height: 32px; padding: 0 10px; text-transform: none; font-size: 12px; }
       .btn-small { height: 32px; line-height: 32px; text-transform: none; font-size: 12px; }
       
@@ -102,6 +102,11 @@
       .modal-custom .modal-content { padding: 20px !important; }
       .modal-custom h6 { font-weight: bold; margin-bottom: 15px; }
       .modal-custom p { font-size: 13px; color: #616161; margin-bottom: 20px; }
+
+      /* Switch Modo Live */
+      .switch label { font-size: 12px; font-weight: 500; color: #616161; }
+      .switch label input[type=checkbox]:checked + .lever { background-color: #bbdefb; }
+      .switch label input[type=checkbox]:checked + .lever:after { background-color: #2196F3; }
     </style>
   </head>
   <body>
@@ -165,6 +170,15 @@
           <button class="btn-flat btn-flat-small dropdown-trigger grey-text text-darken-2" data-target="dropdown-acciones">
             Acciones <i class="material-icons right">arrow_drop_down</i>
           </button>
+          
+          <div class="switch" title="Sincronizar cambios instantáneamente sin guardar">
+            <label>
+              Modo Live
+              <input type="checkbox" id="switch-live" onchange="toggleModoLive()">
+              <span class="lever"></span>
+            </label>
+          </div>
+
           <!-- Dropdown Structure -->
           <ul id="dropdown-acciones" class="dropdown-content">
             <li><a href="#" onclick="accionMasiva('mostrar')"><i class="material-icons">visibility</i>Mostrar</a></li>
@@ -182,7 +196,7 @@
         
         <div style="display: flex; gap: 10px;">
           <button class="btn-flat btn-flat-small" onclick="google.script.host.close()">Cancelar</button>
-          <button class="btn blue btn-small" onclick="guardarTodo()">
+          <button id="btn-guardar" class="btn blue btn-small" onclick="guardarTodo()">
             <i class="material-icons left">save</i>Guardar Cambios
           </button>
         </div>
@@ -247,6 +261,7 @@
       let grupos = {};
       let filtroActual = null;
       let sortable = null;
+      let modoLive = false;
 
       const COLORES_PREDEF = [
         { hex: '#FFFFFF', nombre: 'Sin color' },
@@ -327,7 +342,6 @@
           const li = document.createElement('li');
           li.className = 'group-item';
           li.onclick = (e) => {
-            // Evitar filtrar si se hace clic en la papelera
             if (e.target.classList.contains('delete-group')) return;
             filtrarGrupo(g, li);
           };
@@ -357,7 +371,8 @@
           if (h.grupo === nombre) h.grupo = '';
         });
         obtenerGrupos();
-        M.toast({html: `Grupo "${nombre}" eliminado localmente`});
+        if (modoLive) syncAuto();
+        else M.toast({html: `Grupo "${nombre}" eliminado localmente`});
       }
 
       function renderList() {
@@ -410,12 +425,29 @@
         });
       }
 
+      function reordenarMemoria() {
+        const newOrderIds = Array.from(document.querySelectorAll('.sheet-row')).map(r => parseInt(r.dataset.id));
+        if (newOrderIds.length === 0) return;
+
+        const newMeta = [];
+        newOrderIds.forEach(id => {
+          const item = hojasMeta.find(h => h.id === id);
+          if (item) newMeta.push(item);
+        });
+        
+        hojasMeta.forEach(h => {
+          if (!newOrderIds.includes(h.id)) newMeta.push(h);
+        });
+        hojasMeta = newMeta;
+        
+        if (modoLive) syncAuto();
+      }
+
       function activarHoja(id) {
         toggleLoading(true);
         google.script.run
           .withSuccessHandler(res => {
             M.toast({html: res});
-            // Marcar como activa localmente y refrescar visualmente
             hojasMeta.forEach(h => h.activa = (h.id == id));
             renderList();
             toggleLoading(false);
@@ -435,6 +467,13 @@
       function actualizarFiltros() {
         const input = document.getElementById('search-input');
         document.getElementById('btn-clear-search').style.display = input.value ? 'block' : 'none';
+        renderList();
+      }
+
+      function filtrarGrupo(grupo, element) {
+        filtroActual = grupo;
+        document.querySelectorAll('.group-item').forEach(li => li.classList.remove('active'));
+        element.classList.add('active');
         renderList();
       }
 
@@ -519,6 +558,7 @@
           });
         }
         renderList();
+        if (modoLive) syncAuto();
       }
 
       function abrirModalColor() {
@@ -528,11 +568,16 @@
 
       function aplicarColorMasivo(hex) {
         const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length === 0) {
+          M.toast({html: '⚠️ Selecciona pestañas primero'});
+          return;
+        }
         hojasMeta.forEach(h => {
           if (seleccionadas.includes(h.id)) h.color = hex;
         });
         M.Modal.getInstance(document.getElementById('modal-color')).close();
         renderList();
+        if (modoLive) syncAuto();
       }
 
       function abrirModalGrupo() {
@@ -541,10 +586,8 @@
           M.toast({html: '⚠️ Selecciona al menos una pestaña'});
           return;
         }
-        
         const select = document.getElementById('select-grupo-asignar');
         while(select.options.length > 2) select.remove(2);
-        
         const groupSet = new Set();
         hojasMeta.forEach(h => { if(h.grupo) groupSet.add(h.grupo); });
         groupSet.forEach(g => {
@@ -553,7 +596,6 @@
           opt.textContent = g;
           select.appendChild(opt);
         });
-        
         const inst = M.Modal.getInstance(document.getElementById('modal-grupo'));
         M.FormSelect.init(select);
         inst.open();
@@ -571,7 +613,6 @@
           M.toast({html: '⚠️ Introduce un nombre para el grupo'});
           return;
         }
-        
         const seleccionadas = getSeleccionadas();
         if (seleccionadas.length > 0) {
           hojasMeta.forEach(h => {
@@ -579,6 +620,7 @@
           });
           M.Modal.getInstance(document.getElementById('modal-nuevo-grupo')).close();
           obtenerGrupos();
+          if (modoLive) syncAuto();
         } else {
           M.toast({html: '⚠️ Selecciona hojas para crear el grupo con ellas'});
         }
@@ -587,19 +629,26 @@
       function confirmarAsignarGrupo() {
         const val = document.getElementById('select-grupo-asignar').value;
         const seleccionadas = getSeleccionadas();
-        
         hojasMeta.forEach(h => {
-          if (seleccionadas.includes(h.id)) {
-            h.grupo = (val === '_ninguno' ? '' : val);
-          }
+          if (seleccionadas.includes(h.id)) h.grupo = (val === '_ninguno' ? '' : val);
         });
-        
         M.Modal.getInstance(document.getElementById('modal-grupo')).close();
         obtenerGrupos();
+        if (modoLive) syncAuto();
       }
 
-      function guardarTodo() {
-        toggleLoading(true);
+      function toggleModoLive() {
+        modoLive = document.getElementById('switch-live').checked;
+        document.getElementById('btn-guardar').disabled = modoLive;
+        if (modoLive) {
+          M.toast({html: '⚡ Modo Live activado'});
+          syncAuto();
+        }
+      }
+
+      function syncAuto() {
+        if (!modoLive) return;
+        
         const cambios = {
           hojas: hojasMeta.map(h => ({ id: h.id, oculta: h.oculta, color: h.color })),
           ordenIds: hojasMeta.map(h => h.id),
@@ -613,6 +662,31 @@
           }
         });
 
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            toggleLoading(false);
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error Sinc: ' + err.message});
+            toggleLoading(false);
+          })
+          .aplicarCambiosConsola(cambios);
+      }
+
+      function guardarTodo() {
+        toggleLoading(true);
+        const cambios = {
+          hojas: hojasMeta.map(h => ({ id: h.id, oculta: h.oculta, color: h.color })),
+          ordenIds: hojasMeta.map(h => h.id),
+          grupos: {}
+        };
+        hojasMeta.forEach(h => {
+          if (h.grupo) {
+            if (!cambios.grupos[h.grupo]) cambios.grupos[h.grupo] = [];
+            cambios.grupos[h.grupo].push(h.id);
+          }
+        });
         google.script.run
           .withSuccessHandler(res => {
             M.toast({html: res});
