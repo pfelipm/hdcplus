@@ -37,18 +37,18 @@
       .sheet-area { flex: 1; display: flex; flex-direction: column; background: white; }
       .controls { padding: 10px 15px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px; background: #fafafa; }
       .search-wrapper { flex: 1; position: relative; }
-      .search-wrapper i { position: absolute; left: 10px; top: 8px; color: #9e9e9e; }
-      .search-wrapper .clear-search { position: absolute; right: 10px; top: 8px; color: #9e9e9e; cursor: pointer; display: none; }
+      .search-wrapper i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #9e9e9e; pointer-events: none; }
+      .search-wrapper .clear-search { position: absolute; right: 10px; left: auto; top: 50%; transform: translateY(-50%); color: #9e9e9e; cursor: pointer; display: none; pointer-events: auto; }
       .search-wrapper .clear-search:hover { color: #ef5350; }
-      .search-wrapper input { margin: 0 !important; padding: 0 35px !important; height: 32px !important; border: 1px solid #ddd !important; border-radius: 20px !important; background: white !important; width: 100% !important; box-sizing: border-box !important; }
+      .search-wrapper input { margin: 0 !important; padding: 0 35px !important; height: 32px !important; border: 1px solid #ddd !important; border-radius: 20px !important; background: white !important; width: 100% !important; box-sizing: border-box !important; line-height: 32px !important; }
       
       .sheet-list-container { flex: 1; overflow-y: auto; padding: 0; }
       #sheet-list { margin: 0; padding: 0; }
-      .sheet-row { display: flex; align-items: center; padding: 8px 15px; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; cursor: default; }
+      .sheet-row { display: flex; align-items: center; padding: 8px 15px; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; cursor: default; height: 40px; box-sizing: border-box; }
       .sheet-row:hover { background: #f9f9f9; }
       .sheet-row.ghost { opacity: 0.4; background: #e3f2fd; }
       .drag-handle { cursor: grab; color: #ccc; margin-right: 10px; }
-      .sheet-checkbox { margin-right: 15px !important; height: 18px; display: flex; align-items: center; }
+      .sheet-checkbox { margin-right: 15px !important; height: 18px; display: flex; align-items: center; transform: translateY(-2px); }
       .sheet-checkbox input[type="checkbox"] + span { height: 18px; padding-left: 20px; line-height: 18px; }
       
       .btn-activate { color: #bdbdbd; cursor: pointer; margin-right: 10px; transition: color 0.2s; visibility: hidden; }
