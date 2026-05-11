@@ -34,6 +34,16 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
     - Estilo mixto de progreso: spinner circular para carga de datos y barra horizontal para ejecución de acciones.
     - Listado dinámico con indicadores visuales para hojas ocultas y hoja activa, con botón de recarga rápida y controles de selección masiva.
 
-### A estudiar
-- Migración de las funciones de gestión de hojas (ordenación, visibilidad masiva) en `hojas.gs` a la API avanzada de Google Sheets (`batchUpdate`) para lograr un rendimiento instantáneo, evaluando la necesidad de ampliar los alcances (scopes) de OAuth.
-- Uso de la API avanzada para detectar programáticamente las pestañas seleccionadas por el usuario en la interfaz de Sheets, permitiendo acciones rápidas de protección/desprotección sin necesidad de selección manual en el panel lateral.
+- **hojas.gs**:
+    - Implementación de la infraestructura de backend para la "Consola de Pestañas" (Gestión avanzada).
+    - Gestión de persistencia de grupos de hojas mediante `PropertiesService`.
+    - Funciones de obtención de metadatos detallados (ID, color, visibilidad, grupo) para todas las pestañas.
+    - Lógica de aplicación de cambios masivos (orden, visibilidad, color, grupos) optimizada.
+- **principal.gs**:
+    - Incorporación del comando "📁 Gestionar hojas..." al submenú de gestión de hojas.
+- **dialogoGestionarHojas.html**:
+    - Nueva interfaz avanzada para la administración centralizada de pestañas.
+    - Soporte para reordenación mediante arrastrar y soltar (Drag & Drop) utilizando SortableJS.
+    - Sistema de creación y filtrado por grupos personalizados.
+    - Buscador en tiempo real y filtros de visibilidad/grupo.
+    - Acciones masivas integradas: cambio de color, visibilidad, asignación a grupos y eliminación.

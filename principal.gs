@@ -79,6 +79,8 @@ function onOpen() {
       .addItem('Transponer (destructivo)', 'transponer'))
     // Manipular hojas
     .addSubMenu(ui.createMenu('📋 Gestionar hojas')
+      .addItem('📁 Gestionar hojas...', 'abrirConsolaPestañas')
+      .addSeparator()
       .addItem('Ordenar hojas (A → Z)', 'ordenarHojasAsc')
       .addItem('Ordenar hojas (Z → A)', 'ordenarHojasDesc')
       .addItem('Desordenar hojas', 'desordenarHojas')

@@ -434,7 +434,7 @@ function conmutarVisibilidadHojas() {
   const hojasVisibles = hojas.filter(hoja => !hoja.isSheetHidden());
 
   if (hojasVisibles.length == 1 && hojasOcultas.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No es posible ocultar la única hoja existente.', ui.ButtonSet.OK);
-  if (hojasOcultas.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
+  else if (hojasOcultas.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
 
   else try {
     hojasOcultas.forEach(hoja => hoja.showSheet());
@@ -447,4 +447,239 @@ function conmutarVisibilidadHojas() {
       ⚠️ ${e.message}`, ui.ButtonSet.OK);
   }
 
+}
+
+// --- FUNCIONES PARA LA CONSOLA DE PESTAÑAS (GESTIÓN AVANZADA) ---
+
+/**
+ * Abre el diálogo de gestión avanzada de hojas
+ */
+function abrirConsolaPestañas() {
+  const html = HtmlService.createTemplateFromFile('dialogoGestionarHojas')
+    .evaluate()
+    .setWidth(750)
+    .setHeight(600)
+    .setTitle('📁 Consola de Pestañas | HdC+');
+  SpreadsheetApp.getUi().showModalDialog(html, ' ');
+}
+
+/**
+ * Obtiene metadatos de todas las hojas incluyendo su pertenencia a grupos
+ */
+function getHojasMetaData() {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const grupos = JSON.parse(PropertiesService.getDocumentProperties().getProperty('HDC_GRUPOS_HOJAS') || '{}');
+  
+  // Mapeo inverso de ID de hoja a nombre de grupo
+  const idAGrupo = {};
+  for (const nombreGrupo in grupos) {
+    grupos[nombreGrupo].forEach(id => idAGrupo[id] = nombreGrupo);
+  }
+
+  return hojas.map(h => {
+    const id = h.getSheetId();
+    let color = '#FFFFFF';
+    const colorObj = h.getTabColorObject();
+    if (colorObj.getColorType() === SpreadsheetApp.ColorType.RGB) {
+      color = colorObj.asRgbColor().asHexString();
+    }
+    
+    return {
+      id: id,
+      nombre: h.getName(),
+      oculta: h.isSheetHidden(),
+      color: color,
+      grupo: idAGrupo[id] || '',
+      activa: h.getName() === hdc.getActiveSheet().getName()
+    };
+  });
+}
+
+/**
+ * Guarda la configuración de grupos
+ * @param {Object} grupos { "NombreGrupo": [id1, id2], ... }
+ */
+function guardarGruposHojas(grupos) {
+  PropertiesService.getDocumentProperties().setProperty('HDC_GRUPOS_HOJAS', JSON.stringify(grupos));
+  return "✅ Grupos guardados correctamente.";
+}
+
+/**
+ * Aplica cambios masivos desde la consola (visibilidad, color, grupos, orden)
+ */
+function aplicarCambiosConsola(cambios) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojasMap = hdc.getSheets().reduce((acc, h) => { acc[h.getSheetId()] = h; return acc; }, {});
+  
+  // 1. Aplicar visibilidad y color
+  if (cambios.hojas) {
+    cambios.hojas.forEach(c => {
+      const hoja = hojasMap[c.id];
+      if (hoja) {
+        if (c.oculta !== undefined) c.oculta ? hoja.hideSheet() : hoja.showSheet();
+        if (c.color !== undefined) hoja.setTabColor(c.color === '#FFFFFF' ? null : c.color);
+      }
+    });
+  }
+
+  // 2. Aplicar orden (si se proporciona)
+  if (cambios.ordenIds && cambios.ordenIds.length > 0) {
+    const hojaActual = hdc.getActiveSheet();
+    cambios.ordenIds.forEach((id, pos) => {
+      const hoja = hojasMap[id];
+      if (hoja) {
+        hdc.setActiveSheet(hoja);
+        hdc.moveActiveSheet(pos + 1);
+      }
+    });
+    hdc.setActiveSheet(hojaActual);
+  }
+
+  // 3. Guardar grupos
+  if (cambios.grupos) guardarGruposHojas(cambios.grupos);
+
+  SpreadsheetApp.flush();
+  return "✅ Cambios aplicados con éxito.";
+}
+
+/**
+ * Elimina las hojas seleccionadas por ID
+ */
+function eliminarHojasPorId(ids) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const aEliminar = hojas.filter(h => ids.includes(h.getSheetId()));
+  
+  if (aEliminar.length >= hojas.length) {
+    throw new Error("No puedes eliminar todas las hojas del documento.");
+  }
+  
+  aEliminar.forEach(h => hdc.deleteSheet(h));
+  return `✅ Se han eliminado ${aEliminar.length} hojas.`;
+}
+
+/**
+ * --- CONSOLA AVANZADA DE GESTIÓN DE HOJAS ---
+ */
+
+/**
+ * Abre el diálogo modal de gestión avanzada de hojas
+ */
+function abrirConsolaHojas() {
+  const html = HtmlService.createTemplateFromFile('dialogoGestionarHojas')
+    .evaluate()
+    .setWidth(850)
+    .setHeight(600)
+    .setTitle('🛡️ Gestión Avanzada de Hojas');
+  SpreadsheetApp.getUi().showModalDialog(html, ' ');
+}
+
+/**
+ * Obtiene los metadatos de todas las hojas y los grupos guardados
+ * @return {Object} { hojas: [], grupos: {} }
+ */
+function getConsolaHojasData() {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const propiedades = PropertiesService.getDocumentProperties();
+  let grupos = {};
+  
+  try {
+    const gruposGuardados = propiedades.getProperty('HDCP_GRUPOS_HOJAS');
+    if (gruposGuardados) grupos = JSON.parse(gruposGuardados);
+  } catch (e) {
+    console.error('Error al leer grupos:', e);
+  }
+
+  const hojasData = hojas.map(h => {
+    let color = null;
+    const colorObj = h.getTabColorObject();
+    if (colorObj.getColorType() === SpreadsheetApp.ColorType.RGB) {
+      color = colorObj.asRgbColor().asHexString().toUpperCase();
+    }
+    
+    return {
+      nombre: h.getName(),
+      id: h.getSheetId(),
+      color: color,
+      oculta: h.isSheetHidden(),
+      activa: h.getName() === hdc.getActiveSheet().getName()
+    };
+  });
+
+  // Limpiar grupos de IDs que ya no existen
+  const idsExistentes = new Set(hojasData.map(h => h.id));
+  let huboLimpieza = false;
+  
+  for (const grupo in grupos) {
+    const filtrados = grupos[grupo].filter(id => idsExistentes.has(id));
+    if (filtrados.length !== grupos[grupo].length) {
+      grupos[grupo] = filtrados;
+      huboLimpieza = true;
+    }
+  }
+  
+  if (huboLimpieza) propiedades.setProperty('HDCP_GRUPOS_HOJAS', JSON.stringify(grupos));
+
+  return {
+    hojas: hojasData,
+    grupos: grupos
+  };
+}
+
+/**
+ * Guarda la configuración de grupos en las propiedades del documento
+ */
+function saveGruposConsola(grupos) {
+  PropertiesService.getDocumentProperties().setProperty('HDCP_GRUPOS_HOJAS', JSON.stringify(grupos));
+  return "Grupos guardados correctamente.";
+}
+
+/**
+ * Ejecuta acciones masivas (mostrar, ocultar, eliminar) sobre una lista de IDs
+ */
+function ejecutarAccionConsola(accion, idsHojas) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const idsSet = new Set(idsHojas);
+  let procesadas = 0;
+
+  hojas.forEach(h => {
+    if (idsSet.has(h.getSheetId())) {
+      try {
+        switch(accion) {
+          case 'mostrar': h.showSheet(); break;
+          case 'ocultar': if (hdc.getSheets().filter(s => !s.isSheetHidden()).length > 1) h.hideSheet(); break;
+          case 'eliminar': if (hdc.getSheets().length > 1) hdc.deleteSheet(h); break;
+        }
+        procesadas++;
+      } catch (e) {
+        console.error(`Error al procesar hoja ${h.getName()}: `, e);
+      }
+    }
+  });
+
+  return `Acción ${accion} completada en ${procesadas} hojas.`;
+}
+
+/**
+ * Reordena las hojas según el array de IDs proporcionado (se usa moveActiveSheet)
+ * Optimizado para minimizar activaciones.
+ */
+function reordenarHojasConsola(idsOrdenados) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojaOriginal = hdc.getActiveSheet();
+  
+  idsOrdenados.forEach((id, index) => {
+    const hojas = hdc.getSheets();
+    const h = hojas.find(s => s.getSheetId() == id);
+    if (h) {
+      hdc.setActiveSheet(h);
+      hdc.moveActiveSheet(index + 1);
+    }
+  });
+  
+  hdc.setActiveSheet(hojaOriginal);
+  return "Hojas reordenadas con éxito.";
 }
