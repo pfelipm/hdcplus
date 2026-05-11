@@ -18,9 +18,20 @@
       .group-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; transition: background 0.2s; }
       .group-item:hover { background: #eeeeee; }
       .group-item.active { background: #bbdefb; border-left: 4px solid #1976d2; }
-      .group-item i { font-size: 18px; margin-right: 8px; color: #757575; }
+      .group-item i { font-size: 18px; margin-right: 8px; }
+      .group-item .delete-group { margin-left: auto; color: #bdbdbd; font-size: 16px; display: none; }
+      .group-item:hover .delete-group { display: block; }
+      .group-item .delete-group:hover { color: #ef5350; }
+      
       .group-divider { height: 1px; background: #e0e0e0; margin: 5px 0; }
       .group-header { padding: 12px 12px 4px; font-size: 10px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
+      
+      /* Colores de iconos de sistema */
+      .icon-all { color: #2196F3; }
+      .icon-visible { color: #4CAF50; }
+      .icon-hidden { color: #FF9800; }
+      .icon-none { color: #9E9E9E; }
+      .icon-user { color: #7986CB; }
       
       /* Lista de Hojas */
       .sheet-area { flex: 1; display: flex; flex-direction: column; background: white; }
@@ -101,16 +112,16 @@
           </div>
           <ul class="group-list" id="group-list">
             <li class="group-item active" onclick="filtrarGrupo(null, this)">
-              <i class="material-icons">all_inclusive</i> Todas
+              <i class="material-icons icon-all">all_inclusive</i> Todas
             </li>
             <li class="group-item" onclick="filtrarGrupo('_visibles', this)">
-              <i class="material-icons">visibility</i> Visibles
+              <i class="material-icons icon-visible">visibility</i> Visibles
             </li>
             <li class="group-item" onclick="filtrarGrupo('_ocultas', this)">
-              <i class="material-icons">visibility_off</i> Ocultas
+              <i class="material-icons icon-hidden">visibility_off</i> Ocultas
             </li>
             <li class="group-item" onclick="filtrarGrupo('_sin_grupo', this)">
-              <i class="material-icons">label_off</i> Sin grupo
+              <i class="material-icons icon-none">label_off</i> Sin grupo
             </li>
           </ul>
         </div>
@@ -281,14 +292,38 @@
         groupSet.forEach(g => {
           const li = document.createElement('li');
           li.className = 'group-item';
-          li.onclick = (e) => filtrarGrupo(g, li);
-          li.innerHTML = `<i class="material-icons">folder</i> ${g}`;
+          li.onclick = (e) => {
+            // Evitar filtrar si se hace clic en la papelera
+            if (e.target.classList.contains('delete-group')) return;
+            filtrarGrupo(g, li);
+          };
+          li.innerHTML = `
+            <i class="material-icons icon-user">folder</i> 
+            <span>${g}</span>
+            <i class="material-icons delete-group" title="Eliminar grupo" onclick="solicitarEliminarGrupo('${g}')">delete</i>
+          `;
           list.appendChild(li);
         });
         
         renderList();
         toggleLoading(false);
         updateStatus();
+      }
+
+      function solicitarEliminarGrupo(nombre) {
+        abrirConfirmacion(
+          '¿Eliminar grupo?',
+          `¿Deseas eliminar el grupo "${nombre}"? Las pestañas asociadas no se eliminarán, solo se les quitará la etiqueta de grupo.`,
+          () => ejecutarEliminarGrupo(nombre)
+        );
+      }
+
+      function ejecutarEliminarGrupo(nombre) {
+        hojasMeta.forEach(h => {
+          if (h.grupo === nombre) h.grupo = '';
+        });
+        obtenerGrupos();
+        M.toast({html: `Grupo "${nombre}" eliminado localmente`});
       }
 
       function renderList() {
