@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-      body { padding: 0; margin: 0; overflow: hidden; font-size: 13px; }
+      body { padding: 0; margin: 0; overflow: hidden; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
       .main-container { display: flex; height: 100vh; flex-direction: column; }
       .header { padding: 10px 20px; background: #2196F3; color: white; display: flex; align-items: center; justify-content: space-between; }
       .header h5 { margin: 0; font-size: 1.2rem; }
@@ -49,10 +49,36 @@
       
       #progress-bar { position: absolute; top: 0; left: 0; width: 100%; margin: 0; display: none; }
       
+      /* Dropdown estilización */
+      .dropdown-content { min-width: 180px !important; }
+      .dropdown-content li { min-height: 40px !important; }
+      .dropdown-content li > a, .dropdown-content li > span { 
+        font-size: 13px !important; 
+        color: #424242 !important; 
+        padding: 10px 16px !important; 
+        display: flex !important; 
+        align-items: center !important;
+        line-height: 1 !important;
+      }
+      .dropdown-content li > a > i { 
+        margin: 0 12px 0 0 !important; 
+        font-size: 20px !important;
+        float: none !important;
+        width: auto !important;
+        height: auto !important;
+        line-height: inherit !important;
+      }
+
       /* Estilos para el selector de color */
       .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 10px; }
       .color-opt { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.1s; }
       .color-opt:hover { transform: scale(1.2); }
+
+      /* Modales personalizados */
+      .modal-custom { max-width: 350px !important; border-radius: 8px !important; }
+      .modal-custom .modal-content { padding: 20px !important; }
+      .modal-custom h6 { font-weight: bold; margin-bottom: 15px; }
+      .modal-custom p { font-size: 13px; color: #616161; margin-bottom: 20px; }
     </style>
   </head>
   <body>
@@ -69,7 +95,7 @@
         <div class="sidebar">
           <div class="sidebar-title">
             <span>Grupos</span>
-            <a href="#" onclick="nuevoGrupo()" title="Nuevo Grupo"><i class="material-icons tiny">add</i></a>
+            <a href="#" onclick="abrirModalNuevoGrupo()" title="Nuevo Grupo"><i class="material-icons tiny">add</i></a>
           </div>
           <ul class="group-list" id="group-list">
             <li class="group-item active" onclick="filtrarGrupo(null, this)">
@@ -122,7 +148,7 @@
             <li><a href="#" onclick="abrirModalColor()"><i class="material-icons">palette</i>Cambiar color</a></li>
             <li><a href="#" onclick="abrirModalGrupo()"><i class="material-icons">label</i>Asignar grupo</a></li>
             <li class="divider"></li>
-            <li><a href="#" onclick="accionMasiva('eliminar')" class="red-text"><i class="material-icons red-text">delete</i>Eliminar</a></li>
+            <li><a href="#" onclick="solicitarConfirmacionEliminar()" class="red-text"><i class="material-icons red-text">delete</i>Eliminar</a></li>
           </ul>
         </div>
         
@@ -136,18 +162,18 @@
     </div>
 
     <!-- Modales -->
-    <div id="modal-color" class="modal" style="max-width: 250px;">
-      <div class="modal-content" style="padding: 15px;">
-        <h6 style="margin-top: 0;">Seleccionar color</h6>
+    <div id="modal-color" class="modal modal-custom" style="max-width: 250px !important;">
+      <div class="modal-content">
+        <h6>Seleccionar color</h6>
         <div class="color-grid" id="color-grid">
           <!-- Dinámico -->
         </div>
       </div>
     </div>
 
-    <div id="modal-grupo" class="modal" style="max-width: 300px;">
-      <div class="modal-content" style="padding: 15px;">
-        <h6 style="margin-top: 0;">Asignar a grupo</h6>
+    <div id="modal-grupo" class="modal modal-custom">
+      <div class="modal-content">
+        <h6>Asignar a grupo</h6>
         <div class="input-field" style="margin-top: 20px;">
           <select id="select-grupo-asignar">
             <option value="" disabled selected>Elegir grupo...</option>
@@ -158,6 +184,30 @@
       <div class="modal-footer">
         <button class="modal-close btn-flat">Cerrar</button>
         <button class="btn blue btn-small" onclick="confirmarAsignarGrupo()">Asignar</button>
+      </div>
+    </div>
+
+    <div id="modal-confirm" class="modal modal-custom">
+      <div class="modal-content">
+        <h6 id="confirm-title">Confirmar acción</h6>
+        <p id="confirm-body"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cancelar</button>
+        <button id="btn-confirm-ok" class="btn blue btn-small">Aceptar</button>
+      </div>
+    </div>
+
+    <div id="modal-nuevo-grupo" class="modal modal-custom">
+      <div class="modal-content">
+        <h6>Crear nuevo grupo</h6>
+        <div class="input-field">
+          <input type="text" id="input-nuevo-grupo" placeholder="Nombre del grupo">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cancelar</button>
+        <button class="btn blue btn-small" onclick="confirmarNuevoGrupo()">Crear</button>
       </div>
     </div>
 
@@ -195,24 +245,21 @@
         toggleLoading(true);
         google.script.run
           .withSuccessHandler(res => {
-            hojasMeta = res; // El servidor ya devuelve el array directamente
+            hojasMeta = res;
             obtenerGrupos();
           })
           .withFailureHandler(err => {
-            showStatus('Error: ' + err.message, true);
+            M.toast({html: 'Error: ' + err.message});
             toggleLoading(false);
           })
           .getHojasMetaData();
       }
 
       function obtenerGrupos() {
-        // En esta versión simplificada, los grupos se deducen de los metadatos de las hojas
-        // pero idealmente se cargan desde PropertiesService
         const groupSet = new Set();
         hojasMeta.forEach(h => { if(h.grupo) groupSet.add(h.grupo); });
         
         const list = document.getElementById('group-list');
-        // Mantener los 4 primeros (Todas, Visibles, Ocultas, Sin Grupo)
         while(list.children.length > 4) list.removeChild(list.lastChild);
         
         groupSet.forEach(g => {
@@ -235,7 +282,6 @@
         const searchTxt = document.getElementById('search-input').value.toLowerCase();
         
         hojasMeta.forEach((h, index) => {
-          // Filtrado
           let visible = true;
           if (searchTxt && !h.nombre.toLowerCase().includes(searchTxt)) visible = false;
           if (filtroActual === '_visibles' && h.oculta) visible = false;
@@ -267,7 +313,6 @@
           container.appendChild(row);
         });
 
-        // Reinicializar Sortable
         if (sortable) sortable.destroy();
         sortable = new Sortable(container, {
           handle: '.drag-handle',
@@ -285,7 +330,6 @@
         newOrderIds.forEach(id => {
           newMeta.push(hojasMeta.find(h => h.id === id));
         });
-        // Añadir las que no están visibles (si hay filtro) al final
         hojasMeta.forEach(h => {
           if (!newOrderIds.includes(h.id)) newMeta.push(h);
         });
@@ -313,27 +357,52 @@
         return ids;
       }
 
-      function accionMasiva(accion) {
+      function abrirConfirmacion(titulo, mensaje, callback) {
+        document.getElementById('confirm-title').textContent = titulo;
+        document.getElementById('confirm-body').textContent = mensaje;
+        const btnOk = document.getElementById('btn-confirm-ok');
+        const inst = M.Modal.getInstance(document.getElementById('modal-confirm'));
+        
+        btnOk.onclick = function() {
+          inst.close();
+          callback();
+        };
+        inst.open();
+      }
+
+      function solicitarConfirmacionEliminar() {
         const seleccionadas = getSeleccionadas();
         if (seleccionadas.length === 0) {
           M.toast({html: '⚠️ Selecciona al menos una pestaña'});
           return;
         }
+        
+        abrirConfirmacion(
+          '¿Eliminar pestañas?', 
+          `¿Estás seguro de eliminar las ${seleccionadas.length} pestañas seleccionadas? Esta acción no se puede deshacer fácilmente.`,
+          ejecutarEliminacion
+        );
+      }
 
-        if (accion === 'eliminar') {
-          if (confirm(`¿Estás seguro de eliminar las ${seleccionadas.length} pestañas seleccionadas?`)) {
-            toggleLoading(true);
-            google.script.run
-              .withSuccessHandler(res => {
-                M.toast({html: res});
-                cargarDatos();
-              })
-              .withFailureHandler(err => {
-                M.toast({html: '❌ Error: ' + err.message});
-                toggleLoading(false);
-              })
-              .eliminarHojasPorId(seleccionadas);
-          }
+      function ejecutarEliminacion() {
+        const seleccionadas = getSeleccionadas();
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: res});
+            cargarDatos();
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .eliminarHojasPorId(seleccionadas);
+      }
+
+      function accionMasiva(accion) {
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length === 0) {
+          M.toast({html: '⚠️ Selecciona al menos una pestaña'});
           return;
         }
 
@@ -368,7 +437,6 @@
         }
         
         const select = document.getElementById('select-grupo-asignar');
-        // Limpiar opciones previas excepto las 2 primeras
         while(select.options.length > 2) select.remove(2);
         
         const groupSet = new Set();
@@ -385,18 +453,28 @@
         inst.open();
       }
 
-      function nuevoGrupo() {
-        const nombre = prompt("Nombre del nuevo grupo:");
-        if (nombre) {
-          const seleccionadas = getSeleccionadas();
-          if (seleccionadas.length > 0) {
-            hojasMeta.forEach(h => {
-              if (seleccionadas.includes(h.id)) h.grupo = nombre;
-            });
-            obtenerGrupos();
-          } else {
-            M.toast({html: 'Selecciona hojas para crear el grupo con ellas'});
-          }
+      function abrirModalNuevoGrupo() {
+        const inst = M.Modal.getInstance(document.getElementById('modal-nuevo-grupo'));
+        document.getElementById('input-nuevo-grupo').value = '';
+        inst.open();
+      }
+
+      function confirmarNuevoGrupo() {
+        const nombre = document.getElementById('input-nuevo-grupo').value.trim();
+        if (!nombre) {
+          M.toast({html: '⚠️ Introduce un nombre para el grupo'});
+          return;
+        }
+        
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length > 0) {
+          hojasMeta.forEach(h => {
+            if (seleccionadas.includes(h.id)) h.grupo = nombre;
+          });
+          M.Modal.getInstance(document.getElementById('modal-nuevo-grupo')).close();
+          obtenerGrupos();
+        } else {
+          M.toast({html: '⚠️ Selecciona hojas para crear el grupo con ellas'});
         }
       }
 
@@ -416,15 +494,12 @@
 
       function guardarTodo() {
         toggleLoading(true);
-        
-        // Preparar datos para el servidor
         const cambios = {
           hojas: hojasMeta.map(h => ({ id: h.id, oculta: h.oculta, color: h.color })),
           ordenIds: hojasMeta.map(h => h.id),
           grupos: {}
         };
         
-        // Reconstruir objeto de grupos
         hojasMeta.forEach(h => {
           if (h.grupo) {
             if (!cambios.grupos[h.grupo]) cambios.grupos[h.grupo] = [];
