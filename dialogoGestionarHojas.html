@@ -38,7 +38,9 @@
       .controls { padding: 10px 15px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px; background: #fafafa; }
       .search-wrapper { flex: 1; position: relative; }
       .search-wrapper i { position: absolute; left: 10px; top: 8px; color: #9e9e9e; }
-      .search-wrapper input { margin: 0 !important; padding-left: 35px !important; height: 32px !important; border: 1px solid #ddd !important; border-radius: 20px !important; background: white !important; width: 100% !important; box-sizing: border-box !important; }
+      .search-wrapper .clear-search { position: absolute; right: 10px; top: 8px; color: #9e9e9e; cursor: pointer; display: none; }
+      .search-wrapper .clear-search:hover { color: #ef5350; }
+      .search-wrapper input { margin: 0 !important; padding: 0 35px !important; height: 32px !important; border: 1px solid #ddd !important; border-radius: 20px !important; background: white !important; width: 100% !important; box-sizing: border-box !important; }
       
       .sheet-list-container { flex: 1; overflow-y: auto; padding: 0; }
       #sheet-list { margin: 0; padding: 0; }
@@ -46,7 +48,13 @@
       .sheet-row:hover { background: #f9f9f9; }
       .sheet-row.ghost { opacity: 0.4; background: #e3f2fd; }
       .drag-handle { cursor: grab; color: #ccc; margin-right: 10px; }
-      .sheet-checkbox { margin-right: 15px !important; }
+      .sheet-checkbox { margin-right: 15px !important; height: 18px; display: flex; align-items: center; }
+      .sheet-checkbox input[type="checkbox"] + span { height: 18px; padding-left: 20px; line-height: 18px; }
+      
+      .btn-activate { color: #bdbdbd; cursor: pointer; margin-right: 10px; transition: color 0.2s; visibility: hidden; }
+      .sheet-row:hover .btn-activate { visibility: visible; }
+      .btn-activate:hover { color: #2196F3; }
+
       .sheet-color { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #ddd; margin-right: 12px; }
       .sheet-name { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sheet-name.active { color: #1976d2; font-weight: bold; }
@@ -98,6 +106,7 @@
   </head>
   <body>
     <div class="main-container">
+      <div id="ui-freeze-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.1); z-index: 9999; display: none; cursor: wait;"></div>
       <div class="progress" id="progress-bar"><div class="indeterminate"></div></div>
       
       <div class="header">
@@ -134,6 +143,7 @@
             <div class="search-wrapper">
               <i class="material-icons">search</i>
               <input type="text" id="search-input" placeholder="Buscar pestaña..." oninput="actualizarFiltros()">
+              <i class="material-icons clear-search" id="btn-clear-search" onclick="limpiarBusqueda()">cancel</i>
             </div>
             <div style="display: flex; gap: 5px;">
               <a href="#" onclick="seleccionarTodo(true)" style="font-size: 11px;">Todas</a>
@@ -372,6 +382,7 @@
           
           row.innerHTML = `
             <i class="material-icons drag-handle">drag_indicator</i>
+            <i class="material-icons btn-activate" title="Activar esta pestaña" onclick="activarHoja(${h.id})">launch</i>
             <label class="sheet-checkbox">
               <input type="checkbox" class="filled-in row-cb" data-id="${h.id}" />
               <span></span>
@@ -399,26 +410,31 @@
         });
       }
 
-      function reordenarMemoria() {
-        const newOrderIds = Array.from(document.querySelectorAll('.sheet-row')).map(r => parseInt(r.dataset.id));
-        const newMeta = [];
-        newOrderIds.forEach(id => {
-          newMeta.push(hojasMeta.find(h => h.id === id));
-        });
-        hojasMeta.forEach(h => {
-          if (!newOrderIds.includes(h.id)) newMeta.push(h);
-        });
-        hojasMeta = newMeta;
+      function activarHoja(id) {
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: res});
+            // Marcar como activa localmente y refrescar visualmente
+            hojasMeta.forEach(h => h.activa = (h.id == id));
+            renderList();
+            toggleLoading(false);
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .activarHojaPorId(id);
       }
 
-      function filtrarGrupo(grupo, element) {
-        filtroActual = grupo;
-        document.querySelectorAll('.group-item').forEach(li => li.classList.remove('active'));
-        element.classList.add('active');
-        renderList();
+      function limpiarBusqueda() {
+        document.getElementById('search-input').value = '';
+        actualizarFiltros();
       }
 
       function actualizarFiltros() {
+        const input = document.getElementById('search-input');
+        document.getElementById('btn-clear-search').style.display = input.value ? 'block' : 'none';
         renderList();
       }
 
@@ -612,6 +628,7 @@
 
       function toggleLoading(val) {
         document.getElementById('progress-bar').style.display = val ? 'block' : 'none';
+        document.getElementById('ui-freeze-overlay').style.display = val ? 'block' : 'none';
         document.getElementById('status-text').textContent = val ? 'Procesando...' : 'Listo';
       }
 

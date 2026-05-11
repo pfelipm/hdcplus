@@ -562,6 +562,20 @@ function eliminarHojasPorId(ids) {
 }
 
 /**
+ * Activa una hoja específica por su ID
+ */
+function activarHojaPorId(id) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = hdc.getSheets().find(h => h.getSheetId() == id);
+  if (hoja) {
+    hdc.setActiveSheet(hoja);
+    return `Pestaña "${hoja.getName()}" activada.`;
+  }
+  throw new Error("No se pudo encontrar la pestaña.");
+}
+
+
+/**
  * --- CONSOLA AVANZADA DE GESTIÓN DE HOJAS ---
  */
 
