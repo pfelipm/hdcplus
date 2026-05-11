@@ -147,6 +147,9 @@
             <li><a href="#" onclick="accionMasiva('mostrar')"><i class="material-icons">visibility</i>Mostrar</a></li>
             <li><a href="#" onclick="accionMasiva('ocultar')"><i class="material-icons">visibility_off</i>Ocultar</a></li>
             <li class="divider"></li>
+            <li><a href="#" onclick="accionMasiva('mostrarSolo')"><i class="material-icons">filter_list</i>Mostrar solo seleccionadas</a></li>
+            <li><a href="#" onclick="accionMasiva('mostrarResto')"><i class="material-icons">flip</i>Mostrar todas menos seleccionadas</a></li>
+            <li class="divider"></li>
             <li><a href="#" onclick="abrirModalColor()"><i class="material-icons">palette</i>Cambiar color</a></li>
             <li><a href="#" onclick="abrirModalGrupo()"><i class="material-icons">label</i>Asignar grupo</a></li>
             <li class="divider"></li>
@@ -419,12 +422,29 @@
           return;
         }
 
-        hojasMeta.forEach(h => {
-          if (seleccionadas.includes(h.id)) {
-            if (accion === 'mostrar') h.oculta = false;
-            if (accion === 'ocultar') h.oculta = true;
+        if (accion === 'eliminar') {
+          solicitarConfirmacionEliminar();
+          return;
+        }
+
+        if (accion === 'mostrarSolo') {
+          hojasMeta.forEach(h => h.oculta = !seleccionadas.includes(h.id));
+        } else if (accion === 'mostrarResto') {
+          if (seleccionadas.length === hojasMeta.length) {
+            M.toast({html: '⚠️ No puedes ocultar todas las pestañas'});
+            return;
           }
-        });
+          hojasMeta.forEach(h => h.oculta = seleccionadas.includes(h.id));
+        } else {
+          hojasMeta.forEach(h => {
+            if (seleccionadas.includes(h.id)) {
+              if (accion === 'mostrar') h.oculta = false;
+              if (accion === 'ocultar') h.oculta = true;
+            }
+          });
+        }
+        renderList();
+      }
         renderList();
       }
 
