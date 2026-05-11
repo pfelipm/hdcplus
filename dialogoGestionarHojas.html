@@ -84,8 +84,10 @@
 
       /* Estilos para el selector de color */
       .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 10px; }
-      .color-opt { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.1s; }
+      .color-opt { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden; }
       .color-opt:hover { transform: scale(1.2); }
+      .color-opt i { font-size: 16px; position: absolute; top: 4px; left: 4px; color: #757575; }
+      #custom-color-input { position: absolute; top: -100px; left: -100px; visibility: hidden; }
 
       /* Modales personalizados */
       .modal-custom { max-width: 350px !important; border-radius: 8px !important; }
@@ -184,6 +186,7 @@
         <div class="color-grid" id="color-grid">
           <!-- Dinámico -->
         </div>
+        <input type="color" id="custom-color-input" onchange="aplicarColorMasivo(this.value)">
       </div>
     </div>
 
@@ -245,7 +248,8 @@
         { hex: '#4285F4', nombre: 'Azul Google' },
         { hex: '#0F9D58', nombre: 'Verde Google' },
         { hex: '#F4B400', nombre: 'Amarillo Google' },
-        { hex: '#00ACC1', nombre: 'Cian Material' }
+        { hex: '#00ACC1', nombre: 'Cian Material' },
+        { hex: '#E91E63', nombre: 'Rosa Material' }
       ];
 
       document.addEventListener('DOMContentLoaded', function() {
@@ -256,15 +260,25 @@
 
       function inicializarColorGrid() {
         const grid = document.getElementById('color-grid');
+        grid.innerHTML = '';
+        
         COLORES_PREDEF.forEach(c => {
           const opt = document.createElement('div');
           opt.className = 'color-opt';
-          // Para "Sin color" usamos un gris muy claro visualmente pero mandamos #FFFFFF
           opt.style.background = c.hex === '#FFFFFF' ? '#f5f5f5' : c.hex;
           opt.title = c.nombre;
           opt.onclick = () => aplicarColorMasivo(c.hex);
           grid.appendChild(opt);
         });
+
+        // Añadir botón de color personalizado
+        const custom = document.createElement('div');
+        custom.className = 'color-opt';
+        custom.style.background = '#e0e0e0';
+        custom.title = 'Color personalizado...';
+        custom.innerHTML = '<i class="material-icons">colorize</i>';
+        custom.onclick = () => document.getElementById('custom-color-input').click();
+        grid.appendChild(custom);
       }
 
       function cargarDatos() {
