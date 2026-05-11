@@ -19,6 +19,8 @@
       .group-item:hover { background: #eeeeee; }
       .group-item.active { background: #bbdefb; border-left: 4px solid #1976d2; }
       .group-item i { font-size: 18px; margin-right: 8px; color: #757575; }
+      .group-divider { height: 1px; background: #e0e0e0; margin: 5px 0; }
+      .group-header { padding: 12px 12px 4px; font-size: 10px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
       
       /* Lista de Hojas */
       .sheet-area { flex: 1; display: flex; flex-direction: column; background: white; }
@@ -262,6 +264,17 @@
         const list = document.getElementById('group-list');
         while(list.children.length > 4) list.removeChild(list.lastChild);
         
+        if (groupSet.size > 0) {
+          const divider = document.createElement('li');
+          divider.className = 'group-divider';
+          list.appendChild(divider);
+          
+          const header = document.createElement('li');
+          header.className = 'group-header';
+          header.textContent = 'Mis Grupos';
+          list.appendChild(header);
+        }
+
         groupSet.forEach(g => {
           const li = document.createElement('li');
           li.className = 'group-item';
