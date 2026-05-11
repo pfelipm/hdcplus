@@ -35,7 +35,7 @@ function protegerFxMasivo(modoProteccion) {
     return;
   }
 
-  if (ui.alert('🛡️ HdC+', `¿Deseas proteger las fórmulas en las ${hojas.length} pestañas de la hoja de cálculo?
+  if (ui.alert(ENCABEZADO_ALERTAS, `🛡️ ¿Deseas proteger las fórmulas en las ${hojas.length} pestañas de la hoja de cálculo?
   
 Se han detectado aproximadamente ${totalFormulas} celdas con fórmulas que serán agrupadas y protegidas.`, ui.ButtonSet.OK_CANCEL) === ui.Button.OK) {
     
@@ -73,7 +73,7 @@ function eliminarProteccionesMasivo(soloHdCPlus) {
     return;
   }
 
-  if (ui.alert('🛡️ HdC+', `¿Deseas eliminar las protecciones en las ${hojas.length} pestañas de la hoja de cálculo?
+  if (ui.alert(ENCABEZADO_ALERTAS, `🛡️ ¿Deseas eliminar las protecciones en las ${hojas.length} pestañas de la hoja de cálculo?
   
 Se van a eliminar un total de ${totalProtecciones} reglas de protección.`, ui.ButtonSet.OK_CANCEL) === ui.Button.OK) {
     
@@ -248,12 +248,13 @@ function protegerFxHoja(modoProteccion, hoja = SpreadsheetApp.getActiveSheet(), 
       intervalosFinales.push(actual);
     }
 
-    if (silencioso || ui.alert('⚠️ ¿Proteger intervalos con fórmulas?',
-      `Se van a proteger ${intervalosFinales.length} intervalos en la hoja [${hoja.getName()}]. Los intervalos protegidos previamente por HdC+ se regenerarán.
+    if (silencioso || ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Proteger intervalos con fórmulas en [${hoja.getName()}]?
+
+Se van a proteger ${intervalosFinales.length} intervalos en esta pestaña. Los intervalos protegidos previamente por HdC+ se regenerarán.
       
-      ${modoProteccion == PROTECCION.modo.advertencia
-        ? 'Se mostrará una advertencia al tratar de editar las celdas de los intervalos protegidos.'
-        : `Solo tú (${Session.getActiveUser().getEmail()}) podrás editar las celdas de los intervalos protegidos.`} `, ui.ButtonSet.OK_CANCEL) == ui.Button.OK) {
+${modoProteccion == PROTECCION.modo.advertencia
+  ? 'Se mostrará una advertencia al tratar de editar las celdas de los intervalos protegidos.'
+  : `Solo tú (${Session.getActiveUser().getEmail()}) podrás editar las celdas de los intervalos protegidos.`} `, ui.ButtonSet.OK_CANCEL) == ui.Button.OK) {
 
       iniciado = true;
       if (!silencioso) hdc.toast(`Protegiendo ${intervalosFinales.length} intervalos...`, '🔒 HdC+', -1);
@@ -314,8 +315,9 @@ function eliminarProteccionesFx(soloHdCPlus = true, hoja = SpreadsheetApp.getAct
     return;
   }
   
-  if (silencioso || ui.alert('⚠️ ¿Eliminar intervalos protegidos?',
-      `Se van a eliminar ${protecciones.length} intervalos protegidos en la hoja [${hoja.getName()}].`,
+  if (silencioso || ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar intervalos protegidos en [${hoja.getName()}]?
+
+Se van a eliminar ${protecciones.length} intervalos protegidos en esta pestaña.`,
     ui.ButtonSet.OK_CANCEL) == ui.Button.OK) {
         
         iniciado = true;

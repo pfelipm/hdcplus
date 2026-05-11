@@ -289,7 +289,7 @@ function unpivot_core(e) {
 
   catch(e) {
   
-      SpreadsheetApp.getUi().alert(e);
+      SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, e, SpreadsheetApp.getUi().ButtonSet.OK);
       return (e);
       
   }
@@ -403,7 +403,7 @@ function eliminarFyC_core(e) {
     nColumnas = hojas.getLastColumn();
     nMaxColumnas = hojas.getMaxColumns();
     if (nFilas == 0 || nColumnas == 0) {
-      SpreadsheetApp.getUi().alert('💡 La hoja de datos está vacía, no se eliminará nada.');
+      SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, '💡 La hoja de datos está vacía, no se eliminará nada.', SpreadsheetApp.getUi().ButtonSet.OK);
     }
     else {
     
@@ -442,7 +442,7 @@ function eliminarFyCNoSeleccionadas() {
   console.info(rangosSeleccionados.length);
 
   if (rangosSeleccionados.length > 1) {
-    ui.alert('Selecciona un único intervalo de datos.');
+    ui.alert(ENCABEZADO_ALERTAS, 'Selecciona un único intervalo de datos.', ui.ButtonSet.OK);
   } else {
 
     const filSup = rangosSeleccionados[0].getRow();
@@ -468,7 +468,7 @@ function eliminarFyCNoSeleccionadas() {
       hoja.setActiveRange(hoja.getRange('A1'));
     
     } catch (e) {
-      ui.alert(`Se ha producido un error inesperado al ajustar eliminar las filas y columnas no seleccionadas.
+      ui.alert(ENCABEZADO_ALERTAS, `Se ha producido un error inesperado al ajustar eliminar las filas y columnas no seleccionadas.
         
         ⚠️ ${e.message}`, ui.ButtonSet.OK);
     }
@@ -637,7 +637,7 @@ function desordenarFil(){
    
   // Comprobaciones previas
  
-  if (matriz.length <= 1) {SpreadsheetApp.getUi().alert('💡 La selección debe tener más de 1 fila.');}
+  if (matriz.length <= 1) {SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, '💡 La selección debe tener más de 1 fila.', SpreadsheetApp.getUi().ButtonSet.OK);}
   
   var ncol = matriz[0].length;
   var nfil = matriz.length;
@@ -662,7 +662,7 @@ function desordenarCol(){
    
   // Comprobaciones previas
  
-  if (matriz[0].length <= 1) {SpreadsheetApp.getUi().alert('💡 La selección debe tener más de 1 columna.');}
+  if (matriz[0].length <= 1) {SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, '💡 La selección debe tener más de 1 columna.', SpreadsheetApp.getUi().ButtonSet.OK);}
   
   var ncol = matriz[0].length;
   var nfil = matriz.length;
