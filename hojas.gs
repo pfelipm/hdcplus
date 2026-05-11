@@ -280,10 +280,11 @@ function eliminarHojasColor(color) {
     if (numHojasColorVisibles > 0) mensajeResultado.push(`${numHojasColorVisibles} hojas visibles`);
     if (numHojasColorOcultas > 0) mensajeResultado.push(`${numHojasColorOcultas} hojas ocultas`);
 
-    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar hojas de color ${color.nombre}?`,
-      `${color.icono} Se van a eliminar ${mensajeResultado.join(' y ')} de color ${color.nombre}.
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar hojas de color ${color.nombre}?
 
-      Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
+${color.icono} Se van a eliminar ${mensajeResultado.join(' y ')} de color ${color.nombre}.
+
+Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasColorEliminar.forEach(hoja => hdc.deleteSheet(hoja));
 
   } catch (e) {
@@ -307,10 +308,11 @@ function eliminarHojasOcultas() {
   else try {
     // Se usa try para fallar graciosamente cuando en un escenario de concurrencia se eliminan
     // algunas de las hojas mientras el usuario visualiza la alerta de confirmación
-    if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Eliminar hojas ocultas?',
-      `Se van a eliminar ${hojasEliminar.length} hojas no visibles de la hoja de cálculo.
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar hojas ocultas?
 
-      Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
+Se van a eliminar ${hojasEliminar.length} hojas no visibles de la hoja de cálculo.
+
+Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
   } catch (e) {
     ui.alert(ENCABEZADO_ALERTAS, `Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
@@ -332,10 +334,11 @@ function eliminarHojas() {
 
   if (hojasEliminar.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No hay más hojas que puedan eliminarse.', ui.ButtonSet.OK);
   else try {
-    if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Eliminar otras hojas?',
-      `Se van a eliminar ${hojasEliminar.length} hojas de la hoja de cálculo.
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar otras hojas?
 
-      Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
+Se van a eliminar ${hojasEliminar.length} hojas de la hoja de cálculo.
+
+Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
   } catch (e) {
     ui.alert(ENCABEZADO_ALERTAS, `Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
