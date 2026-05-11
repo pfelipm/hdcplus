@@ -512,9 +512,26 @@ function guardarGruposHojas(grupos) {
  */
 function aplicarCambiosConsola(cambios) {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
-  const hojasMap = hdc.getSheets().reduce((acc, h) => { acc[h.getSheetId()] = h; return acc; }, {});
+  const hojas = hdc.getSheets();
+  const hojasMap = hojas.reduce((acc, h) => { acc[h.getSheetId()] = h; return acc; }, {});
   
-  // 1. Aplicar visibilidad y color
+  let hojaActual = hdc.getActiveSheet();
+  const idActiva = hojaActual.getSheetId();
+
+  // 1. Gestión de seguridad: Si la activa se va a ocultar, buscamos sustituta visible
+  const cambioActiva = cambios.hojas ? cambios.hojas.find(c => c.id == idActiva) : null;
+  if (cambioActiva && cambioActiva.oculta) {
+    const sustituta = hojas.find(h => {
+      const c = cambios.hojas.find(ch => ch.id == h.getSheetId());
+      return c ? !c.oculta : !h.isSheetHidden();
+    });
+    if (sustituta) {
+      hdc.setActiveSheet(sustituta);
+      hojaActual = sustituta; // La nueva activa para la restauración final
+    }
+  }
+
+  // 2. Aplicar visibilidad y color
   if (cambios.hojas) {
     cambios.hojas.forEach(c => {
       const hoja = hojasMap[c.id];
@@ -525,9 +542,8 @@ function aplicarCambiosConsola(cambios) {
     });
   }
 
-  // 2. Aplicar orden (si se proporciona)
+  // 3. Aplicar orden (si se proporciona)
   if (cambios.ordenIds && cambios.ordenIds.length > 0) {
-    const hojaActual = hdc.getActiveSheet();
     cambios.ordenIds.forEach((id, pos) => {
       const hoja = hojasMap[id];
       if (hoja) {
@@ -535,10 +551,11 @@ function aplicarCambiosConsola(cambios) {
         hdc.moveActiveSheet(pos + 1);
       }
     });
+    // Restaurar la que definimos como activa (sea la original o la sustituta)
     hdc.setActiveSheet(hojaActual);
   }
 
-  // 3. Guardar grupos
+  // 4. Guardar grupos
   if (cambios.grupos) guardarGruposHojas(cambios.grupos);
 
   SpreadsheetApp.flush();
