@@ -83,7 +83,7 @@
       }
 
       /* Estilos para el selector de color */
-      .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 10px; }
+      .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 10px; }
       .color-opt { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.1s; }
       .color-opt:hover { transform: scale(1.2); }
 
@@ -236,16 +236,16 @@
       let sortable = null;
 
       const COLORES_PREDEF = [
-        '#FFFFFF', // Sin color
-        '#0000FF', // Azul HdC+
-        '#9900FF', // Morado HdC+
-        '#00FF00', // Verde HdC+
-        '#FF9900', // Naranja HdC+
-        '#FF0000', // Rojo HdC+
-        '#4285F4', // Azul Google
-        '#0F9D58', // Verde Google
-        '#F4B400', // Amarillo Google
-        '#00ACC1'  // Cian Material
+        { hex: '#FFFFFF', nombre: 'Sin color' },
+        { hex: '#0000FF', nombre: 'Azul HdC+' },
+        { hex: '#9900FF', nombre: 'Morado HdC+' },
+        { hex: '#00FF00', nombre: 'Verde HdC+' },
+        { hex: '#FF9900', nombre: 'Naranja HdC+' },
+        { hex: '#FF0000', nombre: 'Rojo HdC+' },
+        { hex: '#4285F4', nombre: 'Azul Google' },
+        { hex: '#0F9D58', nombre: 'Verde Google' },
+        { hex: '#F4B400', nombre: 'Amarillo Google' },
+        { hex: '#00ACC1', nombre: 'Cian Material' }
       ];
 
       document.addEventListener('DOMContentLoaded', function() {
@@ -259,8 +259,10 @@
         COLORES_PREDEF.forEach(c => {
           const opt = document.createElement('div');
           opt.className = 'color-opt';
-          opt.style.background = c;
-          opt.onclick = () => aplicarColorMasivo(c);
+          // Para "Sin color" usamos un gris muy claro visualmente pero mandamos #FFFFFF
+          opt.style.background = c.hex === '#FFFFFF' ? '#f5f5f5' : c.hex;
+          opt.title = c.nombre;
+          opt.onclick = () => aplicarColorMasivo(c.hex);
           grid.appendChild(opt);
         });
       }
