@@ -474,7 +474,9 @@ function getHojasMetaData() {
   // Mapeo inverso de ID de hoja a nombre de grupo
   const idAGrupo = {};
   for (const nombreGrupo in grupos) {
-    grupos[nombreGrupo].forEach(id => idAGrupo[id] = nombreGrupo);
+    if (Array.isArray(grupos[nombreGrupo])) {
+      grupos[nombreGrupo].forEach(id => idAGrupo[id] = nombreGrupo);
+    }
   }
 
   return hojas.map(h => {

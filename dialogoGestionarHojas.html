@@ -195,9 +195,12 @@
         toggleLoading(true);
         google.script.run
           .withSuccessHandler(res => {
-            hojasMeta = res.hojas;
-            grupos = res.grupos || {}; // Esto vendrá de una función separada o combinada
+            hojasMeta = res; // El servidor ya devuelve el array directamente
             obtenerGrupos();
+          })
+          .withFailureHandler(err => {
+            showStatus('Error: ' + err.message, true);
+            toggleLoading(false);
           })
           .getHojasMetaData();
       }
