@@ -12,6 +12,8 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 - **principal.gs**: 
     - Actualizada la constante `VERSION` a "2.0 (mayo 2026)".
     - Rediseño del menú "Proteger celdas con fórmulas" con una estructura jerárquica: Hoja actual, Todas las hojas y Selección personalizada.
+    - Estandarización global de `ui.alert()` para utilizar siempre la constante `ENCABEZADO_ALERTAS` como título y corregir firmas de método erróneas.
+    - Ajuste de dimensiones del diálogo "Acerca de" para el nuevo diseño.
 - **fx_acoplar_desacoplar.gs**: 
     - Optimización crítica de la función `ACOPLAR`. Se ha sustituido la lógica de doble pasada con complejidad $O(N^2)$ por una agrupación basada en un objeto `Map` con complejidad lineal $O(N)$.
     - Refactorización para evitar mutaciones accidentales del intervalo original mediante el uso del operador spread (`[...]`).
@@ -26,24 +28,27 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
     - Mejora de fluidez en la UI: sustitución de `ui.alert` finales por "toasts" de larga duración (10s) con cierre automático.
     - Mejora de UX en acciones masivas: implementación de conteo previo de intervalos y sistema de notificaciones de progreso pestaña por pestaña mediante "toasts".
     - Nueva lógica de backend para procesamiento granular: añadida función `procesarAccionHojaIndividual` para permitir feedback en tiempo real desde el cliente.
-- **panelProteccion.html**:
-    - Nuevo panel lateral interactivo desarrollado con Materialize CSS.
-    - Implementación de procesamiento secuencial de pestañas: feedback granular ("Procesando 2/5 [Nombre]") que mejora la UX y evita problemas de 'timeout'.
-    - Eliminación de alertas y confirmaciones nativas del navegador, sustituyéndolas por un sistema de mensajes de estado interno y un modal de confirmación personalizado.
-    - Incorporación de barra de progreso animada y bloqueos de seguridad en todos los controles durante la ejecución.
-    - Estilo mixto de progreso: spinner circular para carga de datos y barra horizontal para ejecución de acciones.
-    - Listado dinámico con indicadores visuales para hojas ocultas y hoja activa, con botón de recarga rápida y controles de selección masiva.
-
 - **hojas.gs**:
     - Implementación de la infraestructura de backend para la "Consola de Pestañas" (Gestión avanzada).
     - Gestión de persistencia de grupos de hojas mediante `PropertiesService`.
     - Funciones de obtención de metadatos detallados (ID, color, visibilidad, grupo) para todas las pestañas.
-    - Lógica de aplicación de cambios masivos (orden, visibilidad, color, grupos) optimizada.
-- **principal.gs**:
-    - Incorporación del comando "📁 Gestionar hojas..." al submenú de gestión de hojas.
+    - Lógica de aplicación de cambios masivos (orden, visibilidad, color, grupos) optimizada, incluyendo gestión inteligente de la hoja activa al ocultar pestañas.
+    - Añadida función `activarHojaPorId()` para navegación rápida desde la interfaz.
+    - Corrección de errores en la sintaxis de alertas masivas (unificación de parámetros de texto).
 - **dialogoGestionarHojas.html**:
-    - Nueva interfaz avanzada para la administración centralizada de pestañas.
+    - Nueva interfaz avanzada para la administración centralizada de pestañas basada en Materialize CSS.
+    - **Modo Live**: Implementación de sincronización en tiempo real que aplica cambios automáticamente sin necesidad de guardar manualmente.
+    - **Activación de Hojas**: Nuevo botón `launch` en cada fila para convertir una pestaña en la hoja activa del documento al instante.
     - Soporte para reordenación mediante arrastrar y soltar (Drag & Drop) utilizando SortableJS.
-    - Sistema de creación y filtrado por grupos personalizados.
-    - Buscador en tiempo real y filtros de visibilidad/grupo.
-    - Acciones masivas integradas: cambio de color, visibilidad, asignación a grupos y eliminación.
+    - Sistema de creación, gestión y filtrado por grupos personalizados con separación visual ("Mis Grupos").
+    - Buscador en tiempo real con botón de limpieza rápida y filtros de visibilidad.
+    - Acciones masivas de visibilidad avanzada: "Mostrar solo seleccionadas" y "Mostrar todas menos seleccionadas".
+    - Paleta de colores ampliada (12 opciones) sincronizada con HdC+ e incluyendo selector de color personalizado.
+    - Bloqueo de UI (freeze) durante procesos activos para garantizar la integridad de las operaciones.
+- **acercaDe.html**:
+    - Modernización completa del diseño utilizando tarjetas y componentes de Materialize CSS, mejorando la legibilidad y la estética general.
+    - Preservación de la identidad visual mediante la integración de la cabecera original en base64.
+
+### A estudiar
+- Migración de las funciones de gestión de hojas (ordenación, visibilidad masiva) en `hojas.gs` a la API avanzada de Google Sheets (`batchUpdate`) para lograr un rendimiento instantáneo, evaluando la necesidad de ampliar los alcances (scopes) de OAuth.
+- Uso de la API avanzada para detectar programáticamente las pestañas seleccionadas por el usuario en la interfaz de Sheets, permitiendo acciones rápidas de protección/desprotección sin necesidad de selección manual en el panel lateral.
