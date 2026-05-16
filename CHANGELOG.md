@@ -45,6 +45,11 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
     - Acciones masivas de visibilidad avanzada: "Mostrar solo seleccionadas" y "Mostrar todas menos seleccionadas".
     - Paleta de colores ampliada (12 opciones) sincronizada con HdC+ e incluyendo selector de color personalizado.
     - Bloqueo de UI (freeze) durante procesos activos para garantizar la integridad de las operaciones.
+- **acondicionarTexto.gs**:
+    - Refactorización integral utilizando estándares modernos de ES6 y expresiones regulares con soporte Unicode (`\p{L}`).
+    - Mejora drástica de `inicialesMays_()` (capitalización de nombres propios), reduciendo su complejidad y aumentando la robustez ante caracteres internacionales.
+    - Preservación de la lógica histórica mediante las funciones `inicialMays_anterior_()` e `inicialesMays_anterior_()` con fines didácticos.
+    - Restauración íntegra de la tabla de mapeo `latin_map` para asegurar la compatibilidad total de la función `latinizar()`.
 - **acercaDe.html**:
     - Modernización completa del diseño utilizando tarjetas y componentes de Materialize CSS, mejorando la legibilidad y la estética general.
     - Preservación de la identidad visual mediante la integración de la cabecera original en base64.
