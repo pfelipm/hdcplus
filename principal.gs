@@ -69,20 +69,6 @@ function onOpen() {
     .addSubMenu(ui.createMenu('🔀 Barajar datos')
       .addItem('Barajar por columnas', 'desordenarFil')
       .addItem('Barajar por filas', 'desordenarCol'))
-    // Estructura de datos
-    .addSubMenu(ui.createMenu('📐 Manipular intervalos de datos')
-      .addItem('⚡ Invertir casillas de verificación', 'invertirCasillas')
-      .addItem('☑️ Convertir texto a casillas', 'textoACasillas')
-      .addItem('⬇️ Rellenar celdas vacías hacia abajo', 'fillDown')
-      .addSubMenu(ui.createMenu('🗜️ Compactar selección')
-        .addItem('Filas vacías', 'compactarFilas')
-        .addItem('Columnas vacías', 'compactarColumnas')
-        .addItem('Filas y columnas vacías', 'compactarAmbas'))
-      .addItem('↕️ Invertir orden de filas (Flip)', 'invertirOrden')
-      .addItem('🔗 Extraer URLs de enlaces', 'extraerURLs')
-      .addSeparator()
-      .addItem('Consolidar dimensiones (despivotar)', 'unpivot_')
-      .addItem('Transponer (destructivo)', 'transponer'))
     // Manipular hojas
     .addSubMenu(ui.createMenu('📋 Gestionar hojas')
       .addItem('📁 Gestionar hojas...', 'abrirConsolaPestañas')
@@ -154,6 +140,22 @@ function onOpen() {
       .addItem('Sustituir por hash SHA-256 (b64)', 'hashSHA256')
       .addItem('Sustituir por hash SHA-384 (b64)', 'hashSHA384')
       .addItem('Sustituir por hash SHA-512 (b64)', 'hashSHA512'))
+    // Estructura de datos
+    .addSubMenu(ui.createMenu('📐 Manipular intervalos de datos')
+      .addItem('⚡ Invertir casillas de verificación', 'invertirCasillas')
+      .addItem('☑️ Convertir texto a casillas', 'textoACasillas')
+      .addItem('⬇️ Rellenar celdas vacías hacia abajo', 'fillDown')
+      .addSubMenu(ui.createMenu('🗜️ Compactar selección')
+        .addItem('Filas vacías', 'compactarFilas')
+        .addItem('Columnas vacías', 'compactarColumnas')
+        .addItem('Filas y columnas vacías', 'compactarAmbas'))
+      .addSubMenu(ui.createMenu('↕️ Invertir y transponer')
+        .addItem('Invertir orden de filas', 'invertirOrdenFil')
+        .addItem('Invertir orden de columnas', 'invertirOrdenCol')
+        .addItem('Transponer (destructivo)', 'transponer'))
+      .addItem('🔗 Extraer URLs de enlaces', 'extraerURLs')
+      .addSeparator()
+      .addItem('Consolidar dimensiones (despivotar)', 'unpivot_'))
     // Proteger celdas
     .addSubMenu(ui.createMenu('🔏 Proteger celdas con fórmulas')
       .addSubMenu(ui.createMenu('📄 Hoja actual')
@@ -916,15 +918,30 @@ const extraerURLs = () => {
   }
 };
 
-const invertirOrden = () => {
+const invertirOrdenCol = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      const vals = r.getValues();
+      const output = vals.map(fila => fila.reverse());
+      r.setValues(output);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Orden de columnas invertido.', '↔️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al invertir columnas: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
+
+const invertirOrdenFil = () => {
   try {
     const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
     ranges.forEach(r => r.setValues(r.getValues().reverse()));
-    SpreadsheetApp.getActiveSpreadsheet().toast('Orden invertido.', '↕️ HdC+');
+    SpreadsheetApp.getActiveSpreadsheet().toast('Orden de filas invertido.', '↕️ HdC+');
   } catch (e) {
-    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al invertir orden: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al invertir filas: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
   }
 };
+
 
 const compactarFilas = () => {
   try {
