@@ -138,19 +138,19 @@ Detecta todas las celdas que contienen fórmulas y crea reglas de protección pa
   <img src="assets/menú-proteger-celdas.png" alt="Menú Proteger celdas">
 </p>
 
-<p align="center">
-  <img src="assets/panel-protecciones.webp" alt="Protección de fórmulas">
-</p>
-
 *   Puede aplicarse a la **Hoja actual** o a **Todas las hojas** de forma masiva.
 *   Dos niveles de seguridad: Mostrar advertencia o Restringir edición solo al propietario ("Solo tú").
 *   Opciones para eliminar protecciones creadas por HdC+ o limpiar todas las protecciones de la hoja/libro.
+
+<p align="center">
+  <img src="assets/panel-protecciones.webp" alt="Protección de fórmulas">
+</p>
 
 ### 🧰 Kit funciones con nombre
 Un producto diferente pero altamente complementario a HdC+. Se trata de una colección de fórmulas avanzadas nativas de Google Sheets (basadas en funciones LAMBDA) listas para importar a tus proyectos.
 *   **Obtener plantilla vacía / con ejemplos:** Abre una copia de la plantilla del Kit para integrar en tu Drive.
 *   **Ayuda:** Enlace a la documentación oficial del Kit.
-*   👉 *Más información en:* [kitfuncioneshdc.notion.site](https://kitfuncioneshdc.notion.site/)
+*   👉 Más información en: [kitfuncioneshdc.notion.site](https://kitfuncioneshdc.notion.site/)
 
 <p align="center">
   <img src="assets/web-kit-funciones-con-nombre.png" alt="Sitio de soporte Kit funciones con nombre" width="90%">
