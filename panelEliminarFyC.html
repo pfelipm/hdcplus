@@ -21,6 +21,12 @@
       .status-box { font-size: 12px; margin-top: 10px; padding: 8px; border-radius: 4px; display: none; }
       .status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
       .warning-text { font-size: 11px; color: #757575; font-style: italic; margin-top: 5px; }
+      
+      /* Estilos para el modal personalizado */
+      .modal-custom { max-width: 350px !important; border-radius: 8px !important; }
+      .modal-custom .modal-content { padding: 20px !important; }
+      .modal-custom h6 { font-weight: bold; margin-bottom: 15px; }
+      .modal-custom p { font-size: 13px; color: #616161; margin-bottom: 20px; }
     </style>
   </head>
   <body>
@@ -63,7 +69,7 @@
     </div>
 
     <div class="footer center-align">
-      <button id="btn-ejecutar" class="btn waves-effect waves-light red lighten-1 btn-small" onclick="ejecutar()">
+      <button id="btn-ejecutar" class="btn waves-effect waves-light red lighten-1 btn-small" onclick="prepararAccion()">
         <i class="material-icons left">content_cut</i>Recortar ahora
       </button>
       
@@ -74,19 +80,51 @@
       <div id="status-box" class="status-box"></div>
     </div>
 
+    <!-- Modal de confirmación personalizado -->
+    <div id="modal-confirm" class="modal modal-custom">
+      <div class="modal-content">
+        <h6 id="confirm-title">Confirmar acción</h6>
+        <p id="confirm-body"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cancelar</button>
+        <button id="btn-confirm-ok" class="btn red lighten-1 white-text btn-small" style="width: auto;">Aceptar</button>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        M.AutoInit();
+      });
+
+      function prepararAccion() {
+        const global = document.getElementById('global').checked;
+        const msg = global 
+          ? '¿Estás seguro de recortar TODAS las pestañas del documento? Esta acción eliminará las filas y columnas vacías de forma inmediata.' 
+          : '¿Deseas recortar la pestaña actual? Se eliminarán todas las filas y columnas sobrantes.';
+        
+        abrirConfirmacion('Confirmar recorte', msg, ejecutar);
+      }
+
+      function abrirConfirmacion(titulo, mensaje, callback) {
+        document.getElementById('confirm-title').textContent = titulo;
+        document.getElementById('confirm-body').textContent = mensaje;
+        const btnOk = document.getElementById('btn-confirm-ok');
+        const inst = M.Modal.getInstance(document.getElementById('modal-confirm'));
+        
+        btnOk.onclick = function() {
+          inst.close();
+          callback();
+        };
+        inst.open();
+      }
+
       function ejecutar() {
         const modo = document.querySelector('input[name="modo"]:checked').value;
         const global = document.getElementById('global').checked ? 'on' : 'off';
         const encuadre = document.getElementById('encuadre').checked ? 'on' : 'off';
         
-        const msgConfirm = global === 'on' 
-          ? '¿Estás seguro de recortar TODAS las pestañas del documento?' 
-          : '¿Deseas recortar la pestaña actual?';
-          
-        if (!confirm(msgConfirm)) return;
-
         toggleLoading(true);
         showStatus(null);
 
