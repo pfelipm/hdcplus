@@ -8,7 +8,13 @@
 
 # HdC+
 
-**HdC+** fue originalmente un proyecto personal de aprendizaje y mi segundo complemento tras [Form Response Control (FRC)](https://workspace.google.com/marketplace/app/form_response_control/433492681931). Su primera versión vio la luz a finales de 2019, apenas unos meses antes de mi incorporación al programa de expertos de Google (GDE, Google Developer Expert) en la categoría de Google Workspace. Las circunstancias en las que nació hacen que sea un proyecto al que le tengo enorme cariño. Hoy en día, ha evolucionado hasta convertirse en una potente colección de herramientas y funciones personalizadas para Google Sheets, diseñada para extender las capacidades nativas de tus hojas de cálculo mediante Google Apps Script.
+**HdC+** fue originalmente un proyecto personal de aprendizaje y mi segundo complemento tras [Form Response Control (FRC)](https://workspace.google.com/marketplace/app/form_response_control/433492681931). Su primera versión vio la luz a finales de 2019, apenas unos meses antes de mi incorporación al programa de expertos de Google (GDE, Google Developer Expert) en la categoría de Google Workspace. Las circunstancias en las que nació hacen que sea un proyecto al que le tengo un enorme cariño.
+
+Al ser un proyecto que ha crecido y evolucionado conmigo a lo largo de los años, es posible que encuentres en su código o en la propia herramienta algunos elementos que no encajan perfectamente entre sí o que parecen "pegotes"; esta falta de uniformidad arquitectónica es consecuencia directa de sus orígenes como banco de pruebas y aprendizaje continuo.
+
+Hasta la versión inmediatamente anterior a la 2.0, todo el desarrollo se realizó de forma manual, a la antigua usanza. Sin embargo, a partir de esta versión 2.0 (inclusive), he contado con la inestimable ayuda de Gemini CLI como copiloto en el proceso de modernización y optimización.
+
+Hoy en día, HdC+ ha evolucionado hasta convertirse en una potente colección de herramientas y funciones personalizadas para Google Sheets, diseñada para extender las capacidades nativas de tus hojas de cálculo mediante Google Apps Script.
 
 Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y estética, transformando el complemento en una suite profesional de utilidades para el tratamiento de datos y la gestión de documentos complejos.
 
