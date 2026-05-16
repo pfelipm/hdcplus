@@ -19,12 +19,11 @@ Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y e
 *   **Suite de manipulación de intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos hacia abajo y extraer URLs exhaustivamente.
 *   **Optimización extrema:** Algoritmos de alto rendimiento para funciones de acople de datos y protección de fórmulas, reduciendo tiempos de espera de minutos a segundos.
 *   **Modernización visual:** Nueva interfaz basada en Materialize CSS y estandarización de alertas para una experiencia de usuario fluida y coherente.
+*   **Tratamiento de texto Unicode:** Refactorización integral de funciones de texto para soporte total de caracteres internacionales y expresiones regulares de última generación.
 
 <p align="center">
   <img src="assets/diálogo-acercade.webp" alt="Diálogo Acerca de">
 </p>
-
-*   **Tratamiento de texto Unicode:** Refactorización integral de funciones de texto para soporte total de caracteres internacionales y expresiones regulares de última generación.
 
 ---
 
