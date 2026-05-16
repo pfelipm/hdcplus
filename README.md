@@ -1,8 +1,10 @@
 ![Banner de HdC+](assets/banner.png)
 
-[![Creado con - Google Apps Script](https://img.shields.io/static/v1?label=Creado+con&message=Google+Apps+Script&color=blue&logo=GAS)](https://developers.google.com/apps-script)
-[![Versión 2.0](https://img.shields.io/badge/Versi%C3%B3n-2.0-brightgreen)](#)
-[![Licencia GPL v3](https://img.shields.io/badge/Licencia-GNU_GPL_v3-blue)](https://github.com/pfelipm/hdcplus/blob/master/LICENSE)
+<p align="center">
+  <a href="https://developers.google.com/apps-script"><img src="https://img.shields.io/static/v1?label=Creado+con&message=Google+Apps+Script&color=blue&logo=GAS" alt="Creado con - Google Apps Script"></a>
+  <img src="https://img.shields.io/badge/Versi%C3%B3n-2.0-brightgreen" alt="Versión 2.0">
+  <a href="https://github.com/pfelipm/hdcplus/blob/master/LICENSE"><img src="https://img.shields.io/badge/Licencia-GNU_GPL_v3-blue" alt="Licencia GPL v3"></a>
+</p>
 
 # HdC+
 
@@ -12,15 +14,16 @@ Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y e
 
 ## 🚀 Novedades de la v2.0
 *   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos y el revolucionario **Modo Live** para sincronización en tiempo real.
-    ![Consola de pestañas](assets/panel-pestañas.webp)
 *   **Marcos de color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
-    ![Marcos de color](assets/panel-.marco-hoja.webp)
 *   **Generador de índices dual:** Crea pestañas de índice enriquecidas o inserta listas de navegación ligeras con un solo clic.
-    ![Índice](assets/índice.webp)
 *   **Suite de manipulación de intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos hacia abajo y extraer URLs exhaustivamente.
 *   **Optimización extrema:** Algoritmos de alto rendimiento para funciones de acople de datos y protección de fórmulas, reduciendo tiempos de espera de minutos a segundos.
 *   **Modernización visual:** Nueva interfaz basada en Materialize CSS y estandarización de alertas para una experiencia de usuario fluida y coherente.
-    ![Acerca de](assets/diálogo-acercade.webp)
+
+<p align="center">
+  <img src="assets/diálogo-acercade.webp" alt="Diálogo Acerca de">
+</p>
+
 *   **Tratamiento de texto Unicode:** Refactorización integral de funciones de texto para soporte total de caracteres internacionales y expresiones regulares de última generación.
 
 ---
@@ -46,9 +49,17 @@ Desordena aleatoriamente los datos dentro del rango seleccionado:
 ### 📋 Gestionar hojas
 Herramientas para la manipulación y organización del libro de cálculo:
 *   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenación, ocultación, muestra, agrupación y coloreado de pestañas de forma masiva.
-    ![Consola de pestañas](assets/panel-pestañas.webp)
+
+<p align="center">
+  <img src="assets/panel-pestañas.webp" alt="Consola de pestañas">
+</p>
+
 *   **📑 Generar pestaña de índice:** Crea una nueva hoja con hipervínculos a todas las pestañas y sus metadatos.
-    ![Índice](assets/índice.webp)
+
+<p align="center">
+  <img src="assets/índice.webp" alt="Pestaña de Índice">
+</p>
+
 *   **📌 Insertar índice aquí:** Inserta una lista de hipervínculos a las pestañas en la celda activa.
 *   **Ordenar/Desordenar hojas:** Ordenación alfabética ascendente o descendente, y desordenación aleatoria de las pestañas.
 *   **Visibilidad:** Ocultar todas excepto la activa, mostrar todas, o conmutar el estado de visibilidad general.
@@ -57,12 +68,23 @@ Herramientas para la manipulación y organización del libro de cálculo:
 
 ### 🗜️ Insertar y eliminar filas/columnas
 *   **🖼️ Crear marco de color:** Genera bordes coloreados y espaciados estéticos alrededor del rango de datos usando una interfaz gráfica.
-    ![Marcos de color](assets/panel-.marco-hoja.webp)
+
+<p align="center">
+  <img src="assets/panel-.marco-hoja.webp" alt="Marcos de color">
+</p>
+
 *   **Eliminar celdas no seleccionadas:** Elimina todas las filas y columnas exteriores a la selección actual, dejando solo los datos de interés.
 *   **Eliminar filas/columnas sobrantes:** Interfaz gráfica (panel interactivo) para recortar de forma avanzada el exceso de celdas en blanco alrededor de tus datos.
-    ![Eliminar sobrantes](assets/panel-elimiinar-filas-columnas-sobrantes.webp)
+
+<p align="center">
+  <img src="assets/panel-elimiinar-filas-columnas-sobrantes.webp" alt="Eliminar sobrantes">
+</p>
+
 *   **Insertar más filas/columnas:** Añade bloques de celdas en posiciones específicas mediante un panel interactivo.
-    ![Insertar filas/columnas](assets/panel-.insertar-filas-columnas.webp)
+
+<p align="center">
+  <img src="assets/panel-.insertar-filas-columnas.webp" alt="Insertar filas/columnas">
+</p>
 
 ### ✨ Generar datos falsos
 *   Rellena el rango seleccionado con **NIFs** o **Nombres y apellidos** aleatorios para realizar pruebas.
@@ -84,7 +106,11 @@ Herramientas avanzadas de procesamiento masivo en celdas:
 
 ### 🔏 Proteger celdas con fórmulas
 Detecta todas las celdas que contienen fórmulas y crea reglas de protección para evitar su edición accidental. Cuenta con una **interfaz gráfica avanzada (panel lateral)** para la selección de hojas y seguimiento del proceso.
-![Protección](assets/panel-protecciones.webp)
+
+<p align="center">
+  <img src="assets/panel-protecciones.webp" alt="Protección de fórmulas">
+</p>
+
 *   Puede aplicarse a la **Hoja actual** o a **Todas las hojas** de forma masiva.
 *   Dos niveles de seguridad: Mostrar advertencia o Restringir edición solo al propietario ("Solo tú").
 *   Opciones para eliminar protecciones creadas por HdC+ o limpiar todas las protecciones de la hoja/libro.
