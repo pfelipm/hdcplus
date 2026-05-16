@@ -496,9 +496,14 @@ function aplicarMarcoColor(config) {
   }
 
   // 2. ENCUADRE PREVIO (Si se solicita y estamos en modo Data Range)
-  if (config.soloDataRange && config.encuadre) {
-    procesarRecorteHoja_(hoja, 3, true); // Modo 3 (filas y col), encuadre = true
-    SpreadsheetApp.flush();
+  if (config.soloDataRange) {
+    const modoRecorte = config.encuadrePosterior ? 3 : 0; // 3 = Filas y columnas sobrantes, 0 = nada
+    const encuadreAnterior = config.encuadreAnterior;
+    
+    if (modoRecorte > 0 || encuadreAnterior) {
+      procesarRecorteHoja_(hoja, modoRecorte, encuadreAnterior);
+      SpreadsheetApp.flush();
+    }
   }
 
   // 3. Definir área de aplicación (Toda la hoja o Data Range actualizado)

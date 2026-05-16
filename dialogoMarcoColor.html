@@ -91,9 +91,13 @@
       </label>
       
       <div id="encuadre-wrapper" style="padding-left: 30px; margin-top: 5px;">
-        <label>
-          <input type="checkbox" id="encuadre" class="filled-in" checked />
-          <span style="font-size: 12px;">Encuadre total (limpiar huecos previos)</span>
+        <label style="display: block; margin-bottom: 5px;">
+          <input type="checkbox" id="encuadreAnterior" class="filled-in" checked />
+          <span style="font-size: 12px;">Encuadre anterior (eliminar vacíos arriba/izq)</span>
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" id="encuadrePosterior" class="filled-in" checked />
+          <span style="font-size: 12px;">Encuadre posterior (eliminar vacíos abajo/der)</span>
         </label>
       </div>
       
@@ -204,10 +208,12 @@
 
       function toggleSoloDataRange(checked) {
         const wrapper = document.getElementById('encuadre-wrapper');
-        const check = document.getElementById('encuadre');
         wrapper.style.opacity = checked ? '1' : '0.4';
         wrapper.style.pointerEvents = checked ? 'auto' : 'none';
-        if (!checked) check.checked = false;
+        if (!checked) {
+          document.getElementById('encuadreAnterior').checked = false;
+          document.getElementById('encuadrePosterior').checked = false;
+        }
       }
 
       function toggleInputsTamano(checked) {
@@ -254,6 +260,8 @@
           syncPadding: document.getElementById('syncPadding').checked,
           padding: document.getElementById('padding').value,
           soloDataRange: document.getElementById('soloDataRange').checked,
+          encuadreAnterior: document.getElementById('encuadreAnterior').checked,
+          encuadrePosterior: document.getElementById('encuadrePosterior').checked,
           combinar: document.getElementById('combinar').checked,
           dominancia: document.querySelector('input[name="dominancia"]:checked').value
         };
