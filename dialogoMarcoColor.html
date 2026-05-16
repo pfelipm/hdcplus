@@ -18,7 +18,7 @@
       .color-opt i { font-size: 16px; position: absolute; top: 4px; left: 4px; color: #757575; }
       #custom-color-input { position: absolute; top: -100px; left: -100px; visibility: hidden; }
 
-      .row-params { display: flex; gap: 15px; margin-top: 10px; margin-bottom: 5px; }
+      .row-params { display: flex; gap: 15px; margin-top: 5px; margin-bottom: 5px; }
       .input-field { margin-top: 0 !important; margin-bottom: 0 !important; flex: 1; }
       .input-field input { height: 2.5rem !important; margin-bottom: 0 !important; }
       
@@ -40,14 +40,22 @@
     <div class="color-grid" id="color-grid"></div>
     <input type="color" id="custom-color-input" onchange="seleccionarColorManual(this.value)">
 
-    <div class="section-title">2. Dimensiones del borde</div>
-    <div class="row-params">
+    <div class="section-title" style="margin-top: 5px;">2. Dimensiones del borde</div>
+    
+    <div style="margin-top: 10px;">
+      <label>
+        <input type="checkbox" id="mantenerTamano" class="filled-in" onchange="toggleInputsTamano(this.checked)" checked />
+        <span>Mantener tamaño predeterminado (21px)</span>
+      </label>
+    </div>
+
+    <div class="row-params" id="inputs-tamano" style="opacity: 0.4; pointer-events: none;">
       <div class="input-field">
-        <input type="number" id="ancho" value="20" min="1" max="100">
+        <input type="number" id="ancho" value="21" min="1" max="100">
         <label class="active">Anchura (px)</label>
       </div>
       <div class="input-field">
-        <input type="number" id="alto" value="20" min="1" max="100">
+        <input type="number" id="alto" value="21" min="1" max="100">
         <label class="active">Altura (px)</label>
       </div>
     </div>
@@ -63,13 +71,13 @@
       </div>
     </div>
 
-    <div class="section-title" style="margin-top: 20px;">3. Combinación y Estilo</div>
+    <div class="section-title" style="margin-top: 15px;">3. Combinación y Estilo</div>
     <div class="options-box">
       <label>
         <input type="checkbox" id="combinar" class="filled-in" checked onchange="toggleDominancia(this.checked)" />
         <span>Combinar celdas del marco</span>
       </label>
-      <div id="dominancia-wrapper" style="margin-top: 10px; padding-left: 30px;">
+      <div id="dominancia-wrapper" style="margin-top: 5px; padding-left: 30px;">
         <label style="font-size: 11px; margin-bottom: 5px;">Dominancia en esquinas:</label>
         <label style="display: inline-block; margin-right: 15px;">
           <input name="dominancia" type="radio" value="horizontal" checked />
@@ -140,6 +148,12 @@
         M.toast({html: 'Color personalizado: ' + hex});
       }
 
+      function toggleInputsTamano(checked) {
+        const wrapper = document.getElementById('inputs-tamano');
+        wrapper.style.opacity = checked ? '0.4' : '1';
+        wrapper.style.pointerEvents = checked ? 'none' : 'auto';
+      }
+
       function togglePadding(checked) {
         const wrapper = document.getElementById('padding-wrapper');
         wrapper.style.opacity = checked ? '1' : '0.4';
@@ -157,6 +171,7 @@
           color: colorSeleccionado,
           ancho: document.getElementById('ancho').value,
           alto: document.getElementById('alto').value,
+          mantenerTamano: document.getElementById('mantenerTamano').checked,
           conPadding: document.getElementById('conPadding').checked,
           padding: document.getElementById('padding').value,
           combinar: document.getElementById('combinar').checked,

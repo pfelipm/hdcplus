@@ -473,7 +473,7 @@ function abrirDialogoMarcoColor() {
   const html = HtmlService.createTemplateFromFile('dialogoMarcoColor')
     .evaluate()
     .setWidth(450)
-    .setHeight(600)
+    .setHeight(650)
     .setTitle('🖼️ Crear marco de color | HdC+');
   SpreadsheetApp.getUi().showModalDialog(html, ' ');
 }
@@ -485,71 +485,70 @@ function aplicarMarcoColor(config) {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hoja = hdc.getActiveSheet();
   
-  // 1. Identificar rango de datos (ignorar marcos previos si los hay)
-  const dataRange = hoja.getDataRange();
-  const lastRow = hoja.getLastRow();
-  const lastCol = hoja.getLastColumn();
-  
-  // 2. Parámetros de la configuración
+  // 1. Parámetros de la configuración
   const color = config.color;
-  const ancho = parseInt(config.ancho) || 0;
-  const alto = parseInt(config.alto) || 0;
-  const padding = config.conPadding ? (parseInt(config.padding) || 0) : 0;
-  const totalF = alto + padding;
-  const totalC = ancho + padding;
+  const pixelAncho = config.mantenerTamano ? 21 : (parseInt(config.ancho) || 21);
+  const pixelAlto = config.mantenerTamano ? 21 : (parseInt(config.alto) || 21);
+  const numPadding = config.conPadding ? (parseInt(config.padding) || 0) : 0;
 
   if (color === '#FFFFFF') {
     return "💡 Utiliza el comando 'Recortar' para eliminar marcos existentes.";
   }
 
-  // 3. Inserciones geométricas
-  if (totalF > 0) {
-    hoja.insertRowsBefore(1, totalF);
-    hoja.insertRowsAfter(hoja.getMaxRows(), totalF);
-  }
-  if (totalC > 0) {
-    hoja.insertColumnsBefore(1, totalC);
-    hoja.insertColumnsAfter(hoja.getMaxColumns(), totalC);
-  }
+  // 2. Inserciones geométricas (1 celda para el borde + N celdas para padding)
+  const totalInsertF = 1 + numPadding;
+  const totalInsertC = 1 + numPadding;
+
+  // Filas (Arriba y Abajo)
+  hoja.insertRowsBefore(1, totalInsertF);
+  hoja.insertRowsAfter(hoja.getMaxRows(), totalInsertF);
+
+  // Columnas (Izquierda y Derecha)
+  hoja.insertColumnsBefore(1, totalInsertC);
+  hoja.insertColumnsAfter(hoja.getMaxColumns(), totalInsertC);
 
   SpreadsheetApp.flush();
 
-  // 4. Aplicar Colores (Excluyendo el padding)
+  // 3. Ajustar tamaño de las celdas del borde (píxeles)
   const maxR = hoja.getMaxRows();
   const maxC = hoja.getMaxColumns();
 
+  // Altura filas superior/inferior
+  hoja.setRowHeight(1, pixelAlto);
+  hoja.setRowHeight(maxR, pixelAlto);
+
+  // Anchura columnas izquierda/derecha
+  hoja.setColumnWidth(1, pixelAncho);
+  hoja.setColumnWidth(maxC, pixelAncho);
+
+  // 4. Aplicar Colores (Solo en la celda exterior del borde)
   // Rango superior
-  if (alto > 0) {
-    hoja.getRange(1, 1, alto, maxC).setBackground(color);
-    // Rango inferior
-    hoja.getRange(maxR - alto + 1, 1, alto, maxC).setBackground(color);
-    // Rango izquierdo
-    hoja.getRange(alto + 1, 1, maxR - (alto * 2), ancho).setBackground(color);
-    // Rango derecho
-    hoja.getRange(alto + 1, maxC - ancho + 1, maxR - (alto * 2), ancho).setBackground(color);
-  }
+  hoja.getRange(1, 1, 1, maxC).setBackground(color);
+  // Rango inferior
+  hoja.getRange(maxR, 1, 1, maxC).setBackground(color);
+  // Rango izquierdo (excluyendo esquinas ya pintadas por el superior/inferior para evitar conflictos)
+  hoja.getRange(2, 1, maxR - 2, 1).setBackground(color);
+  // Rango derecho
+  hoja.getRange(2, maxC, maxR - 2, 1).setBackground(color);
 
   // 5. Combinación (Merge)
   if (config.combinar) {
     if (config.dominancia === 'horizontal') {
-      // Superior e inferior dominan todo el ancho
-      hoja.getRange(1, 1, alto, maxC).merge();
-      hoja.getRange(maxR - alto + 1, 1, alto, maxC).merge();
-      // Laterales se ajustan al centro
-      hoja.getRange(alto + 1, 1, maxR - (alto * 2), ancho).merge();
-      hoja.getRange(alto + 1, maxC - ancho + 1, maxR - (alto * 2), ancho).merge();
+      hoja.getRange(1, 1, 1, maxC).merge();
+      hoja.getRange(maxR, 1, 1, maxC).merge();
+      hoja.getRange(2, 1, maxR - 2, 1).merge();
+      hoja.getRange(2, maxC, maxR - 2, 1).merge();
     } else {
-      // Laterales dominan toda la altura
-      hoja.getRange(1, 1, maxR, ancho).merge();
-      hoja.getRange(1, maxC - ancho + 1, maxR, ancho).merge();
-      // Superior e inferior se ajustan al centro
-      hoja.getRange(1, ancho + 1, alto, maxC - (ancho * 2)).merge();
-      hoja.getRange(maxR - alto + 1, ancho + 1, alto, maxC - (ancho * 2)).merge();
+      hoja.getRange(1, 1, maxR, 1).merge();
+      hoja.getRange(1, maxC, maxR, 1).merge();
+      hoja.getRange(1, 2, 1, maxC - 2).merge();
+      hoja.getRange(maxR, 2, 1, maxC - 2).merge();
     }
   }
 
   return "✅ Marco de color aplicado correctamente.";
 }
+
 
 
 /**
