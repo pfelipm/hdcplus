@@ -28,19 +28,8 @@
       .padding-control input { width: 50px !important; height: 1.5rem !important; text-align: center; }
 
       /* Estilos para Toasts centrados y redondeados */
-      #toast-container {
-        top: 30px !important;
-        right: auto !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-      }
-      .toast {
-        border-radius: 25px !important;
-        background-color: rgba(50, 50, 50, 0.9) !important;
-        justify-content: center !important;
-        min-width: 200px !important;
-        text-align: center !important;
-      }
+      #toast-container { top: 30px !important; right: auto !important; left: 50% !important; transform: translateX(-50%) !important; }
+      .toast { border-radius: 25px !important; background-color: rgba(50, 50, 50, 0.9) !important; justify-content: center !important; min-width: 200px !important; text-align: center !important; }
 
       .footer { margin-top: 25px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
       .btn-small { width: 100%; text-transform: none; display: flex; align-items: center; justify-content: center; height: 36px; }
@@ -80,18 +69,33 @@
         <input type="checkbox" id="conPadding" class="filled-in" onchange="togglePadding(this.checked)" />
         <span>Incluir margen interior en blanco</span>
       </label>
-      <div id="padding-wrapper" class="padding-control" style="opacity: 0.4; pointer-events: none;">
-        <span style="font-size: 12px;">Grosor (nº celdas):</span>
-        <input type="number" id="padding" value="1" min="1" max="5">
+      <div id="padding-wrapper" style="opacity: 0.4; pointer-events: none;">
+        <div class="padding-control" style="margin-bottom: 8px;">
+          <label>
+            <input type="checkbox" id="syncPadding" class="filled-in" onchange="togglePaddingInput(!this.checked)" checked />
+            <span style="font-size: 12px;">Sincronizar tamaño con el borde</span>
+          </label>
+        </div>
+        <div class="padding-control" id="custom-padding-wrapper" style="opacity: 0.4; pointer-events: none;">
+          <span style="font-size: 12px;">Grosor (nº celdas):</span>
+          <input type="number" id="padding" value="1" min="1" max="5">
+        </div>
       </div>
     </div>
 
-    <div class="section-title" style="margin-top: 15px;">3. Combinación y Estilo</div>
+    <div class="section-title" style="margin-top: 20px;">3. Combinación y Alcance</div>
     <div class="options-box">
       <label>
-        <input type="checkbox" id="combinar" class="filled-in" checked onchange="toggleDominancia(this.checked)" />
-        <span>Combinar celdas del marco</span>
+        <input type="checkbox" id="soloDataRange" class="filled-in" checked />
+        <span>Aplicar solo alrededor de los datos (Data Range)</span>
       </label>
+      
+      <p style="margin-top: 15px; margin-bottom: 5px;">
+        <label>
+          <input type="checkbox" id="combinar" class="filled-in" checked onchange="toggleDominancia(this.checked)" />
+          <span>Combinar celdas del marco</span>
+        </label>
+      </p>
       <div id="dominancia-wrapper" style="margin-top: 5px; padding-left: 30px;">
         <label style="font-size: 11px; margin-bottom: 5px;">Dominancia en esquinas:</label>
         <label style="display: inline-block; margin-right: 15px;">
@@ -150,7 +154,6 @@
         custom.title = 'Color personalizado... (Botón derecho para truco)';
         custom.onclick = () => document.getElementById('custom-color-input').click();
         
-        // Easter Egg: Botón derecho para alternar con Verde Google Sheets
         custom.oncontextmenu = (e) => {
           e.preventDefault();
           const esVerdeSheets = custom.dataset.verde === 'true';
@@ -195,6 +198,12 @@
         wrapper.style.pointerEvents = checked ? 'auto' : 'none';
       }
 
+      function togglePaddingInput(enabled) {
+        const wrapper = document.getElementById('custom-padding-wrapper');
+        wrapper.style.opacity = enabled ? '1' : '0.4';
+        wrapper.style.pointerEvents = enabled ? 'auto' : 'none';
+      }
+
       function toggleDominancia(checked) {
         const wrapper = document.getElementById('dominancia-wrapper');
         wrapper.style.opacity = checked ? '1' : '0.4';
@@ -208,7 +217,9 @@
           alto: document.getElementById('alto').value,
           mantenerTamano: document.getElementById('mantenerTamano').checked,
           conPadding: document.getElementById('conPadding').checked,
+          syncPadding: document.getElementById('syncPadding').checked,
           padding: document.getElementById('padding').value,
+          soloDataRange: document.getElementById('soloDataRange').checked,
           combinar: document.getElementById('combinar').checked,
           dominancia: document.querySelector('input[name="dominancia"]:checked').value
         };

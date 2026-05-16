@@ -473,7 +473,7 @@ function abrirDialogoMarcoColor() {
   const html = HtmlService.createTemplateFromFile('dialogoMarcoColor')
     .evaluate()
     .setWidth(450)
-    .setHeight(650)
+    .setHeight(750)
     .setTitle('🖼️ Crear marco de color | HdC+');
   SpreadsheetApp.getUi().showModalDialog(html, ' ');
 }
@@ -495,59 +495,87 @@ function aplicarMarcoColor(config) {
     return "💡 Utiliza el comando 'Recortar' para eliminar marcos existentes.";
   }
 
-  // 2. Inserciones geométricas (1 celda para el borde + N celdas para padding)
-  const totalInsertF = 1 + numPadding;
-  const totalInsertC = 1 + numPadding;
+  // 2. Definir área de aplicación (Toda la hoja o Data Range)
+  let rowInit, rowEnd, colInit, colEnd;
+  
+  if (config.soloDataRange) {
+    const range = hoja.getDataRange();
+    rowInit = range.getRow();
+    rowEnd = range.getLastRow();
+    colInit = range.getColumn();
+    colEnd = range.getLastColumn();
+  } else {
+    rowInit = 1;
+    rowEnd = hoja.getMaxRows();
+    colInit = 1;
+    colEnd = hoja.getMaxColumns();
+  }
 
-  // Filas (Arriba y Abajo)
-  hoja.insertRowsBefore(1, totalInsertF);
-  hoja.insertRowsAfter(hoja.getMaxRows(), totalInsertF);
+  // 3. Inserciones geométricas (1 celda para el borde + N celdas para padding)
+  const totalInsert = 1 + numPadding;
+
+  // Filas (Arriba y Abajo del área seleccionada)
+  hoja.insertRowsBefore(rowInit, totalInsert);
+  hoja.insertRowsAfter(rowEnd + totalInsert, totalInsert); // +totalInsert porque la hoja se ha desplazado
 
   // Columnas (Izquierda y Derecha)
-  hoja.insertColumnsBefore(1, totalInsertC);
-  hoja.insertColumnsAfter(hoja.getMaxColumns(), totalInsertC);
+  hoja.insertColumnsBefore(colInit, totalInsert);
+  hoja.insertColumnsAfter(colEnd + totalInsert, totalInsert);
 
   SpreadsheetApp.flush();
 
-  // 3. Ajustar tamaño de las celdas del borde (píxeles)
+  // 4. Ajustar tamaños y aplicar Colores
   const maxR = hoja.getMaxRows();
   const maxC = hoja.getMaxColumns();
+  
+  // Coordenadas del borde exterior (son la primera y última fila/columna del área expandida)
+  const bFilSup = rowInit;
+  const bFilInf = rowEnd + (totalInsert * 2);
+  const bColIzq = colInit;
+  const bColDer = colEnd + (totalInsert * 2);
 
-  // Altura filas superior/inferior
-  hoja.setRowHeight(1, pixelAlto);
-  hoja.setRowHeight(maxR, pixelAlto);
+  // Aplicar tamaños en píxeles al borde
+  hoja.setRowHeight(bFilSup, pixelAlto);
+  hoja.setRowHeight(bFilInf, pixelAlto);
+  hoja.setColumnWidth(bColIzq, pixelAncho);
+  hoja.setColumnWidth(bColDer, pixelAncho);
 
-  // Anchura columnas izquierda/derecha
-  hoja.setColumnWidth(1, pixelAncho);
-  hoja.setColumnWidth(maxC, pixelAncho);
+  // Si hay margen sincronizado, aplicar también el tamaño a las filas de padding
+  if (config.conPadding && config.syncPadding) {
+    for (let i = 1; i <= numPadding; i++) {
+      hoja.setRowHeight(bFilSup + i, pixelAlto);
+      hoja.setRowHeight(bFilInf - i, pixelAlto);
+      hoja.setColumnWidth(bColIzq + i, pixelAncho);
+      hoja.setColumnWidth(bColDer - i, pixelAncho);
+    }
+  }
 
-  // 4. Aplicar Colores (Solo en la celda exterior del borde)
-  // Rango superior
-  hoja.getRange(1, 1, 1, maxC).setBackground(color);
-  // Rango inferior
-  hoja.getRange(maxR, 1, 1, maxC).setBackground(color);
-  // Rango izquierdo (excluyendo esquinas ya pintadas por el superior/inferior para evitar conflictos)
-  hoja.getRange(2, 1, maxR - 2, 1).setBackground(color);
-  // Rango derecho
-  hoja.getRange(2, maxC, maxR - 2, 1).setBackground(color);
+  // 5. Aplicar fondos de color al borde
+  // Superior e Inferior
+  hoja.getRange(bFilSup, bColIzq, 1, bColDer - bColIzq + 1).setBackground(color);
+  hoja.getRange(bFilInf, bColIzq, 1, bColDer - bColIzq + 1).setBackground(color);
+  // Laterales (ajustados para no solapar)
+  hoja.getRange(bFilSup + 1, bColIzq, bFilInf - bFilSup - 1, 1).setBackground(color);
+  hoja.getRange(bFilSup + 1, bColDer, bFilInf - bFilSup - 1, 1).setBackground(color);
 
-  // 5. Combinación (Merge)
+  // 6. Combinación (Merge)
   if (config.combinar) {
     if (config.dominancia === 'horizontal') {
-      hoja.getRange(1, 1, 1, maxC).merge();
-      hoja.getRange(maxR, 1, 1, maxC).merge();
-      hoja.getRange(2, 1, maxR - 2, 1).merge();
-      hoja.getRange(2, maxC, maxR - 2, 1).merge();
+      hoja.getRange(bFilSup, bColIzq, 1, bColDer - bColIzq + 1).merge();
+      hoja.getRange(bFilInf, bColIzq, 1, bColDer - bColIzq + 1).merge();
+      hoja.getRange(bFilSup + 1, bColIzq, bFilInf - bFilSup - 1, 1).merge();
+      hoja.getRange(bFilSup + 1, bColDer, bFilInf - bFilSup - 1, 1).merge();
     } else {
-      hoja.getRange(1, 1, maxR, 1).merge();
-      hoja.getRange(1, maxC, maxR, 1).merge();
-      hoja.getRange(1, 2, 1, maxC - 2).merge();
-      hoja.getRange(maxR, 2, 1, maxC - 2).merge();
+      hoja.getRange(bFilSup, bColIzq, bFilInf - bFilSup + 1, 1).merge();
+      hoja.getRange(bFilSup, bColDer, bFilInf - bFilSup + 1, 1).merge();
+      hoja.getRange(bFilSup, bColIzq + 1, 1, bColDer - bColIzq - 1).merge();
+      hoja.getRange(bFilInf, bColIzq + 1, 1, bColDer - bColIzq - 1).merge();
     }
   }
 
   return "✅ Marco de color aplicado correctamente.";
 }
+
 
 
 
