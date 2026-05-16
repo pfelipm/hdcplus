@@ -2,12 +2,20 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+      body {
+        overflow: hidden;
+        margin: 0;
+        padding: 0 15px;
+      }
+    </style>
   </head>
   <body>
     <div id="mensaje" style="visibility:hidden;">
-      <p>Parece que tu navegador está bloqueando ventanas emergentes, considera 
+      <p>Parece que tu navegador está bloqueando ventanas emergentes. Considera 
          modificar sus ajustes para permitirlas en este sitio.</p>
       <p>Haz clic <a href="<?= url; ?>" target="_blank">aquí</a> para abrir la página externa.</p>
+    </div>
   </body>
   <script>
     const windowReference = window.open('<?= url; ?>', '_blank');
