@@ -359,73 +359,79 @@ function eliminarFyC() {
 const eliminarFyC_core = (e) => {
   
   const modo = +e.modo;
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Si viene un nombre de hoja específico (modo granular)
+  if (e.nombreHoja) {
+    const hoja = hdc.getSheetByName(e.nombreHoja);
+    if (!hoja) throw new Error(`Pestaña no encontrada: ${e.nombreHoja}`);
+    procesarRecorteHoja_(hoja, modo, e.encuadre === 'on');
+    return { nombre: e.nombreHoja, completado: true };
+  }
+
+  // Modo directo (Hoja actual o todas las hojas en una sola llamada - OBSOLETO por UI granular)
   const global = e.global === 'on';
   const encuadre = e.encuadre === 'on';
-    
-  const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojas = global ? hdc.getSheets() : [hdc.getActiveSheet()];
     
-  hojas.forEach(h => {
-    
-    // (A) RECORTE POR ARRIBA E IZQUIERDA (ENCUADRE)
-    if (encuadre) {
-      const vals = h.getDataRange().getValues();
-      let firstRow = 0, firstCol = 0;
-
-      // Buscar primera fila con datos reales
-      for (let r = 0; r < vals.length; r++) {
-        if (vals[r].join("").length > 0) {
-          firstRow = r + 1;
-          break;
-        }
-      }
-
-      // Buscar primera columna con datos reales
-      if (firstRow > 0) {
-        let minCol = vals[0].length;
-        vals.forEach(fila => {
-          for (let c = 0; c < fila.length; c++) {
-            if (fila[c] !== "") {
-              minCol = Math.min(minCol, c);
-              break;
-            }
-          }
-        });
-        firstCol = minCol + 1;
-      }
-
-      // Aplicar recortes superiores e izquierdos
-      if (firstCol > 1) h.deleteColumns(1, firstCol - 1);
-      if (firstRow > 1) h.deleteRows(1, firstRow - 1);
-      
-      // Forzar actualización de caché de Sheets para el siguiente paso
-      SpreadsheetApp.flush();
-    }
-
-    // (B) RECORTE POR ABAJO Y DERECHA (SOBRANTES)
-    const nFilas = h.getLastRow();
-    const nMaxFilas = h.getMaxRows();
-    const nColumnas = h.getLastColumn();
-    const nMaxColumnas = h.getMaxColumns();
-
-    if (nFilas > 0 && nColumnas > 0) {
-      switch (modo) {
-        case 1: // Columnas
-          if (nMaxColumnas > nColumnas) h.deleteColumns(nColumnas + 1, nMaxColumnas - nColumnas);
-          break;
-        case 2: // Filas
-          if (nMaxFilas > nFilas) h.deleteRows(nFilas + 1, nMaxFilas - nFilas);
-          break;   
-        case 3: // Filas y columnas 
-          if (nMaxColumnas > nColumnas) h.deleteColumns(nColumnas + 1, nMaxColumnas - nColumnas);
-          if (nMaxFilas > nFilas) h.deleteRows(nFilas + 1, nMaxFilas - nFilas);          
-          break;
-      }
-    }
-  });
+  hojas.forEach(h => procesarRecorteHoja_(h, modo, encuadre));
 
   return `✅ Recorte completado en ${hojas.length} pestañas.`;
 }
+
+/**
+ * Función interna de procesamiento de recorte para una hoja
+ * @private
+ */
+function procesarRecorteHoja_(h, modo, encuadre) {
+  // (A) RECORTE POR ARRIBA E IZQUIERDA (ENCUADRE)
+  if (encuadre) {
+    const vals = h.getDataRange().getValues();
+    let firstRow = 0, firstCol = 0;
+
+    for (let r = 0; r < vals.length; r++) {
+      if (vals[r].join("").length > 0) {
+        firstRow = r + 1;
+        break;
+      }
+    }
+
+    if (firstRow > 0) {
+      let minCol = vals[0].length;
+      vals.forEach(fila => {
+        for (let c = 0; c < fila.length; c++) {
+          if (fila[c] !== "") {
+            minCol = Math.min(minCol, c);
+            break;
+          }
+        }
+      });
+      firstCol = minCol + 1;
+    }
+
+    if (firstCol > 1) h.deleteColumns(1, firstCol - 1);
+    if (firstRow > 1) h.deleteRows(1, firstRow - 1);
+    SpreadsheetApp.flush();
+  }
+
+  // (B) RECORTE POR ABAJO Y DERECHA (SOBRANTES)
+  const nFilas = h.getLastRow();
+  const nMaxFilas = h.getMaxRows();
+  const nColumnas = h.getLastColumn();
+  const nMaxColumnas = h.getMaxColumns();
+
+  if (nFilas > 0 && nColumnas > 0) {
+    switch (modo) {
+      case 1: if (nMaxColumnas > nColumnas) h.deleteColumns(nColumnas + 1, nMaxColumnas - nColumnas); break;
+      case 2: if (nMaxFilas > nFilas) h.deleteRows(nFilas + 1, nMaxFilas - nFilas); break;   
+      case 3: 
+        if (nMaxColumnas > nColumnas) h.deleteColumns(nColumnas + 1, nMaxColumnas - nColumnas);
+        if (nMaxFilas > nFilas) h.deleteRows(nFilas + 1, nMaxFilas - nFilas);          
+        break;
+    }
+  }
+}
+
 
 
 /**
