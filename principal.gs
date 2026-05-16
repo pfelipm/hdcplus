@@ -859,7 +859,7 @@ const fillDown = () => {
 
       for (let c = 0; c < nCols; c++) {
         let ultimoValor = '';
-        for (let f = 0; r < nRows; f++) {
+        for (let f = 0; f < nRows; f++) {
           if (vals[f][c] !== '') ultimoValor = vals[f][c];
           else if (ultimoValor !== '') vals[f][c] = ultimoValor;
         }
