@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
     <style>
       html, body {
         overflow: hidden !important;
         margin: 0 !important;
         padding: 0 !important;
+        background-color: #f5f5f5; /* Color de fondo típico de diálogos GAS */
+        height: 100%;
+        width: 100%;
+        font-family: 'Arial', sans-serif;
       }
       #mensaje {
-        padding: 15px;
+        display: none;
+        padding: 10px 15px;
+        font-size: 13px;
+        line-height: 1.4;
       }
+      a { color: #15c; }
     </style>
+    <script>
+      function intentarAbrir() {
+        const url = '<?= url; ?>';
+        const win = window.open(url, '_blank');
+        if (win) {
+          google.script.host.close();
+        } else {
+          document.getElementById("mensaje").style.display = 'block';
+        }
+      }
+    </script>
   </head>
-  <body>
-    <div id="mensaje" style="display:none;">
-      <p>Parece que tu navegador está bloqueando ventanas emergentes. Considera 
-         modificar sus ajustes para permitirlas en este sitio.</p>
-      <p>Haz clic <a href="<?= url; ?>" target="_blank">aquí</a> para abrir la página externa.</p>
+  <body onload="intentarAbrir()">
+    <div id="mensaje">
+      <p>Parece que tu navegador bloquea las ventanas emergentes. Por favor, 
+         permítelas para este sitio.</p>
+      <p>O haz clic <a href="<?= url; ?>" target="_blank">aquí</a> para abrirla manualmente.</p>
     </div>
   </body>
-  <script>
-    const windowReference = window.open('<?= url; ?>', '_blank');
-    if (windowReference != null) google.script.host.close();
-    // Se muestra el enlace en el caso de que el navegador haya bloqueado la apertura
-    document.getElementById("mensaje").style.display = 'block'; 
-  </script>
 </html>

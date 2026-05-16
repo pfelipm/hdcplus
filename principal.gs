@@ -211,7 +211,7 @@ function abrirWebExterna_(urlSitioExterno) {
   const htmlTemplate = HtmlService.createTemplateFromFile('dialogoAbrirPaginaExterna.html');
   htmlTemplate.url = urlSitioExterno;
   SpreadsheetApp.getUi().showModelessDialog(
-    htmlTemplate.evaluate().setHeight(100).setWidth(400),
+    htmlTemplate.evaluate().setHeight(85).setWidth(400),
     '🌐 Abriendo sitio web...'
   );  // No parece ser necesario
   Utilities.sleep(2000);
