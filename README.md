@@ -74,6 +74,12 @@ Detecta todas las celdas que contienen fórmulas y crea reglas de protección pa
 *   Dos niveles de seguridad: Mostrar advertencia o Restringir edición solo al propietario ("Solo tú").
 *   Opciones para eliminar protecciones creadas por HdC+ o limpiar todas las protecciones de la hoja/libro.
 
+### 🧰 Kit funciones con nombre
+Un producto diferente pero altamente complementario a HdC+. Se trata de una colección de fórmulas avanzadas nativas de Google Sheets (basadas en funciones LAMBDA) listas para importar a tus proyectos.
+*   **Obtener plantilla vacía / con ejemplos:** Abre una copia de la plantilla del Kit para integrar en tu Drive.
+*   **Ayuda:** Enlace a la documentación oficial del Kit.
+*   👉 *Más información en:* [kitfuncioneshdc.notion.site](https://kitfuncioneshdc.notion.site/)
+
 ---
 
 ## 🧩 Funciones Personalizadas (Custom Functions)
