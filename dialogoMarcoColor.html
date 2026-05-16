@@ -72,11 +72,11 @@
       <div id="padding-wrapper" style="opacity: 0.4; pointer-events: none;">
         <div class="padding-control" style="margin-bottom: 8px;">
           <label>
-            <input type="checkbox" id="syncPadding" class="filled-in" onchange="togglePaddingInput(!this.checked)" checked />
-            <span style="font-size: 12px;">Sincronizar tamaño con el borde</span>
+            <input type="checkbox" id="syncPadding" class="filled-in" checked />
+            <span id="label-sync" style="font-size: 12px;">Sincronizar tamaño con el borde</span>
           </label>
         </div>
-        <div class="padding-control" id="custom-padding-wrapper" style="opacity: 0.4; pointer-events: none;">
+        <div class="padding-control" id="custom-padding-wrapper">
           <span style="font-size: 12px;">Grosor (nº celdas):</span>
           <input type="number" id="padding" value="1" min="1" max="5">
         </div>
@@ -190,18 +190,28 @@
         const wrapper = document.getElementById('inputs-tamano');
         wrapper.style.opacity = checked ? '0.4' : '1';
         wrapper.style.pointerEvents = checked ? 'none' : 'auto';
+        
+        // El check de sincronizar solo tiene sentido con tamaño personalizado
+        const sync = document.getElementById('syncPadding');
+        sync.disabled = checked;
+        document.getElementById('label-sync').style.opacity = checked ? '0.4' : '1';
       }
 
       function togglePadding(checked) {
         const wrapper = document.getElementById('padding-wrapper');
         wrapper.style.opacity = checked ? '1' : '0.4';
         wrapper.style.pointerEvents = checked ? 'auto' : 'none';
+        
+        // Refrescar estado de syncPadding según el check de tamaño general
+        if (checked) {
+           const mantTam = document.getElementById('mantenerTamano').checked;
+           document.getElementById('syncPadding').disabled = mantTam;
+           document.getElementById('label-sync').style.opacity = mantTam ? '0.4' : '1';
+        }
       }
 
       function togglePaddingInput(enabled) {
-        const wrapper = document.getElementById('custom-padding-wrapper');
-        wrapper.style.opacity = enabled ? '1' : '0.4';
-        wrapper.style.pointerEvents = enabled ? 'auto' : 'none';
+        // Esta función ya no se usa para bloquear el input de número
       }
 
       function toggleDominancia(checked) {
