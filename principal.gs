@@ -10,6 +10,8 @@ const VERSION = 'Versión: 2.0 (mayo 2026)';
 
 const ENCABEZADO_ALERTAS = 'HdC+';
 
+const NOMBRE_INDICE = 'Índice HdC+';
+
 // Para mostrar / ocultar pestañas por color
 const COLORES_HOJAS = {
   azul: { nombre: 'azul', hex:'#0000ff', icono: '🟦' },
@@ -75,6 +77,8 @@ function onOpen() {
       .addItem('Barajar por filas', 'desordenarCol'))
     // Estructura de datos
     .addSubMenu(ui.createMenu('📐 Estructurar datos')
+      .addItem('🖼️ Crear marco de color...', 'abrirDialogoMarcoColor')
+      .addSeparator()
       .addItem('Consolidar dimensiones (despivotar)', 'unpivot_')
       .addItem('Transponer (destructivo)', 'transponer'))
     // Manipular hojas

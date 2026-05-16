@@ -467,6 +467,92 @@ function abrirConsolaPestañas() {
 }
 
 /**
+ * Abre el diálogo modal para crear marcos de color
+ */
+function abrirDialogoMarcoColor() {
+  const html = HtmlService.createTemplateFromFile('dialogoMarcoColor')
+    .evaluate()
+    .setWidth(450)
+    .setHeight(550)
+    .setTitle('🖼️ Crear marco de color | HdC+');
+  SpreadsheetApp.getUi().showModalDialog(html, ' ');
+}
+
+/**
+ * Aplica un marco de color a la hoja activa basándose en la configuración
+ */
+function aplicarMarcoColor(config) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = hdc.getActiveSheet();
+  
+  // 1. Identificar rango de datos (ignorar marcos previos si los hay)
+  const dataRange = hoja.getDataRange();
+  const lastRow = hoja.getLastRow();
+  const lastCol = hoja.getLastColumn();
+  
+  // 2. Parámetros de la configuración
+  const color = config.color;
+  const ancho = parseInt(config.ancho) || 0;
+  const alto = parseInt(config.alto) || 0;
+  const padding = config.conPadding ? (parseInt(config.padding) || 0) : 0;
+  const totalF = alto + padding;
+  const totalC = ancho + padding;
+
+  if (color === '#FFFFFF') {
+    return "💡 Utiliza el comando 'Recortar' para eliminar marcos existentes.";
+  }
+
+  // 3. Inserciones geométricas
+  if (totalF > 0) {
+    hoja.insertRowsBefore(1, totalF);
+    hoja.insertRowsAfter(hoja.getMaxRows(), totalF);
+  }
+  if (totalC > 0) {
+    hoja.insertColumnsBefore(1, totalC);
+    hoja.insertColumnsAfter(hoja.getMaxColumns(), totalC);
+  }
+
+  SpreadsheetApp.flush();
+
+  // 4. Aplicar Colores (Excluyendo el padding)
+  const maxR = hoja.getMaxRows();
+  const maxC = hoja.getMaxColumns();
+
+  // Rango superior
+  if (alto > 0) {
+    hoja.getRange(1, 1, alto, maxC).setBackground(color);
+    // Rango inferior
+    hoja.getRange(maxR - alto + 1, 1, alto, maxC).setBackground(color);
+    // Rango izquierdo
+    hoja.getRange(alto + 1, 1, maxR - (alto * 2), ancho).setBackground(color);
+    // Rango derecho
+    hoja.getRange(alto + 1, maxC - ancho + 1, maxR - (alto * 2), ancho).setBackground(color);
+  }
+
+  // 5. Combinación (Merge)
+  if (config.combinar) {
+    if (config.dominancia === 'horizontal') {
+      // Superior e inferior dominan todo el ancho
+      hoja.getRange(1, 1, alto, maxC).merge();
+      hoja.getRange(maxR - alto + 1, 1, alto, maxC).merge();
+      // Laterales se ajustan al centro
+      hoja.getRange(alto + 1, 1, maxR - (alto * 2), ancho).merge();
+      hoja.getRange(alto + 1, maxC - ancho + 1, maxR - (alto * 2), ancho).merge();
+    } else {
+      // Laterales dominan toda la altura
+      hoja.getRange(1, 1, maxR, ancho).merge();
+      hoja.getRange(1, maxC - ancho + 1, maxR, ancho).merge();
+      // Superior e inferior se ajustan al centro
+      hoja.getRange(1, ancho + 1, alto, maxC - (ancho * 2)).merge();
+      hoja.getRange(maxR - alto + 1, ancho + 1, alto, maxC - (ancho * 2)).merge();
+    }
+  }
+
+  return "✅ Marco de color aplicado correctamente.";
+}
+
+
+/**
  * Obtiene metadatos de todas las hojas incluyendo su pertenencia a grupos
  */
 function getHojasMetaData() {
@@ -602,7 +688,6 @@ function activarHojaPorId(id) {
 function generarIndiceCompleto() {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const ui = SpreadsheetApp.getUi();
-  const NOMBRE_INDICE = 'Índice HdC+';
   
   let hojaIndice = hdc.getSheetByName(NOMBRE_INDICE);
 
@@ -682,7 +767,6 @@ El rango donde se insertará el índice ya contiene información. ¿Deseas conti
 function obtenerDatosIndice_(incluirMetadatos) {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojas = hdc.getSheets();
-  const NOMBRE_INDICE = 'Índice HdC+';
   
   // Obtener grupos para los metadatos
   let idAGrupo = {};
