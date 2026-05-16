@@ -176,7 +176,12 @@ function inicialesMays_anterior_() {
 // --- RESTO DE FUNCIONES MODERNIZADAS ---
 
 /**
- * Reemplaza las ocurrencias de un patrón de expresión regular con un carácter especificado.
+ * Reemplaza las ocurrencias de un patrón de expresión regular con un carácter especificado
+ * en todas las celdas dentro de los rangos seleccionados actualmente en la hoja activa de Google Sheets.
+ * Maneja correctamente los valores de celda que no son de texto.
+ *
+ * @param {RegExp} exp La expresión regular a buscar.
+ * @param {string} caracter El carácter o cadena con el que reemplazar las coincidencias.
  */
 function sustituir(exp, caracter) {
   try {
