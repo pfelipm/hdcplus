@@ -896,25 +896,58 @@ const compactarColumnas = () => {
 
 const extraerURLs = () => {
   const ui = SpreadsheetApp.getUi();
-  const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const ranges = hdc.getActiveSheet().getActiveRangeList().getRanges();
 
-  if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Extraer URLs?\n\nEsta acción sustituirá el texto visible por las direcciones URL de los enlaces encontrados en la selección.', ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) return;
+  if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Extraer URL?\n\nEsta acción sustituirá el texto visible por las direcciones URL de los enlaces encontrados en la selección.', ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) return;
 
   try {
+    let urlsExtraidas = 0;
+
     ranges.forEach(r => {
       const rtMatrix = r.getRichTextValues();
-      const output = rtMatrix.map(fila => fila.map(celda => {
+      const formulas = r.getFormulas();
+
+      const output = rtMatrix.map((fila, fIndex) => fila.map((celda, cIndex) => {
         if (!celda) return '';
-        const urls = celda.getRuns()
-          .map(run => run.getLinkUrl())
-          .filter((url, i, self) => url && self.indexOf(url) === i); // Únicos no nulos
-        return urls.length > 0 ? urls.join('\n') : celda.getText();
+        
+        let urls = [];
+        
+        // 1. Intentar extraer de enlaces manuales (RichText)
+        celda.getRuns().forEach(run => {
+          const url = run.getLinkUrl();
+          if (url) urls.push(url);
+        });
+        
+        // 2. Si no hay en RichText, buscar en fórmulas =HYPERLINK
+        if (urls.length === 0 && formulas[fIndex][cIndex]) {
+          const formula = formulas[fIndex][cIndex];
+          // Expresión regular para atrapar HYPERLINK("url"
+          const match = formula.match(/HYPERLINK\s*\(\s*"([^"]+)"/i);
+          if (match && match[1]) {
+            urls.push(match[1]);
+          }
+        }
+        
+        // Filtrar repetidos (si un enlace abarca varios runs con el mismo formato)
+        urls = urls.filter((url, i, self) => self.indexOf(url) === i);
+        
+        if (urls.length > 0) {
+          urlsExtraidas += urls.length;
+          return urls.join('\n');
+        }
+        
+        // Si no hay enlaces, devolvemos el texto original para no machacar datos
+        return celda.getText() || formulas[fIndex][cIndex];
       }));
+      
       r.setValues(output);
     });
-    SpreadsheetApp.getActiveSpreadsheet().toast('URLs extraídas con éxito.', '🔗 HdC+');
+    
+    const msg = urlsExtraidas > 0 ? `Se han extraído ${urlsExtraidas} URL.` : 'No se encontraron URL para extraer.';
+    hdc.toast(msg, '🔗 HdC+');
   } catch (e) {
-    ui.alert(ENCABEZADO_ALERTAS, `Error al extraer URLs: ${e.message}`, ui.ButtonSet.OK);
+    ui.alert(ENCABEZADO_ALERTAS, `Error al extraer URL: ${e.message}`, ui.ButtonSet.OK);
   }
 };
 
