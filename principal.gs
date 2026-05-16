@@ -369,14 +369,37 @@ const eliminarFyC_core = (e) => {
     
     // (A) RECORTE POR ARRIBA E IZQUIERDA (ENCUADRE)
     if (encuadre) {
-      const dataRange = h.getDataRange();
-      const firstRow = dataRange.getRow();
-      const firstCol = dataRange.getColumn();
+      const vals = h.getDataRange().getValues();
+      let firstRow = 0, firstCol = 0;
 
-      // Eliminar columnas izquierdas vacías (de derecha a izquierda para mantener índices)
+      // Buscar primera fila con datos reales
+      for (let r = 0; r < vals.length; r++) {
+        if (vals[r].join("").length > 0) {
+          firstRow = r + 1;
+          break;
+        }
+      }
+
+      // Buscar primera columna con datos reales
+      if (firstRow > 0) {
+        let minCol = vals[0].length;
+        vals.forEach(fila => {
+          for (let c = 0; c < fila.length; c++) {
+            if (fila[c] !== "") {
+              minCol = Math.min(minCol, c);
+              break;
+            }
+          }
+        });
+        firstCol = minCol + 1;
+      }
+
+      // Aplicar recortes superiores e izquierdos
       if (firstCol > 1) h.deleteColumns(1, firstCol - 1);
-      // Eliminar filas superiores vacías
       if (firstRow > 1) h.deleteRows(1, firstRow - 1);
+      
+      // Forzar actualización de caché de Sheets para el siguiente paso
+      SpreadsheetApp.flush();
     }
 
     // (B) RECORTE POR ABAJO Y DERECHA (SOBRANTES)
