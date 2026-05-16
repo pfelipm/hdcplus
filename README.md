@@ -11,7 +11,7 @@
 Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y estética, transformando el complemento en una suite profesional de utilidades para el tratamiento de datos y la gestión de documentos complejos.
 
 ## 🚀 Novedades de la v2.0
-*   **Consola de Pestañas Avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos y el revolucionario **Modo Live** para sincronización en tiempo real.
+*   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos y el revolucionario **Modo Live** para sincronización en tiempo real.
 *   **Marcos de Color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
 *   **Generador de Índices Dual:** Crea pestañas de índice enriquecidas o inserta listas de navegación ligeras con un solo clic.
 *   **Suite de Manipulación de Intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos (Fill Down) y extraer URLs exhaustivamente.
@@ -41,7 +41,7 @@ Desordena aleatoriamente los datos dentro del rango seleccionado:
 
 ### 📋 Gestionar hojas
 Herramientas para la manipulación y organización del libro de cálculo:
-*   **📁 Consola de Pestañas:** Interfaz gráfica avanzada para reordenar, ocultar, mostrar, agrupar y colorear pestañas masivamente.
+*   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenar, ocultar, mostrar, agrupar y colorear pestañas masivamente.
 *   **📑 Generar pestaña de índice:** Crea una nueva hoja con hipervínculos a todas las pestañas y sus metadatos.
 *   **📌 Insertar índice aquí:** Inserta una lista de hipervínculos a las pestañas en la celda activa.
 *   **Ordenar/Desordenar hojas:** Ordenación alfabética ascendente o descendente, y desordenación aleatoria de las pestañas.
@@ -52,7 +52,7 @@ Herramientas para la manipulación y organización del libro de cálculo:
 ### 🗜️ Insertar y eliminar filas/columnas
 *   **🖼️ Crear marco de color:** Genera bordes coloreados y espaciados estéticos alrededor del rango de datos usando una interfaz gráfica.
 *   **Eliminar celdas no seleccionadas:** Elimina todas las filas y columnas exteriores a la selección actual, dejando solo los datos de interés.
-*   **Eliminar filas/columnas sobrantes:** Recorta el exceso de celdas en blanco alrededor de tus datos.
+*   **Eliminar filas/columnas sobrantes:** Interfaz gráfica (panel interactivo) para recortar de forma avanzada el exceso de celdas en blanco alrededor de tus datos.
 *   **Insertar más filas/columnas:** Añade bloques de celdas en posiciones específicas mediante un panel interactivo.
 
 ### ✨ Generar datos falsos
@@ -74,7 +74,7 @@ Herramientas avanzadas de procesamiento masivo en celdas:
 *   **Consolidar dimensiones (despivotar):** Inicia el panel Unpivot para normalizar tablas de doble entrada en un formato tabular plano.
 
 ### 🔏 Proteger celdas con fórmulas
-Detecta todas las celdas que contienen fórmulas y crea reglas de protección para evitar su edición accidental.
+Detecta todas las celdas que contienen fórmulas y crea reglas de protección para evitar su edición accidental. Cuenta con una **interfaz gráfica avanzada (panel lateral)** para la selección de hojas y seguimiento del proceso.
 *   Puede aplicarse a la **Hoja actual** o a **Todas las hojas** de forma masiva.
 *   Dos niveles de seguridad: Mostrar advertencia o Restringir edición solo al propietario ("Solo tú").
 *   Opciones para eliminar protecciones creadas por HdC+ o limpiar todas las protecciones de la hoja/libro.
