@@ -56,7 +56,7 @@ Herramientas para la manipulación y organización del libro de cálculo:
 *   **📑 Generar pestaña de índice:** Crea una nueva hoja con hipervínculos a todas las pestañas y sus metadatos.
 
 <p align="center">
-  <img src="assets/índice.webp" alt="Pestaña de Índice">
+  <img src="assets/índice.webp" alt="Pestaña de Índice" width="90%">
 </p>
 
 *   **📌 Insertar índice aquí:** Inserta una lista de hipervínculos a las pestañas en la celda activa.
