@@ -473,7 +473,7 @@ function abrirDialogoMarcoColor() {
   const html = HtmlService.createTemplateFromFile('dialogoMarcoColor')
     .evaluate()
     .setWidth(450)
-    .setHeight(750)
+    .setHeight(780)
     .setTitle('🖼️ Crear marco de color | HdC+');
   SpreadsheetApp.getUi().showModalDialog(html, ' ');
 }
@@ -495,7 +495,13 @@ function aplicarMarcoColor(config) {
     return "💡 Utiliza el comando 'Recortar' para eliminar marcos existentes.";
   }
 
-  // 2. Definir área de aplicación (Toda la hoja o Data Range)
+  // 2. ENCUADRE PREVIO (Si se solicita y estamos en modo Data Range)
+  if (config.soloDataRange && config.encuadre) {
+    procesarRecorteHoja_(hoja, 3, true); // Modo 3 (filas y col), encuadre = true
+    SpreadsheetApp.flush();
+  }
+
+  // 3. Definir área de aplicación (Toda la hoja o Data Range actualizado)
   let rowInit, rowEnd, colInit, colEnd;
   
   if (config.soloDataRange) {

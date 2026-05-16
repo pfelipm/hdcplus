@@ -86,9 +86,16 @@
     <div class="section-title" style="margin-top: 20px;">3. Combinación y Alcance</div>
     <div class="options-box">
       <label>
-        <input type="checkbox" id="soloDataRange" class="filled-in" checked />
+        <input type="checkbox" id="soloDataRange" class="filled-in" onchange="toggleSoloDataRange(this.checked)" checked />
         <span>Aplicar solo alrededor de los datos (Data Range)</span>
       </label>
+      
+      <div id="encuadre-wrapper" style="padding-left: 30px; margin-top: 5px;">
+        <label>
+          <input type="checkbox" id="encuadre" class="filled-in" checked />
+          <span style="font-size: 12px;">Encuadre total (limpiar huecos previos)</span>
+        </label>
+      </div>
       
       <p style="margin-top: 15px; margin-bottom: 5px;">
         <label>
@@ -153,7 +160,7 @@
         custom.innerHTML = '<i class="material-icons">colorize</i>';
         custom.title = 'Color personalizado... (Botón derecho para truco)';
         custom.onclick = () => document.getElementById('custom-color-input').click();
-        
+        // Easter Egg: Botón derecho para alternar con Verde Google Sheets
         custom.oncontextmenu = (e) => {
           e.preventDefault();
           const esVerdeSheets = custom.dataset.verde === 'true';
@@ -162,6 +169,15 @@
             custom.innerHTML = '';
             custom.dataset.verde = 'true';
             custom.title = 'Verde Google Sheets (#0F9D58)';
+
+            // Efecto visual: Pulso
+            custom.animate([
+              { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(15, 157, 88, 0.7)' },
+              { transform: 'scale(1.2)', boxShadow: '0 0 0 10px rgba(15, 157, 88, 0)' },
+              { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(15, 157, 88, 0)' }
+            ], { duration: 600, iterations: 1 });
+
+            M.toast({html: '<span>¡Verde Google Sheets activado! 🟢✨</span>', displayLength: 3000});
             seleccionarColor('#0F9D58', custom);
           } else {
             custom.style.background = '#e0e0e0';
@@ -184,6 +200,14 @@
         colorSeleccionado = hex;
         document.querySelectorAll('.color-opt').forEach(opt => opt.classList.remove('selected'));
         M.toast({html: 'Color personalizado: ' + hex});
+      }
+
+      function toggleSoloDataRange(checked) {
+        const wrapper = document.getElementById('encuadre-wrapper');
+        const check = document.getElementById('encuadre');
+        wrapper.style.opacity = checked ? '1' : '0.4';
+        wrapper.style.pointerEvents = checked ? 'auto' : 'none';
+        if (!checked) check.checked = false;
       }
 
       function toggleInputsTamano(checked) {
