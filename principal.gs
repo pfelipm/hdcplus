@@ -77,8 +77,6 @@ function onOpen() {
       .addItem('Barajar por filas', 'desordenarCol'))
     // Estructura de datos
     .addSubMenu(ui.createMenu('📐 Estructurar datos')
-      .addItem('🖼️ Crear marco de color...', 'abrirDialogoMarcoColor')
-      .addSeparator()
       .addItem('Consolidar dimensiones (despivotar)', 'unpivot_')
       .addItem('Transponer (destructivo)', 'transponer'))
     // Manipular hojas
@@ -133,6 +131,8 @@ function onOpen() {
         .addItem('Eliminar hojas color rojo', 'eliminarHojasRojo')))
     // Filas y columnas
     .addSubMenu(ui.createMenu('🗜️ Insertar y eliminar filas/columnas')
+      .addItem('🖼️ Crear marco de color...', 'abrirDialogoMarcoColor')
+      .addSeparator()
       .addItem('Eliminar celdas no seleccionadas', 'eliminarFyCNoSeleccionadas')
       .addItem('Eliminar filas/columnas sobrantes', 'eliminarFyC')
       .addSeparator()
