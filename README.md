@@ -188,4 +188,9 @@ HdC+ incluye fórmulas que puedes usar directamente en las celdas de tus hojas, 
 HdC+ se distribuye bajo licencia **GNU GPL v3**. Puedes consultar la documentación detallada de cada herramienta en la wiki oficial del proyecto o a través de los menús de ayuda integrados en el complemento.
 
 ---
+
+## 🤫 Curiosidades
+¿Sabías que HdC+ oculta un pequeño *easter egg* en algún lugar de su interfaz? 🥚 Solo los usuarios más observadores que se atrevan a explorar más allá de lo evidente lograrán descubrirlo.
+
+---
 © 2020-2026 Pablo Felip Monferrer ([@pfelipm](https://twitter.com/pfelipm)).
