@@ -14,8 +14,11 @@ Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y e
 
 ## 🚀 Novedades de la v2.0
 *   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos y el revolucionario **Modo Live** para sincronización en tiempo real.
+    ![Consola de pestañas](assets/panel-pestañas.webp)
 *   **Marcos de color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
+    ![Marcos de color](assets/panel-.marco-hoja.webp)
 *   **Generador de índices dual:** Crea pestañas de índice enriquecidas o inserta listas de navegación ligeras con un solo clic.
+    ![Índice](assets/índice.webp)
 *   **Suite de manipulación de intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos hacia abajo y extraer URLs exhaustivamente.
 *   **Optimización extrema:** Algoritmos de alto rendimiento para funciones de acople de datos y protección de fórmulas, reduciendo tiempos de espera de minutos a segundos.
 *   **Modernización visual:** Nueva interfaz basada en Materialize CSS y estandarización de alertas para una experiencia de usuario fluida y coherente.
@@ -152,6 +155,10 @@ Un producto diferente pero altamente complementario a HdC+. Se trata de una cole
 *   **Ayuda:** Enlace a la documentación oficial del Kit.
 *   👉 *Más información en:* [kitfuncioneshdc.notion.site](https://kitfuncioneshdc.notion.site/)
 
+<p align="center">
+  <img src="assets/web-kit-funciones-con-nombre.png" alt="Sitio de soporte Kit funciones con nombre" width="90%">
+</p>
+
 ---
 
 ## 🧩 Funciones personalizadas (Custom functions)
@@ -178,6 +185,10 @@ HdC+ incluye fórmulas que puedes usar directamente en las celdas de tus hojas, 
 HdC+ se distribuye bajo licencia **GNU GPL v3**. Puedes consultar la documentación detallada de cada función personalizada en la wiki oficial del proyecto.
 
 👉 [Página oficial de soporte y documentación de funciones personalizadas](https://pfelipm.notion.site/fxpersonalizadashdcplus)
+
+<p align="center">
+  <img src="assets/web-funciones-personalizadas.png" alt="Sitio de soporte Funciones personalizadas" width="90%">
+</p>
 
 ---
 © 2020-2026 Pablo Felip Monferrer ([@pfelipm](https://twitter.com/pfelipm)).
