@@ -51,22 +51,16 @@ function onOpen() {
       .addItem('❌↩️ Eliminar saltos de línea ', 'eliminarSaltos')
       .addItem('🔺➖️ Comas a espacios', 'comasEspacios')
       .addItem('🔺↩️ Comas a saltos de línea', 'comasSaltos')
-      .addItem('➖🔺 Espacios a comas', 'espaciosComas')      
-      .addItem('➖↩️ Espacios a saltos de línea', 'espaciosSaltos')      
+      .addItem('➖🔺 Espacios a comas', 'espaciosComas')
+      .addItem('➖↩️ Espacios a saltos de línea', 'espaciosSaltos')
       .addItem('↩️➖ Saltos de línea a espacios', 'saltosEspacios')
       .addItem('↩️🔺 Saltos de línea a comas', 'saltosComas')
       .addItem('↗️ Iniciales a mayúsculas', 'inicialesMays_')
       .addItem('⬆️ Inicial a mayúsculas', 'inicialMays_')
       .addItem('🔠 Todo a mayúsculas', 'mayusculas')
       .addItem('🔤 Todo a minúsculas', 'minusculas'))
-    // Casillas de verificación
-    .addSubMenu(ui.createMenu('⚡ Ajustar casillas de verificación')
-      .addItem('✔️️ Activar seleccionadas', 'check')
-      .addItem('❌ Desactivar seleccionadas ', 'uncheck')
-      .addItem('➖ Invertir seleccionadas ', 'recheck'))
     // Anotaciones
-    .addSubMenu(ui.createMenu('📝 Anotar celdas')
-      .addItem('Insertar nota con fecha', 'notaFecha')
+    .addSubMenu(ui.createMenu('📝 Anotar celdas')      .addItem('Insertar nota con fecha', 'notaFecha')
       .addItem('Insertar nota con usuario', 'notaUsuario')
       .addItem('Insertar nota con fecha y hora', 'notaFechaHora')
       .addItem('Insertar nota con fecha y usuario', 'notaFechaUsuario')
@@ -76,7 +70,14 @@ function onOpen() {
       .addItem('Barajar por columnas', 'desordenarFil')
       .addItem('Barajar por filas', 'desordenarCol'))
     // Estructura de datos
-    .addSubMenu(ui.createMenu('📐 Estructurar datos')
+    .addSubMenu(ui.createMenu('📐 Manipular intervalos de datos')
+      .addItem('⚡ Invertir casillas de verificación', 'invertirCasillas')
+      .addItem('☑️ Convertir texto a casillas', 'textoACasillas')
+      .addItem('⬇️ Rellenar celdas vacías hacia abajo', 'fillDown')
+      .addItem('🗜️ Compactar filas vacías en selección', 'compactarFilas')
+      .addItem('↕️ Invertir orden de filas (Flip)', 'invertirOrden')
+      .addItem('🔗 Extraer URLs de enlaces', 'extraerURLs')
+      .addSeparator()
       .addItem('Consolidar dimensiones (despivotar)', 'unpivot_')
       .addItem('Transponer (destructivo)', 'transponer'))
     // Manipular hojas
@@ -798,67 +799,109 @@ function forzarRecalculo() {
   
 }
 
-// Funciones de manipulación de casillas de verificación
+const extraerURLs = () => {
+  const ui = SpreadsheetApp.getUi();
+  const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
 
-function check() {
+  if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Extraer URLs?\n\nEsta acción sustituirá el texto visible por las direcciones URL de los enlaces encontrados en la selección.', ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) return;
 
-  procesarCheck(true);
+  try {
+    ranges.forEach(r => {
+      const rtMatrix = r.getRichTextValues();
+      const output = rtMatrix.map(fila => fila.map(celda => {
+        if (!celda) return '';
+        const urls = celda.getRuns()
+          .map(run => run.getLinkUrl())
+          .filter((url, i, self) => url && self.indexOf(url) === i); // Únicos no nulos
+        return urls.length > 0 ? urls.join('\n') : celda.getText();
+      }));
+      r.setValues(output);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('URLs extraídas con éxito.', '🔗 HdC+');
+  } catch (e) {
+    ui.alert(ENCABEZADO_ALERTAS, `Error al extraer URLs: ${e.message}`, ui.ButtonSet.OK);
+  }
+};
 
-}
+const invertirOrden = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => r.setValues(r.getValues().reverse()));
+    SpreadsheetApp.getActiveSpreadsheet().toast('Orden invertido.', '↕️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al invertir orden: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
 
+const compactarFilas = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      const vals = r.getValues();
+      const filtrados = vals.filter(f => f.join('').trim() !== '');
+      if (filtrados.length === 0) return;
+      r.clearContent();
+      r.offset(0, 0, filtrados.length, vals[0].length).setValues(filtrados);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Filas compactadas.', '🗜️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al compactar: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
 
-function uncheck() {
+const fillDown = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      const vals = r.getValues();
+      const nCols = vals[0].length;
+      const nRows = vals.length;
 
-  procesarCheck(false);
+      for (let c = 0; c < nCols; c++) {
+        let ultimoValor = '';
+        for (let f = 0; r < nRows; f++) {
+          if (vals[f][c] !== '') ultimoValor = vals[f][c];
+          else if (ultimoValor !== '') vals[f][c] = ultimoValor;
+        }
+      }
+      r.setValues(vals);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Relleno completado.', '⬇️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error en Fill Down: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
 
-}
+const textoACasillas = () => {
+  const regSI = /^(sí|si|v|verdadero|1|true|yes|y|ok|x)$/i;
+  const regNO = /^(no|f|falso|0|false|n)$/i;
 
-/**
- * Procesa el rango seleccionado, ajustando el valor de 
- * las celdas con valores TRUE o FALSE al valor T/F indicado
- */
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      const vals = r.getValues().map(fila => fila.map(c => {
+        const s = String(c).trim();
+        if (regSI.test(s)) return true;
+        if (regNO.test(s)) return false;
+        return c;
+      }));
+      r.setValues(vals).insertCheckboxes();
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Conversión a casillas finalizada.', '☑️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al convertir: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
 
-function procesarCheck(valor)  {
-
-  var rangos = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
-  var matriz;
-  
-  rangos.map(function(r) {
-  
-    matriz = r.getValues().map(function(c) {
-      
-      return c.map(function(c) {
-      
-        return (typeof c == 'boolean' ? valor : c);    
-      })
-    
-    })
-    r.setValues(matriz);
-  })
-    
-}
-
-/**
- * Procesa el rango seleccionado, invirtiendo el valor de 
- * las celdas con valores TRUE o FALSE 
- */
-
-function recheck(valor)  {
-
-  var rangos = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
-  var matriz;
-  
-  rangos.map(function(r) {
-  
-    matriz = r.getValues().map(function(c) {
-      
-      return c.map(function(c) {
-      
-       return (typeof c == 'boolean' ? !c : c);    
-      })
-    
-    })
-    r.setValues(matriz);
-  })
-    
-}
+const invertirCasillas = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      const vals = r.getValues().map(fila => fila.map(c => typeof c === 'boolean' ? !c : c));
+      r.setValues(vals);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Casillas invertidas.', '⚡ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al invertir casillas: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
