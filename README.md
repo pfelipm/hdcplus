@@ -1,7 +1,12 @@
-[![Creado con - Google Apps Script](https://img.shields.io/static/v1?label=Creado+con&message=Google+Apps+Script&color=blue&logo=GAS)](https://developers.google.com/apps-script)
-# HdC+ (Versión 2.0)
+![Banner de HdC+](assets/banner.png)
 
-**HdC+** fue originalmente un proyecto personal de aprendizaje y mi segundo complemento tras [Form Response Control (FRC)](https://workspace.google.com/marketplace/app/form_response_control/433492681931). Su primera versión vio la luz a finales de 2019, apenas unos meses antes de mi incorporación al programa de expertos de Google (GDE, Google Developer Expert) en la categoría de Google Workspace. Hoy en día, ha evolucionado hasta convertirse en una potente colección de herramientas y funciones personalizadas para Google Sheets, diseñada para extender las capacidades nativas de tus hojas de cálculo mediante Google Apps Script.
+[![Creado con - Google Apps Script](https://img.shields.io/static/v1?label=Creado+con&message=Google+Apps+Script&color=blue&logo=GAS)](https://developers.google.com/apps-script)
+[![Versión 2.0](https://img.shields.io/badge/Versi%C3%B3n-2.0-brightgreen)](#)
+[![Licencia GPL v3](https://img.shields.io/badge/Licencia-GNU_GPL_v3-blue)](https://github.com/pfelipm/hdcplus/blob/master/LICENSE)
+
+# HdC+
+
+**HdC+** fue originalmente un proyecto personal de aprendizaje y mi segundo complemento tras [Form Response Control (FRC)](https://workspace.google.com/marketplace/app/form_response_control/433492681931). Su primera versión vio la luz a finales de 2019, apenas unos meses antes de mi incorporación al programa de expertos de Google (GDE, Google Developer Expert) en la categoría de Google Workspace. Las circunstancias en las que nació hacen que sea un proyecto al que le tengo enorme cariño. Hoy en día, ha evolucionado hasta convertirse en una potente colección de herramientas y funciones personalizadas para Google Sheets, diseñada para extender las capacidades nativas de tus hojas de cálculo mediante Google Apps Script.
 
 Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y estética, transformando el complemento en una suite profesional de utilidades para el tratamiento de datos y la gestión de documentos complejos.
 
