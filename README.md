@@ -1,7 +1,7 @@
 [![Creado con - Google Apps Script](https://img.shields.io/static/v1?label=Creado+con&message=Google+Apps+Script&color=blue&logo=GAS)](https://developers.google.com/apps-script)
 # HdC+ (Versión 2.0)
 
-**HdC+** es una potente colección de herramientas y funciones personalizadas para Google Sheets, diseñada para extender las capacidades nativas de tus hojas de cálculo mediante Google Apps Script.
+**HdC+** fue originalmente un proyecto personal de aprendizaje cuya primera versión vio la luz a finales de 2019, apenas unos meses antes de mi incorporación al programa de expertos de Google (GDE, Google Developer Expert) en la categoría de Google Workspace. Hoy en día, ha evolucionado hasta convertirse en una potente colección de herramientas y funciones personalizadas para Google Sheets, diseñada para extender las capacidades nativas de tus hojas de cálculo mediante Google Apps Script.
 
 Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y estética, transformando el complemento en una suite profesional de utilidades para el tratamiento de datos y la gestión de documentos complejos.
 
@@ -16,7 +16,7 @@ Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y e
 
 ---
 
-## 🛠️ Herramientas de Menú
+## 🛠️ Herramientas de menú
 
 ### 🔤 Acondicionar el texto de las celdas
 Herramientas para limpieza rápida de datos textuales en las celdas seleccionadas:
@@ -82,7 +82,7 @@ Un producto diferente pero altamente complementario a HdC+. Se trata de una cole
 
 ---
 
-## 🧩 Funciones Personalizadas (Custom Functions)
+## 🧩 Funciones personalizadas (Custom functions)
 HdC+ incluye fórmulas que puedes usar directamente en las celdas de tus hojas, al igual que `=SUMA()` o `=BUSCARV()`.
 
 *   **`ACOPLAR(intervalo, ...)`** / **`HDCP_ACOPLAR`**: Combina filas de datos correspondientes a una misma entidad basándose en columnas clave, concatenando el resto de valores con un delimitador. Altamente optimizada en v2.0 para procesar miles de filas instantáneamente ($O(N)$).
@@ -99,7 +99,7 @@ HdC+ incluye fórmulas que puedes usar directamente en las celdas de tus hojas, 
 
 ---
 
-## 🛠️ Instalación y Soporte
+## 🛠️ Instalación y soporte
 HdC+ se distribuye bajo licencia **GNU GPL v3**. Puedes consultar la documentación detallada de cada función personalizada en la wiki oficial del proyecto.
 
 👉 [Página oficial de soporte y documentación de funciones personalizadas](https://pfelipm.notion.site/fxpersonalizadashdcplus)
