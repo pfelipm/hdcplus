@@ -27,6 +27,21 @@
       .padding-control { display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-left: 30px; }
       .padding-control input { width: 50px !important; height: 1.5rem !important; text-align: center; }
 
+      /* Estilos para Toasts centrados y redondeados */
+      #toast-container {
+        top: 30px !important;
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+      .toast {
+        border-radius: 25px !important;
+        background-color: rgba(50, 50, 50, 0.9) !important;
+        justify-content: center !important;
+        min-width: 200px !important;
+        text-align: center !important;
+      }
+
       .footer { margin-top: 25px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
       .btn-small { width: 100%; text-transform: none; display: flex; align-items: center; justify-content: center; height: 36px; }
       #progress-bar { display: none; margin-top: 15px; }
@@ -42,14 +57,14 @@
 
     <div class="section-title" style="margin-top: 5px;">2. Dimensiones del borde</div>
     
-    <div style="margin-top: 10px;">
+    <div style="margin-top: 5px;">
       <label>
         <input type="checkbox" id="mantenerTamano" class="filled-in" onchange="toggleInputsTamano(this.checked)" checked />
-        <span>Mantener tamaño predeterminado (21px)</span>
+        <span>Mantener tamaño predeterminado</span>
       </label>
     </div>
 
-    <div class="row-params" id="inputs-tamano" style="opacity: 0.4; pointer-events: none;">
+    <div class="row-params" id="inputs-tamano" style="opacity: 0.4; pointer-events: none; margin-top: 15px;">
       <div class="input-field">
         <input type="number" id="ancho" value="21" min="1" max="100">
         <label class="active">Anchura (px)</label>
@@ -130,9 +145,29 @@
 
         const custom = document.createElement('div');
         custom.className = 'color-opt';
+        custom.id = 'custom-color-picker';
         custom.innerHTML = '<i class="material-icons">colorize</i>';
-        custom.title = 'Color personalizado...';
+        custom.title = 'Color personalizado... (Botón derecho para truco)';
         custom.onclick = () => document.getElementById('custom-color-input').click();
+        
+        // Easter Egg: Botón derecho para alternar con Verde Google Sheets
+        custom.oncontextmenu = (e) => {
+          e.preventDefault();
+          const esVerdeSheets = custom.dataset.verde === 'true';
+          if (!esVerdeSheets) {
+            custom.style.background = '#0F9D58';
+            custom.innerHTML = '';
+            custom.dataset.verde = 'true';
+            custom.title = 'Verde Google Sheets (#0F9D58)';
+            seleccionarColor('#0F9D58', custom);
+          } else {
+            custom.style.background = '#e0e0e0';
+            custom.innerHTML = '<i class="material-icons">colorize</i>';
+            custom.dataset.verde = 'false';
+            custom.title = 'Color personalizado...';
+          }
+        };
+        
         grid.appendChild(custom);
       });
 
