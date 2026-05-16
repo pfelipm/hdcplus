@@ -210,10 +210,10 @@
         const wrapper = document.getElementById('encuadre-wrapper');
         wrapper.style.opacity = checked ? '1' : '0.4';
         wrapper.style.pointerEvents = checked ? 'auto' : 'none';
-        if (!checked) {
-          document.getElementById('encuadreAnterior').checked = false;
-          document.getElementById('encuadrePosterior').checked = false;
-        }
+        
+        // Al activar/desactivar el padre, sincronizamos el estado de los hijos por defecto
+        document.getElementById('encuadreAnterior').checked = checked;
+        document.getElementById('encuadrePosterior').checked = checked;
       }
 
       function toggleInputsTamano(checked) {
