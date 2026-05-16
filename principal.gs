@@ -934,7 +934,7 @@ const extraerURLs = () => {
         
         if (urls.length > 0) {
           urlsExtraidas += urls.length;
-          return urls.join('\n');
+          return urls.join(', ');
         }
         
         // Si no hay enlaces, devolvemos el texto original para no machacar datos
