@@ -307,48 +307,44 @@ function insertarFyC() {
   
 }
 
-function insertarFyC_core(e) {
+const insertarFyC_core = (e) => {
   
-  var nFil = +e.numFil;
-  var nCol = +e.numCol;
-  var modo = +e.modo;
-  var hdc = SpreadsheetApp.getActiveSheet();
+  const nFil = +e.numFil;
+  const nCol = +e.numCol;
+  const modo = +e.modo;
+  const hdc = SpreadsheetApp.getActiveSheet();
   
   // Fila y Columna posición superior izquierda rango seleccionado
-  
-  var fil = hdc.getActiveCell().getRow();
-  var col = hdc.getActiveCell().getColumn();
+  const fil = hdc.getActiveCell().getRow();
+  const col = hdc.getActiveCell().getColumn();
   
   // Fila y Columna máximas
-  
-  var filMax = hdc.getMaxRows();
-  var colMax = hdc.getMaxColumns();
+  const filMax = hdc.getMaxRows();
+  const colMax = hdc.getMaxColumns();
     
   switch (modo) {
-  
     case 1: // al principio de la hoja
-      
-      if (nFil > 0) {hdc.insertRowsBefore(1, nFil);}
-      if (nCol > 0) {hdc.insertColumnsBefore(1, nCol);}
+      if (nFil > 0) hdc.insertRowsBefore(1, nFil);
+      if (nCol > 0) hdc.insertColumnsBefore(1, nCol);
       break;
     
     case 2: // al final de la hoja
-    
-      if (nFil > 0) {hdc.insertRowsAfter(filMax, nFil);}
-      if (nCol > 0) {hdc.insertColumnsAfter(colMax, nCol);}
+      if (nFil > 0) hdc.insertRowsAfter(filMax, nFil);
+      if (nCol > 0) hdc.insertColumnsAfter(colMax, nCol);
       break;
     
     case 3: // antes de celda
-      
-      if (nFil > 0) {hdc.insertRowsBefore(fil, nFil);}
-      if (nCol > 0) {hdc.insertColumnsBefore(col, nCol);}
+      if (nFil > 0) hdc.insertRowsBefore(fil, nFil);
+      if (nCol > 0) hdc.insertColumnsBefore(col, nCol);
       break;
       
     case 4: // después de celda
-      if (nFil > 0) {hdc.insertRowsAfter(fil, nFil);}
-      if (nCol > 0) {hdc.insertColumnsAfter(col, nCol);}
+      if (nFil > 0) hdc.insertRowsAfter(fil, nFil);
+      if (nCol > 0) hdc.insertColumnsAfter(col, nCol);
       break;    
   }
+
+  return `✅ Operación completada con éxito.`;
 }
 
 function eliminarFyC() {
@@ -360,77 +356,54 @@ function eliminarFyC() {
   
 }
 
-function eliminarFyC_core(e) {
+const eliminarFyC_core = (e) => {
   
-  var modo = +e.modo;
-  var global = e.global == 'on' ? true : false;
+  const modo = +e.modo;
+  const global = e.global === 'on';
+  const encuadre = e.encuadre === 'on';
     
-  var nFilas, nMaxFilas, nColumnas, nMaxColumnas;
-  var hojas = global ? SpreadsheetApp.getActiveSpreadsheet().getSheets() : SpreadsheetApp.getActiveSheet();
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = global ? hdc.getSheets() : [hdc.getActiveSheet()];
     
-  if (global) { // se procesan todas las hojas de la hdc
-  
-    hojas.map(function(h) {
-      
-      nFilas = h.getLastRow();
-      nMaxFilas = h.getMaxRows();
-      nColumnas = h.getLastColumn();
-      nMaxColumnas = h.getMaxColumns();
-      if (nFilas > 0 && nColumnas > 0) {
-        
-        switch (modo) {
-        
-          case 1: // Columnas
-          
-            if (nMaxColumnas > nColumnas) {h.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
-            break;
-          
-          case 2: // Filas
-      
-            if (nMaxFilas > nFilas) {h.deleteRows(nFilas+1, nMaxFilas - nFilas);}
-            break;   
-            
-          case 3: // Filas y columnas 
-          
-            if (nMaxColumnas > nColumnas) {h.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
-            if (nMaxFilas > nFilas) {h.deleteRows(nFilas+1, nMaxFilas - nFilas);}          
-            break;
-        }      
-      }
-  })}
-  else { // solo se procesa la hoja actual
-  
-    nFilas = hojas.getLastRow();
-    nMaxFilas = hojas.getMaxRows();
-    nColumnas = hojas.getLastColumn();
-    nMaxColumnas = hojas.getMaxColumns();
-    if (nFilas == 0 || nColumnas == 0) {
-      SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, '💡 La hoja de datos está vacía, no se eliminará nada.', SpreadsheetApp.getUi().ButtonSet.OK);
+  hojas.forEach(h => {
+    
+    // (A) RECORTE POR ARRIBA E IZQUIERDA (ENCUADRE)
+    if (encuadre) {
+      const dataRange = h.getDataRange();
+      const firstRow = dataRange.getRow();
+      const firstCol = dataRange.getColumn();
+
+      // Eliminar columnas izquierdas vacías (de derecha a izquierda para mantener índices)
+      if (firstCol > 1) h.deleteColumns(1, firstCol - 1);
+      // Eliminar filas superiores vacías
+      if (firstRow > 1) h.deleteRows(1, firstRow - 1);
     }
-    else {
-    
+
+    // (B) RECORTE POR ABAJO Y DERECHA (SOBRANTES)
+    const nFilas = h.getLastRow();
+    const nMaxFilas = h.getMaxRows();
+    const nColumnas = h.getLastColumn();
+    const nMaxColumnas = h.getMaxColumns();
+
+    if (nFilas > 0 && nColumnas > 0) {
       switch (modo) {
-      
         case 1: // Columnas
-        
-          if (nMaxColumnas > nColumnas) {hojas.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
+          if (nMaxColumnas > nColumnas) h.deleteColumns(nColumnas + 1, nMaxColumnas - nColumnas);
           break;
-        
         case 2: // Filas
-    
-          if (nMaxFilas > nFilas) {hojas.deleteRows(nFilas+1, nMaxFilas - nFilas);}
+          if (nMaxFilas > nFilas) h.deleteRows(nFilas + 1, nMaxFilas - nFilas);
           break;   
-          
         case 3: // Filas y columnas 
-        
-          if (nMaxColumnas > nColumnas) {hojas.deleteColumns(nColumnas+1, nMaxColumnas - nColumnas);}
-          if (nMaxFilas > nFilas) {hojas.deleteRows(nFilas+1, nMaxFilas - nFilas);}          
+          if (nMaxColumnas > nColumnas) h.deleteColumns(nColumnas + 1, nMaxColumnas - nColumnas);
+          if (nMaxFilas > nFilas) h.deleteRows(nFilas + 1, nMaxFilas - nFilas);          
           break;
       }
     }
-  }
-  
+  });
+
+  return `✅ Recorte completado en ${hojas.length} pestañas.`;
 }
+
 
 /**
  * Elimina las filas y columnas de la hoja actual que quedan fuera del intervalo (único) de celdas seleccionado
