@@ -18,6 +18,7 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
     - Rediseño integral del menú con una estructura jerárquica y funcional mejorada.
     - Estandarización global de `ui.alert()` utilizando la constante `ENCABEZADO_ALERTAS` y corrección de errores de firma de método (unificación de parámetros de texto).
     - Refactorización de la lógica de dimensiones (`insertarFyC_core`, `eliminarFyC_core`) a ES6, implementando el "Encuadre total".
+    - **Nueva suite 'Manipular intervalos de datos'**: 6 funciones de procesamiento masivo (invertir casillas, texto a casillas, fill down, compactación avanzada, invertir orden y extracción de URLs).
 - **hojas.gs**:
     - Implementación de la infraestructura de backend para la "Consola de Pestañas" y gestión de grupos mediante `PropertiesService`.
     - Lógica de aplicación de cambios masivos optimizada y gestión inteligente de visibilidad de la hoja activa.

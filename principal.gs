@@ -74,7 +74,10 @@ function onOpen() {
       .addItem('⚡ Invertir casillas de verificación', 'invertirCasillas')
       .addItem('☑️ Convertir texto a casillas', 'textoACasillas')
       .addItem('⬇️ Rellenar celdas vacías hacia abajo', 'fillDown')
-      .addItem('🗜️ Compactar filas vacías en selección', 'compactarFilas')
+      .addSubMenu(ui.createMenu('🗜️ Compactar selección')
+        .addItem('Filas vacías', 'compactarFilas')
+        .addItem('Columnas vacías', 'compactarColumnas')
+        .addItem('Filas y columnas vacías', 'compactarAmbas'))
       .addItem('↕️ Invertir orden de filas (Flip)', 'invertirOrden')
       .addItem('🔗 Extraer URLs de enlaces', 'extraerURLs')
       .addSeparator()
@@ -798,6 +801,70 @@ function forzarRecalculo() {
   SpreadsheetApp.getActiveSheet().deleteRow(1);
   
 }
+
+const compactarAmbas = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      let vals = r.getValues();
+      // 1. Compactar filas
+      vals = vals.filter(f => f.join('').trim() !== '');
+      if (vals.length === 0) {
+        r.clearContent();
+        return;
+      }
+      // 2. Compactar columnas
+      const nRows = vals.length;
+      const nCols = vals[0].length;
+      const indicesNoVacios = [];
+      for (let c = 0; c < nCols; c++) {
+        let colVacia = true;
+        for (let f = 0; f < nRows; f++) {
+          if (vals[f][c] !== '') {
+            colVacia = false;
+            break;
+          }
+        }
+        if (!colVacia) indicesNoVacios.push(c);
+      }
+      const matrizFinal = vals.map(fila => indicesNoVacios.map(idx => fila[idx]));
+      r.clearContent();
+      r.offset(0, 0, matrizFinal.length, matrizFinal[0].length).setValues(matrizFinal);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Selección compactada.', '🗜️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al compactar selección: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
+
+const compactarColumnas = () => {
+  try {
+    const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    ranges.forEach(r => {
+      const vals = r.getValues();
+      const nRows = vals.length;
+      const nCols = vals[0].length;
+      const indicesNoVacios = [];
+      for (let c = 0; c < nCols; c++) {
+        let colVacia = true;
+        for (let f = 0; f < nRows; f++) {
+          if (vals[f][c] !== '') {
+            colVacia = false;
+            break;
+          }
+        }
+        if (!colVacia) indicesNoVacios.push(c);
+      }
+      if (indicesNoVacios.length === 0 || indicesNoVacios.length === nCols) return;
+      const nuevaMatriz = vals.map(fila => indicesNoVacios.map(idx => fila[idx]));
+      r.clearContent();
+      r.offset(0, 0, nRows, indicesNoVacios.length).setValues(nuevaMatriz);
+    });
+    SpreadsheetApp.getActiveSpreadsheet().toast('Columnas compactadas.', '🗜️ HdC+');
+  } catch (e) {
+    SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al compactar columnas: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+};
 
 const extraerURLs = () => {
   const ui = SpreadsheetApp.getUi();
