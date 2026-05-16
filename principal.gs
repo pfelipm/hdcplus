@@ -81,7 +81,7 @@ function onOpen() {
     .addSubMenu(ui.createMenu('📋 Gestionar hojas')
       .addItem('📁 Gestionar hojas...', 'abrirConsolaPestañas')
       .addSeparator()
-      .addItem('📑 Generar índice (nueva pestaña)', 'generarIndiceCompleto')
+      .addItem('📑 Generar pestaña de índice', 'generarIndiceCompleto')
       .addItem('📌 Insertar índice aquí (solo enlaces)', 'insertarIndiceLigero')
       .addSeparator()
       .addItem('Ordenar hojas (A → Z)', 'ordenarHojasAsc')
