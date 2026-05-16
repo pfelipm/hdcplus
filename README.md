@@ -27,6 +27,10 @@ Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y e
 
 ---
 
+<p align="center">
+  <img src="assets/menu.png" alt="Menú de HdC+">
+</p>
+
 ## 🛠️ Herramientas de menú
 
 ### 🔤 Acondicionar el texto de las celdas
