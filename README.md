@@ -190,8 +190,17 @@ HdC+ incluye fórmulas que puedes usar directamente en las celdas de tus hojas, 
 
 ---
 
+## 🏗️ Arquitectura técnica
+HdC+ está construido sobre los pilares tecnológicos de **Google Apps Script (motor V8)** y diseñado con un enfoque modular:
+*   **Interfaz de usuario:** Utiliza HTML5 y JavaScript moderno junto con el framework **Materialize CSS v1.0.0**, asegurando una estética profesional coherente con el ecosistema de Google Workspace.
+*   **Rendimiento:** Implementa algoritmos de alta eficiencia (complejidad $O(N)$ y $O(N \log N)$) para el procesamiento masivo de celdas y la gestión de protecciones, minimizando los tiempos de ejecución.
+*   **Persistencia:** La gestión de grupos de hojas y preferencias se apoya en `PropertiesService`, garantizando que la configuración se mantenga vinculada al documento.
+*   **Seguridad:** El complemento opera bajo la directiva `@OnlyCurrentDoc`, lo que restringe su alcance exclusivamente al documento activo y garantiza la máxima privacidad de los datos del usuario.
+
+---
+
 ## 🛠️ Instalación y soporte
-HdC+ se distribuye bajo licencia **GNU GPL v3**. Puedes consultar la documentación detallada de cada herramienta en la wiki oficial del proyecto o a través de los menús de ayuda integrados en el complemento.
+HdC+ se distribuye bajo licencia **GNU GPL v3**. La documentación de uso detallada se encuentra recogida en este archivo `README.md` y en los menús de ayuda integrados en el propio complemento.
 
 ---
 
