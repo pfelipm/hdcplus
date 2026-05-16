@@ -57,3 +57,4 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 ### A estudiar
 - Migración de las funciones de gestión de hojas (ordenación, visibilidad masiva) en `hojas.gs` a la API avanzada de Google Sheets (`batchUpdate`) para lograr un rendimiento instantáneo, evaluando la necesidad de ampliar los alcances (scopes) de OAuth.
 - Uso de la API avanzada para detectar programáticamente las pestañas seleccionadas por el usuario en la interfaz de Sheets, permitiendo acciones rápidas de protección/desprotección sin necesidad de selección manual en el panel lateral.
+- Creación de una interfaz unificada para el acondicionamiento de texto que permita el encadenamiento (chaining) de múltiples transformaciones (ej. pasar a minúsculas, latinizar y eliminar espacios) en una sola operación.
