@@ -124,7 +124,7 @@ Herramientas avanzadas de procesamiento masivo en celdas:
 *   **⬇️ Rellenar celdas vacías hacia abajo:** Rellena huecos en tablas basándose en el valor superior más cercano.
 *   **🗜️ Compactar selección:** Elimina huecos (filas, columnas o ambas) apilando los datos y eliminando los vacíos interiores.
 *   **↕️ Invertir y transponer:** Invierte el orden de las filas o columnas (solo valores) o transpone el rango completo (incluyendo formatos y notas).
-*   **🔗 Extraer URLs de enlaces:** Extrae a texto plano todas las URLs incrustadas (RichText o =HYPERLINK) de las celdas seleccionadas.
+*   **🔗 Extraer URLs de enlaces:** Extrae a texto plano todas las URLs incrustadas (RichText o ..HYPERLINK) de las celdas seleccionadas.
 *   **Consolidar dimensiones (despivotar):** Inicia el panel Unpivot para normalizar tablas de doble entrada en un formato tabular plano.
 
 <p align="center">
