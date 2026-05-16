@@ -14,6 +14,12 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
     - Rediseño del menú "Proteger celdas con fórmulas" con una estructura jerárquica: Hoja actual, Todas las hojas y Selección personalizada.
     - Estandarización global de `ui.alert()` para utilizar siempre la constante `ENCABEZADO_ALERTAS` como título y corregir firmas de método erróneas.
     - Ajuste de dimensiones del diálogo "Acerca de" para el nuevo diseño.
+    - Refactorización de la lógica de inserción y eliminación de dimensiones (`insertarFyC_core`, `eliminarFyC_core`) a ES6, implementando la nueva función de "Encuadre total".
+- **panelCrearFyC.html / panelEliminarFyC.html**:
+    - Modernización visual completa siguiendo el estándar Materialize v2.0.
+    - Sustitución de menús desplegables por botones de radio para una selección más ágil.
+    - Incorporación de la funcionalidad "Encuadre total" para recortar filas/columnas vacías por los cuatro costados.
+    - Implementación de bloqueo de interfaz y notificaciones dinámicas durante la ejecución.
 - **fx_acoplar_desacoplar.gs**: 
     - Optimización crítica de la función `ACOPLAR`. Se ha sustituido la lógica de doble pasada con complejidad $O(N^2)$ por una agrupación basada en un objeto `Map` con complejidad lineal $O(N)$.
     - Refactorización para evitar mutaciones accidentales del intervalo original mediante el uso del operador spread (`[...]`).
