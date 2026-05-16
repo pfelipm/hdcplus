@@ -42,6 +42,11 @@ Herramientas para limpieza rápida de datos textuales en las celdas seleccionada
 
 ### 📝 Anotar celdas
 Añade notas a las celdas seleccionadas incluyendo metadatos de auditoría:
+
+<p align="center">
+  <img src="assets/menú-anotar-celdas.png" alt="Menú Anotar celdas">
+</p>
+
 *   Insertar nota con fecha, hora y/o usuario (correo electrónico del editor).
 
 ### 🔀 Barajar datos
@@ -51,6 +56,11 @@ Desordena aleatoriamente los datos dentro del rango seleccionado:
 
 ### 📋 Gestionar hojas
 Herramientas para la manipulación y organización del libro de cálculo:
+
+<p align="center">
+  <img src="assets/menú-hojas.png" alt="Menú Gestionar hojas">
+</p>
+
 *   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenación, ocultación, muestra, agrupación y coloreado de pestañas de forma masiva.
 
 <p align="center">
@@ -69,7 +79,17 @@ Herramientas para la manipulación y organización del libro de cálculo:
 *   **Eliminar:** Eliminar hojas ocultas o todas excepto la activa.
 *   **Filtros por color:** Submenús dedicados para mostrar, ocultar o eliminar hojas según su color de pestaña (Azul, Morado, Verde, Naranja, Rojo).
 
+<p align="center">
+  <img src="assets/menú-hojas-color.png" alt="Menú Filtros por color">
+</p>
+
 ### 🗜️ Insertar y eliminar filas/columnas
+Herramientas para el control dimensional de tus hojas de cálculo:
+
+<p align="center">
+  <img src="assets/menú-añadir-eliminar-filas-columnas.png" alt="Menú Insertar y eliminar filas/columnas">
+</p>
+
 *   **🖼️ Crear marco de color:** Genera bordes coloreados y espaciados estéticos alrededor del rango de datos usando una interfaz gráfica.
 
 <p align="center">
@@ -107,8 +127,16 @@ Herramientas avanzadas de procesamiento masivo en celdas:
 *   **🔗 Extraer URLs de enlaces:** Extrae a texto plano todas las URLs incrustadas (RichText o =HYPERLINK) de las celdas seleccionadas.
 *   **Consolidar dimensiones (despivotar):** Inicia el panel Unpivot para normalizar tablas de doble entrada en un formato tabular plano.
 
+<p align="center">
+  <img src="assets/panel-unpivot.png" alt="Panel Unpivot">
+</p>
+
 ### 🔏 Proteger celdas con fórmulas
 Detecta todas las celdas que contienen fórmulas y crea reglas de protección para evitar su edición accidental. Cuenta con una **interfaz gráfica avanzada (panel lateral)** para la selección de hojas y seguimiento del proceso.
+
+<p align="center">
+  <img src="assets/menú-proteger-celdas.png" alt="Menú Proteger celdas">
+</p>
 
 <p align="center">
   <img src="assets/panel-protecciones.webp" alt="Protección de fórmulas">
