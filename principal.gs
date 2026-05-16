@@ -805,14 +805,23 @@ function forzarRecalculo() {
 const compactarAmbas = () => {
   try {
     const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    let tFil = 0, tCol = 0;
+
     ranges.forEach(r => {
       let vals = r.getValues();
+      const nRowsOri = vals.length;
+      const nColsOri = vals[0].length;
+
       // 1. Compactar filas
       vals = vals.filter(f => f.join('').trim() !== '');
       if (vals.length === 0) {
+        tFil += nRowsOri;
+        tCol += nColsOri;
         r.clearContent();
         return;
       }
+      tFil += (nRowsOri - vals.length);
+
       // 2. Compactar columnas
       const nRows = vals.length;
       const nCols = vals[0].length;
@@ -827,19 +836,29 @@ const compactarAmbas = () => {
         }
         if (!colVacia) indicesNoVacios.push(c);
       }
+      tCol += (nCols - indicesNoVacios.length);
+
       const matrizFinal = vals.map(fila => indicesNoVacios.map(idx => fila[idx]));
       r.clearContent();
       r.offset(0, 0, matrizFinal.length, matrizFinal[0].length).setValues(matrizFinal);
     });
-    SpreadsheetApp.getActiveSpreadsheet().toast('Selección compactada.', '🗜️ HdC+');
+
+    const msg = (tFil > 0 && tCol > 0) ? `Se han compactado ${tFil} filas y ${tCol} columnas.` :
+                (tFil > 0) ? `Se han compactado ${tFil} filas.` :
+                (tCol > 0) ? `Se han compactado ${tCol} columnas.` : 'No se encontraron huecos vacíos.';
+    
+    SpreadsheetApp.getActiveSpreadsheet().toast(msg, '🗜️ HdC+');
   } catch (e) {
     SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al compactar selección: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
   }
 };
 
+
 const compactarColumnas = () => {
   try {
     const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    let tCol = 0;
+
     ranges.forEach(r => {
       const vals = r.getValues();
       const nRows = vals.length;
@@ -855,16 +874,23 @@ const compactarColumnas = () => {
         }
         if (!colVacia) indicesNoVacios.push(c);
       }
-      if (indicesNoVacios.length === 0 || indicesNoVacios.length === nCols) return;
+      if (indicesNoVacios.length === nCols) return;
+      
+      tCol += (nCols - indicesNoVacios.length);
       const nuevaMatriz = vals.map(fila => indicesNoVacios.map(idx => fila[idx]));
       r.clearContent();
-      r.offset(0, 0, nRows, indicesNoVacios.length).setValues(nuevaMatriz);
+      if (indicesNoVacios.length > 0) {
+        r.offset(0, 0, nRows, indicesNoVacios.length).setValues(nuevaMatriz);
+      }
     });
-    SpreadsheetApp.getActiveSpreadsheet().toast('Columnas compactadas.', '🗜️ HdC+');
+    
+    const msg = tCol > 0 ? `Se han compactado ${tCol} columnas.` : 'No se encontraron columnas vacías.';
+    SpreadsheetApp.getActiveSpreadsheet().toast(msg, '🗜️ HdC+');
   } catch (e) {
     SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al compactar columnas: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
   }
 };
+
 
 const extraerURLs = () => {
   const ui = SpreadsheetApp.getUi();
@@ -903,18 +929,30 @@ const invertirOrden = () => {
 const compactarFilas = () => {
   try {
     const ranges = SpreadsheetApp.getActiveSheet().getActiveRangeList().getRanges();
+    let tFil = 0;
+
     ranges.forEach(r => {
       const vals = r.getValues();
+      const nRowsOri = vals.length;
       const filtrados = vals.filter(f => f.join('').trim() !== '');
-      if (filtrados.length === 0) return;
+      
+      tFil += (nRowsOri - filtrados.length);
+      
+      if (filtrados.length === nRowsOri) return;
+      
       r.clearContent();
-      r.offset(0, 0, filtrados.length, vals[0].length).setValues(filtrados);
+      if (filtrados.length > 0) {
+        r.offset(0, 0, filtrados.length, vals[0].length).setValues(filtrados);
+      }
     });
-    SpreadsheetApp.getActiveSpreadsheet().toast('Filas compactadas.', '🗜️ HdC+');
+
+    const msg = tFil > 0 ? `Se han compactado ${tFil} filas.` : 'No se encontraron filas vacías.';
+    SpreadsheetApp.getActiveSpreadsheet().toast(msg, '🗜️ HdC+');
   } catch (e) {
     SpreadsheetApp.getUi().alert(ENCABEZADO_ALERTAS, `Error al compactar: ${e.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
   }
 };
+
 
 const fillDown = () => {
   try {
