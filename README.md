@@ -12,12 +12,12 @@ Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y e
 
 ## 🚀 Novedades de la v2.0
 *   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos y el revolucionario **Modo Live** para sincronización en tiempo real.
-*   **Marcos de Color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
-*   **Generador de Índices Dual:** Crea pestañas de índice enriquecidas o inserta listas de navegación ligeras con un solo clic.
-*   **Suite de Manipulación de Intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos (Fill Down) y extraer URLs exhaustivamente.
-*   **Optimización Extrema:** Algoritmos de alto rendimiento para funciones de acople de datos y protección de fórmulas, reduciendo tiempos de espera de minutos a segundos.
-*   **Modernización Visual:** Nueva interfaz basada en Materialize CSS y estandarización de alertas para una experiencia de usuario fluida y coherente.
-*   **Tratamiento de Texto Unicode:** Refactorización integral de funciones de texto para soporte total de caracteres internacionales y expresiones regulares de última generación.
+*   **Marcos de color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
+*   **Generador de índices dual:** Crea pestañas de índice enriquecidas o inserta listas de navegación ligeras con un solo clic.
+*   **Suite de manipulación de intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos hacia abajo y extraer URLs exhaustivamente.
+*   **Optimización extrema:** Algoritmos de alto rendimiento para funciones de acople de datos y protección de fórmulas, reduciendo tiempos de espera de minutos a segundos.
+*   **Modernización visual:** Nueva interfaz basada en Materialize CSS y estandarización de alertas para una experiencia de usuario fluida y coherente.
+*   **Tratamiento de texto Unicode:** Refactorización integral de funciones de texto para soporte total de caracteres internacionales y expresiones regulares de última generación.
 
 ---
 
@@ -41,13 +41,13 @@ Desordena aleatoriamente los datos dentro del rango seleccionado:
 
 ### 📋 Gestionar hojas
 Herramientas para la manipulación y organización del libro de cálculo:
-*   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenar, ocultar, mostrar, agrupar y colorear pestañas masivamente.
+*   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenación, ocultación, muestra, agrupación y coloreado de pestañas de forma masiva.
 *   **📑 Generar pestaña de índice:** Crea una nueva hoja con hipervínculos a todas las pestañas y sus metadatos.
 *   **📌 Insertar índice aquí:** Inserta una lista de hipervínculos a las pestañas en la celda activa.
 *   **Ordenar/Desordenar hojas:** Ordenación alfabética ascendente o descendente, y desordenación aleatoria de las pestañas.
 *   **Visibilidad:** Ocultar todas excepto la activa, mostrar todas, o conmutar el estado de visibilidad general.
 *   **Eliminar:** Eliminar hojas ocultas o todas excepto la activa.
-*   **Filtros por Color:** Submenús dedicados para mostrar, ocultar o eliminar hojas según su color de pestaña (Azul, Morado, Verde, Naranja, Rojo).
+*   **Filtros por color:** Submenús dedicados para mostrar, ocultar o eliminar hojas según su color de pestaña (Azul, Morado, Verde, Naranja, Rojo).
 
 ### 🗜️ Insertar y eliminar filas/columnas
 *   **🖼️ Crear marco de color:** Genera bordes coloreados y espaciados estéticos alrededor del rango de datos usando una interfaz gráfica.
@@ -67,9 +67,9 @@ Criptografía aplicada a los datos seleccionados. Las celdas se reemplazan irrev
 Herramientas avanzadas de procesamiento masivo en celdas:
 *   **⚡ Invertir casillas de verificación:** Cambia el estado de TODAS las casillas de la selección (`TRUE` a `FALSE` y viceversa).
 *   **☑️ Convertir texto a casillas:** Detecta textos afirmativos ("sí", "true", "1") o negativos ("no", "false", "0") y los convierte en casillas reales.
-*   **⬇️ Rellenar celdas vacías hacia abajo:** (Fill Down) Rellena huecos en tablas basándose en el valor superior más cercano.
+*   **⬇️ Rellenar celdas vacías hacia abajo:** Rellena huecos en tablas basándose en el valor superior más cercano.
 *   **🗜️ Compactar selección:** Elimina huecos (filas, columnas o ambas) apilando los datos y eliminando los vacíos interiores.
-*   **↕️ Invertir y transponer:** Invierte el orden de las filas/columnas (solo valores) o transpone el rango completo (incluyendo formatos y notas, operación destructiva del diseño previo).
+*   **↕️ Invertir y transponer:** Invierte el orden de las filas o columnas (solo valores) o transpone el rango completo (incluyendo formatos y notas).
 *   **🔗 Extraer URLs de enlaces:** Extrae a texto plano todas las URLs incrustadas (RichText o =HYPERLINK) de las celdas seleccionadas.
 *   **Consolidar dimensiones (despivotar):** Inicia el panel Unpivot para normalizar tablas de doble entrada en un formato tabular plano.
 
