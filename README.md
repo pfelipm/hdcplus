@@ -90,15 +90,18 @@ Un producto diferente pero altamente complementario a HdC+. Se trata de una cole
 ## 🧩 Funciones personalizadas (Custom functions)
 HdC+ incluye fórmulas que puedes usar directamente en las celdas de tus hojas, al igual que `=SUMA()` o `=BUSCARV()`.
 
-*   **`ACOPLAR(intervalo, ...)`** / **`HDCP_ACOPLAR`**: Combina filas de datos correspondientes a una misma entidad basándose en columnas clave, concatenando el resto de valores con un delimitador. Altamente optimizada en v2.0 para procesar miles de filas instantáneamente ($O(N)$).
-*   **`DESACOPLAR(intervalo, ...)`** / **`HDCP_DESACOPLAR`**: Operación inversa a `ACOPLAR`. Divide filas que contienen valores múltiples delimitados en una celda y genera una fila independiente para cada valor.
-*   **`CHOOSECOLSROWS(matriz, columnas, filas)`**: Permite seleccionar simultáneamente tanto filas como columnas específicas de una matriz (combinando el comportamiento de las funciones nativas `CHOOSECOLS` y `CHOOSEROWS`).
-*   **`CONTARCOLOR(intervalo, tipo_referencia, referencia, [tipo_calculo])`** / **`HDCP_CONTARCOLOR`**: Cuenta celdas basándose en el color de su fondo o fuente. *Nota: Debido a limitaciones de Google Sheets, esta función no se recalcula automáticamente al cambiar colores, requiriendo el uso de la opción de menú "Forzar recálculo".*
-*   **`DESORDENAR(matriz, [semilla])`** / **`HDCP_DESORDENAR`**: Desordena aleatoriamente los elementos de una matriz unidimensional o bidimensional.
-*   **`HASH(texto, [algoritmo])`** / **`HDCP_HASH`**: Devuelve un hash criptográfico del texto proporcionado (MD5, SHA-1, SHA-256, etc.).
-*   **`LEVENSHTEIN(cadena1, cadena2)`** / **`HDCP_LEVENSHTEIN`**: Calcula la Distancia de Levenshtein (número mínimo de ediciones necesarias para transformar una cadena en otra), útil para medir similitud de textos.
-*   **`TROCEAR(cadena, tamaño)`** / **`HDCP_TROCEAR`**: Divide una cadena de texto larga en partes de un tamaño máximo especificado.
-*   **`UNPIVOT(intervalo, filas_encabezado, columnas_identificadoras, ...)`** / **`HDCP_UNPIVOT`**: Convierte una tabla de doble entrada en un formato de base de datos plano (tabular), ideal para usar con Tablas Dinámicas.
+*   **`BARAJARDATOSCOL`**: Ordena aleatoriamente los datos contenidos en cada una de las columnas de un intervalo de manera independiente utilizando el algoritmo de Durstenfeld.
+*   **`BARAJARDATOSFIL`**: Ordena aleatoriamente los datos contenidos en cada una de las filas de un intervalo de manera independiente utilizando el algoritmo de Durstenfeld.
+*   **`BASE64`**: Codifica en Base64 el contenido de un intervalo de datos.
+*   **`DISTANCIA_EDICION`**: Calcula la distancia de Levenshtein entre dos cadenas de texto. Opcionalmente, puede diferenciar o no mayúsculas y minúsculas, así como permitir transposiciones de caracteres no adyacentes (versión simple de la distancia de Damerau-Levenshtein).
+*   **`DISTANCIA_EDICION_MINIMA`**: Devuelve la cadena o cadenas más próximas, de acuerdo con la distancia de Levenshtein, a un conjunto de secuencias de texto de referencia candidatas.
+*   **`HASH`**: Calcula el hash de los valores del intervalo.
+*   **`HDCP_ACOPLAR`**: Acopla (combina) las filas de un intervalo de datos que corresponden a una misma entidad basándose en columnas clave. Altamente optimizada en v2.0 para procesar miles de filas instantáneamente ($O(N)$).
+*   **`HDCP_CHOOSECOLSROWS`**: Devuelve una matriz a partir de las filas y columnas seleccionadas de un intervalo simultáneamente.
+*   **`HDCP_CONTARCOLOR`**: Realiza un recuento, calcula la suma o el promedio de los valores de las celdas que tienen un color de texto o fondo determinado. *Nota: Debido a limitaciones de Google Sheets, esta función no se recalcula automáticamente al cambiar colores, requiriendo el uso de la opción de menú "Forzar recálculo".*
+*   **`HDCP_DESACOPLAR`**: Operación inversa a `HDCP_ACOPLAR`. Divide filas que contienen valores múltiples delimitados en una celda y genera una fila independiente para cada valor.
+*   **`TROCEAR`**: Divide en subcadenas los valores de texto contenidos en las celdas de un intervalo utilizando una secuencia de caracteres delimitadora.
+*   **`UNPIVOT`**: Consolida los datos de un intervalo realizando una reagrupación por dimensión (despivotaje).
 
 *(Nota: Las funciones `RELLENAR` y `REPETIRFC` se mantienen en el código por retrocompatibilidad, pero han sido marcadas como obsoletas en la v2.0 a favor de la función nativa `MAKEARRAY()` de Google Sheets).*
 
