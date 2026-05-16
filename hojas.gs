@@ -594,128 +594,120 @@ function activarHojaPorId(id) {
   throw new Error("No se pudo encontrar la pestaña.");
 }
 
+// --- GENERADOR DE ÍNDICES ---
 
 /**
- * --- CONSOLA AVANZADA DE GESTIÓN DE HOJAS ---
+ * Genera un índice completo en una pestaña dedicada 'Índice HdC+'
  */
-
-/**
- * Abre el diálogo modal de gestión avanzada de hojas
- */
-function abrirConsolaHojas() {
-  const html = HtmlService.createTemplateFromFile('dialogoGestionarHojas')
-    .evaluate()
-    .setWidth(850)
-    .setHeight(600)
-    .setTitle('🛡️ Gestión Avanzada de Hojas');
-  SpreadsheetApp.getUi().showModalDialog(html, ' ');
-}
-
-/**
- * Obtiene los metadatos de todas las hojas y los grupos guardados
- * @return {Object} { hojas: [], grupos: {} }
- */
-function getConsolaHojasData() {
+function generarIndiceCompleto() {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
-  const hojas = hdc.getSheets();
-  const propiedades = PropertiesService.getDocumentProperties();
-  let grupos = {};
+  const ui = SpreadsheetApp.getUi();
+  const NOMBRE_INDICE = 'Índice HdC+';
   
-  try {
-    const gruposGuardados = propiedades.getProperty('HDCP_GRUPOS_HOJAS');
-    if (gruposGuardados) grupos = JSON.parse(gruposGuardados);
-  } catch (e) {
-    console.error('Error al leer grupos:', e);
+  let hojaIndice = hdc.getSheetByName(NOMBRE_INDICE);
+  
+  if (hojaIndice) {
+    hojaIndice.clear().clearNotes();
+  } else {
+    hojaIndice = hdc.insertSheet(NOMBRE_INDICE, 0);
   }
 
-  const hojasData = hojas.map(h => {
-    let color = null;
-    const colorObj = h.getTabColorObject();
-    if (colorObj.getColorType() === SpreadsheetApp.ColorType.RGB) {
-      color = colorObj.asRgbColor().asHexString().toUpperCase();
-    }
-    
-    return {
-      nombre: h.getName(),
-      id: h.getSheetId(),
-      color: color,
-      oculta: h.isSheetHidden(),
-      activa: h.getName() === hdc.getActiveSheet().getName()
-    };
-  });
-
-  // Limpiar grupos de IDs que ya no existen
-  const idsExistentes = new Set(hojasData.map(h => h.id));
-  let huboLimpieza = false;
+  const cabeceras = [['Pestaña', 'Estado', 'Grupo']];
+  const datos = obtenerDatosIndice_(true);
   
-  for (const grupo in grupos) {
-    const filtrados = grupos[grupo].filter(id => idsExistentes.has(id));
-    if (filtrados.length !== grupos[grupo].length) {
-      grupos[grupo] = filtrados;
-      huboLimpieza = true;
+  if (datos.length === 0) {
+    ui.alert(ENCABEZADO_ALERTAS, 'No hay otras pestañas para indexar.', ui.ButtonSet.OK);
+    return;
+  }
+
+  // Escribir cabeceras
+  hojaIndice.getRange(1, 1, 1, 3).setValues(cabeceras).setFontWeight('bold').setBackground('#f3f3f3');
+  
+  // Escribir datos (nombres/enlaces en la columna 1, metadatos en 2 y 3)
+  const nombresRichText = datos.map(fila => [fila[0]]);
+  const metadatos = datos.map(fila => [fila[1], fila[2]]);
+  
+  hojaIndice.getRange(2, 1, datos.length, 1).setRichTextValues(nombresRichText);
+  hojaIndice.getRange(2, 2, datos.length, 2).setValues(metadatos);
+  
+  // Formato
+  hojaIndice.autoResizeColumns(1, 3);
+  hojaIndice.getRange('A1').setNote(`Última actualización: ${new Date().toLocaleString()}`);
+  
+  hdc.toast('Índice generado con éxito.', '📑 HdC+', 5);
+}
+
+/**
+ * Inserta un índice ligero (solo enlaces) a partir de la celda activa
+ */
+function insertarIndiceLigero() {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const celdaActiva = hdc.getActiveCell();
+  const ui = SpreadsheetApp.getUi();
+  
+  const datos = obtenerDatosIndice_(false);
+  
+  if (datos.length === 0) {
+    ui.alert(ENCABEZADO_ALERTAS, 'No hay otras pestañas para indexar.', ui.ButtonSet.OK);
+    return;
+  }
+
+  // Comprobar si hay riesgo de sobreescribir datos
+  const rangoDestino = celdaActiva.offset(0, 0, datos.length, 1);
+  const valoresExistentes = rangoDestino.getValues();
+  const tieneDatos = valoresExistentes.some(fila => fila[0] !== '');
+  
+  if (tieneDatos) {
+    if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Sobreescribir datos?', 'El rango donde se insertará el índice ya contiene información. ¿Deseas continuar?', ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) {
+      return;
     }
   }
-  
-  if (huboLimpieza) propiedades.setProperty('HDCP_GRUPOS_HOJAS', JSON.stringify(grupos));
 
-  return {
-    hojas: hojasData,
-    grupos: grupos
-  };
+  rangoDestino.setRichTextValues(datos.map(fila => [fila[0]]));
+  hdc.toast('Índice insertado.', '📌 HdC+', 5);
 }
 
 /**
- * Guarda la configuración de grupos en las propiedades del documento
+ * Función interna para recopilar datos de pestañas y generar enlaces RichText
+ * @private
  */
-function saveGruposConsola(grupos) {
-  PropertiesService.getDocumentProperties().setProperty('HDCP_GRUPOS_HOJAS', JSON.stringify(grupos));
-  return "Grupos guardados correctamente.";
-}
-
-/**
- * Ejecuta acciones masivas (mostrar, ocultar, eliminar) sobre una lista de IDs
- */
-function ejecutarAccionConsola(accion, idsHojas) {
+function obtenerDatosIndice_(incluirMetadatos) {
   const hdc = SpreadsheetApp.getActiveSpreadsheet();
   const hojas = hdc.getSheets();
-  const idsSet = new Set(idsHojas);
-  let procesadas = 0;
+  const NOMBRE_INDICE = 'Índice HdC+';
+  
+  // Obtener grupos para los metadatos
+  let idAGrupo = {};
+  if (incluirMetadatos) {
+    const grupos = JSON.parse(PropertiesService.getDocumentProperties().getProperty('HDC_GRUPOS_HOJAS') || '{}');
+    for (const nombreGrupo in grupos) {
+      if (Array.isArray(grupos[nombreGrupo])) {
+        grupos[nombreGrupo].forEach(id => idAGrupo[id] = nombreGrupo);
+      }
+    }
+  }
 
-  hojas.forEach(h => {
-    if (idsSet.has(h.getSheetId())) {
-      try {
-        switch(accion) {
-          case 'mostrar': h.showSheet(); break;
-          case 'ocultar': if (hdc.getSheets().filter(s => !s.isSheetHidden()).length > 1) h.hideSheet(); break;
-          case 'eliminar': if (hdc.getSheets().length > 1) hdc.deleteSheet(h); break;
-        }
-        procesadas++;
-      } catch (e) {
-        console.error(`Error al procesar hoja ${h.getName()}: `, e);
+  const filas = [];
+  hojas.forEach(hoja => {
+    if (hoja.getName() !== NOMBRE_INDICE) {
+      const id = hoja.getSheetId();
+      const nombre = hoja.getName();
+      
+      // Crear valor RichText con enlace nativo (#gid=ID)
+      const rt = SpreadsheetApp.newRichTextValue()
+        .setText(nombre)
+        .setLinkUrl(`#gid=${id}`)
+        .build();
+      
+      if (incluirMetadatos) {
+        const estado = hoja.isSheetHidden() ? '🙈 Oculta' : '👁️ Visible';
+        const grupo = idAGrupo[id] || '-';
+        filas.push([rt, estado, grupo]);
+      } else {
+        filas.push([rt]);
       }
     }
   });
-
-  return `Acción ${accion} completada en ${procesadas} hojas.`;
-}
-
-/**
- * Reordena las hojas según el array de IDs proporcionado (se usa moveActiveSheet)
- * Optimizado para minimizar activaciones.
- */
-function reordenarHojasConsola(idsOrdenados) {
-  const hdc = SpreadsheetApp.getActiveSpreadsheet();
-  const hojaOriginal = hdc.getActiveSheet();
   
-  idsOrdenados.forEach((id, index) => {
-    const hojas = hdc.getSheets();
-    const h = hojas.find(s => s.getSheetId() == id);
-    if (h) {
-      hdc.setActiveSheet(h);
-      hdc.moveActiveSheet(index + 1);
-    }
-  });
-  
-  hdc.setActiveSheet(hojaOriginal);
-  return "Hojas reordenadas con éxito.";
+  return filas;
 }
