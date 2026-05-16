@@ -605,8 +605,14 @@ function generarIndiceCompleto() {
   const NOMBRE_INDICE = 'Índice HdC+';
   
   let hojaIndice = hdc.getSheetByName(NOMBRE_INDICE);
-  
+
+  // Advertir sobre la sobreescritura total si la pestaña ya existe
   if (hojaIndice) {
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Actualizar pestaña de índice?
+
+Se va a sobreescribir por completo el contenido y el formato de la pestaña [${NOMBRE_INDICE}].`, ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) {
+      return;
+    }
     hojaIndice.clear().clearNotes();
   } else {
     hojaIndice = hdc.insertSheet(NOMBRE_INDICE, 0);
@@ -658,7 +664,9 @@ function insertarIndiceLigero() {
   const tieneDatos = valoresExistentes.some(fila => fila[0] !== '');
   
   if (tieneDatos) {
-    if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Sobreescribir datos?', 'El rango donde se insertará el índice ya contiene información. ¿Deseas continuar?', ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) {
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Sobreescribir datos?
+
+El rango donde se insertará el índice ya contiene información. ¿Deseas continuar?`, ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) {
       return;
     }
   }
