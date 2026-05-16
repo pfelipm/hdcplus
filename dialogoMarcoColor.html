@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
       body { padding: 15px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; background-color: #ffffff; overflow-x: hidden; }
-      .section-title { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #2196F3; display: inline-block; color: #2196F3; padding-bottom: 2px; }
+      .section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 2px solid #2196F3; display: inline-block; color: #2196F3; padding-bottom: 2px; }
       
       /* Grid de colores idéntico al gestor */
       .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px; background: #fafafa; margin-bottom: 15px; }
@@ -18,11 +18,11 @@
       .color-opt i { font-size: 16px; position: absolute; top: 4px; left: 4px; color: #757575; }
       #custom-color-input { position: absolute; top: -100px; left: -100px; visibility: hidden; }
 
-      .row-params { display: flex; gap: 15px; margin-bottom: 10px; }
-      .input-field { margin-top: 0 !important; margin-bottom: 5px !important; flex: 1; }
-      .input-field input { height: 2.5rem !important; margin-bottom: 5px !important; }
+      .row-params { display: flex; gap: 15px; margin-top: 10px; margin-bottom: 5px; }
+      .input-field { margin-top: 0 !important; margin-bottom: 0 !important; flex: 1; }
+      .input-field input { height: 2.5rem !important; margin-bottom: 0 !important; }
       
-      .options-box { border: 1px solid #e0e0e0; padding: 12px; border-radius: 4px; background: #fafafa; margin-top: 10px; }
+      .options-box { border: 1px solid #e0e0e0; padding: 12px; border-radius: 4px; background: #fafafa; margin-top: 5px; }
       .options-box label { display: block; margin-bottom: 8px; color: #424242; }
       .padding-control { display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-left: 30px; }
       .padding-control input { width: 50px !important; height: 1.5rem !important; text-align: center; }
@@ -40,25 +40,25 @@
     <div class="color-grid" id="color-grid"></div>
     <input type="color" id="custom-color-input" onchange="seleccionarColorManual(this.value)">
 
-    <div class="section-title">2. Dimensiones (celdas)</div>
+    <div class="section-title">2. Dimensiones del borde</div>
     <div class="row-params">
       <div class="input-field">
-        <input type="number" id="ancho" value="1" min="1" max="10">
-        <label class="active">Anchura</label>
+        <input type="number" id="ancho" value="20" min="1" max="100">
+        <label class="active">Anchura (px)</label>
       </div>
       <div class="input-field">
-        <input type="number" id="alto" value="1" min="1" max="10">
-        <label class="active">Altura</label>
+        <input type="number" id="alto" value="20" min="1" max="100">
+        <label class="active">Altura (px)</label>
       </div>
     </div>
 
     <div class="options-box">
       <label>
         <input type="checkbox" id="conPadding" class="filled-in" onchange="togglePadding(this.checked)" />
-        <span>Incluir margen interior (blanco)</span>
+        <span>Incluir margen interior en blanco</span>
       </label>
       <div id="padding-wrapper" class="padding-control" style="opacity: 0.4; pointer-events: none;">
-        <span style="font-size: 12px;">Grosor:</span>
+        <span style="font-size: 12px;">Grosor (nº celdas):</span>
         <input type="number" id="padding" value="1" min="1" max="5">
       </div>
     </div>

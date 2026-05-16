@@ -473,7 +473,7 @@ function abrirDialogoMarcoColor() {
   const html = HtmlService.createTemplateFromFile('dialogoMarcoColor')
     .evaluate()
     .setWidth(450)
-    .setHeight(550)
+    .setHeight(600)
     .setTitle('🖼️ Crear marco de color | HdC+');
   SpreadsheetApp.getUi().showModalDialog(html, ' ');
 }
