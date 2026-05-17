@@ -155,7 +155,7 @@ function onOpen() {
         .addItem('Transponer (todo, destructivo)', 'transponer'))
       .addItem('🔗 Extraer URLs de enlaces', 'extraerURLs')
       .addSeparator()
-      .addItem('Consolidar dimensiones (despivotar)', 'unpivot_'))
+      .addItem('🧬 Consolidar dimensiones (despivotar)', 'unpivot_'))
     // Proteger celdas
     .addSubMenu(ui.createMenu('🔏 Proteger celdas con fórmulas')
       .addSubMenu(ui.createMenu('📄 Hoja actual')
