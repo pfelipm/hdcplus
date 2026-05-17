@@ -33,8 +33,8 @@ function UNPIVOT(intervalo, numCol, encabezadosNuevos) {
     finalHeaders = originalHeaders.slice(0, numCol);
     var extra = (encabezadosNuevos && encabezadosNuevos[0]) ? encabezadosNuevos[0] : [];
     
-    // Encabezado (nombre de la columna pivotada)
-    finalHeaders.push(extra[numCol] || "Encabezado");
+    // Atributo (nombre de la columna pivotada)
+    finalHeaders.push(extra[numCol] || "Atributo");
     // Valor
     finalHeaders.push(extra[numCol + 1] || "Valor");
   }
