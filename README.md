@@ -99,7 +99,9 @@ Herramientas para el control dimensional de tus hojas de cálculo:
 *   **🖼️ Crear marco de color:** Genera bordes coloreados y espaciados estéticos alrededor del rango de datos usando una interfaz gráfica.
 
 <p align="center">
-  <img src="assets/panel-.marco-hoja.webp" alt="Marcos de color">
+  <img src="assets/panel-.marco-hoja.webp" alt="Panel de Marcos de color">
+  <br>
+  <img src="assets/ejemplo-marco-hoja.webp" alt="Ejemplo de resultado: Marco de color" width="90%">
 </p>
 
 *   **🎯 Eliminar celdas no seleccionadas:** Elimina todas las filas y columnas exteriores a la selección actual, dejando solo los datos de interés.
