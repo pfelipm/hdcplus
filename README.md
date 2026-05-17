@@ -19,7 +19,7 @@ Hoy en día, HdC+ ha evolucionado hasta convertirse en una potente colección de
 Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y estética, transformando el complemento en una suite profesional de utilidades para el tratamiento de datos y la gestión de documentos complejos.
 
 ## 🚀 Novedades de la v2.0
-*   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos y el revolucionario **Modo Live** para sincronización en tiempo real.
+*   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos, eliminación masiva y el revolucionario **Modo Live** para sincronización en tiempo real.
 *   **Marcos de color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
 *   **Generador de índices dual:** Crea pestañas de índice enriquecidas o inserta listas de navegación ligeras con un solo clic.
 *   **Suite de manipulación de intervalos:** Nuevas herramientas masivas para invertir datos, compactar celdas vacías, rellenar huecos hacia abajo y extraer URLs exhaustivamente.
@@ -67,7 +67,7 @@ Herramientas para la manipulación y organización del libro de cálculo:
   <img src="assets/menú-hojas.png" alt="Menú Gestionar hojas">
 </p>
 
-*   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenación, ocultación, muestra, agrupación y coloreado de pestañas de forma masiva.
+*   **📁 Consola de pestañas:** Interfaz gráfica avanzada para reordenar, ocultar, mostrar, agrupar, colorear y eliminar pestañas de forma masiva.
 
 <p align="center">
   <img src="assets/panel-pestañas.webp" alt="Consola de pestañas">
