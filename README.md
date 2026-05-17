@@ -102,14 +102,14 @@ Herramientas para el control dimensional de tus hojas de cálculo:
   <img src="assets/panel-.marco-hoja.webp" alt="Marcos de color">
 </p>
 
-*   **Eliminar celdas no seleccionadas:** Elimina todas las filas y columnas exteriores a la selección actual, dejando solo los datos de interés.
-*   **Eliminar filas/columnas sobrantes:** Interfaz gráfica (panel interactivo) para recortar de forma avanzada el exceso de celdas en blanco alrededor de tus datos.
+*   **🎯 Eliminar celdas no seleccionadas:** Elimina todas las filas y columnas exteriores a la selección actual, dejando solo los datos de interés.
+*   **✂️ Eliminar filas/columnas sobrantes:** Interfaz gráfica (panel interactivo) para recortar de forma avanzada el exceso de celdas en blanco alrededor de tus datos.
 
 <p align="center">
   <img src="assets/panel-elimiinar-filas-columnas-sobrantes.webp" alt="Eliminar sobrantes">
 </p>
 
-*   **Insertar más filas/columnas:** Añade bloques de celdas en posiciones específicas mediante un panel interactivo.
+*   **➕ Insertar más filas/columnas:** Añade bloques de celdas en posiciones específicas mediante un panel interactivo.
 
 <p align="center">
   <img src="assets/panel-.insertar-filas-columnas.webp" alt="Insertar filas/columnas">

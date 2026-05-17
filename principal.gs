@@ -123,10 +123,10 @@ function onOpen() {
     .addSubMenu(ui.createMenu('🗜️ Insertar y eliminar filas/columnas')
       .addItem('🖼️ Crear marco de color...', 'abrirDialogoMarcoColor')
       .addSeparator()
-      .addItem('Eliminar celdas no seleccionadas', 'eliminarFyCNoSeleccionadas')
-      .addItem('Eliminar filas/columnas sobrantes', 'eliminarFyC')
+      .addItem('🎯 Eliminar celdas no seleccionadas', 'eliminarFyCNoSeleccionadas')
+      .addItem('✂️ Eliminar filas/columnas sobrantes', 'eliminarFyC')
       .addSeparator()
-      .addItem('Insertar más filas/columnas', 'insertarFyC'))
+      .addItem('➕ Insertar más filas/columnas', 'insertarFyC'))
     // Generación
     .addSubMenu(ui.createMenu('✨ Generar datos falsos')
       .addItem('NIFs', 'generarNIF')
