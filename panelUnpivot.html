@@ -2,60 +2,157 @@
 <html>
   <head>
     <base target="_top">
-
-    <!-- Incluir css -->
-    <?!= HtmlService.createHtmlOutputFromFile('panelLateral_css').getContent(); ?>
-    
-  </head>
- 
-  <body>
-    <div class="row"> 
-      <form class="col s12" id="formConsolidar">
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Importar Iconos de Google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      body { padding: 15px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; background-color: #ffffff; }
+      .section-title { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #2196F3; display: inline-block; color: #2196F3; padding-bottom: 2px; }
+      .input-field { margin-top: 10px !important; margin-bottom: 10px !important; }
+      .input-field input, .input-field textarea { margin-bottom: 5px !important; }
+      .helper-text { font-size: 11px; color: #757575; margin-bottom: 15px; font-style: italic; }
+      .footer { margin-top: 25px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
+      .btn-small { width: 100%; text-transform: none; display: flex; align-items: center; justify-content: center; height: 36px; margin-bottom: 10px; }
+      .btn-ref { width: auto; font-size: 11px; height: 28px; line-height: 28px; padding: 0 10px; margin-bottom: 5px; }
+      #progress-bar { display: none; margin-top: 15px; }
+      #ui-freeze-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.1); z-index: 9999; display: none; cursor: wait; }
+      .status-box { font-size: 12px; margin-top: 10px; padding: 8px; border-radius: 4px; display: none; line-height: 1.4; }
+      .status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
       
-        <div class="row">
-        <div class="input-field col s12">
-          <input placeholder="Selecciona rango y clic en botón" id="rango" name="rango" type="text" >
-          <label for="rango">Rango a consolidar (con encabezados)</label>
-          <button id="btn_selRango" class="btn waves-effect waves-light col 6 referencia" name="action">Usar rango<i class="material-icons right">arrow_upward</i></button>
-        </div>
-        </div>
-        
-        <div class="row">
-        <div class="input-field col s12">
-          <input placeholder="Selecciona celda y clic en botón" id="destino" name="destino" type="text" >
-          <label for="destino">Celda destino</label>
-          <button id="btn_selCelda" class="btn waves-effect waves-light col 6 referencia" name="action">Usar celda<i class="material-icons right">arrow_upward</i></button>
-        </div>
-        </div>       
-        
-        <div class="row">
-        <div class="input-field col s12">
-          <label for="numCol">Nº columnas fijas a la izquierda</label>
-          <input class="validate" type="number" name="numCol" value="1" min="1" step="1" id="numCol">
-        </div>
-        </div>
-       
-        <div class="row">
-        <div class="input-field col s12">
-          <textarea id="encabezados" name="encabezados" class="materialize-textarea" placeholder="1 etiqueta por línea"></textarea>
-          <label for="encabezados">Encabezados rango consolidado</label>
-        </div>
-        </div>
-        
-      </form>
-    </div>
+      /* Toasts personalizados */
+      .toast { border-radius: 25px !important; min-height: 40px !important; justify-content: center !important; text-align: center !important; }
+    </style>
+  </head>
+  <body>
+    <div id="ui-freeze-overlay"></div>
     
-    <div class="row center-align">
-      <button id="btn_Consolidar" class="btn waves-effect waves-light">Consolidar<i class="material-icons right">table_chart</i></button>
+    <form id="formConsolidar">
+      <div class="section-title">1. Origen y destino</div>
+      
+      <div class="input-field">
+        <input placeholder="Selecciona rango y clic en botón" id="rango" name="rango" type="text" class="validate">
+        <label class="active" for="rango">Rango a consolidar (con encabezados)</label>
+        <button type="button" onclick="leerReferencia('rango')" class="btn-small btn-ref waves-effect waves-light grey darken-1">
+          <i class="material-icons left tiny">grid_on</i>Usar selección
+        </button>
+      </div>
+      
+      <div class="input-field">
+        <input placeholder="Selecciona celda y clic en botón" id="destino" name="destino" type="text" class="validate">
+        <label class="active" for="destino">Celda destino</label>
+        <button type="button" onclick="leerReferencia('celda')" class="btn-small btn-ref waves-effect waves-light grey darken-1">
+          <i class="material-icons left tiny">near_me</i>Usar celda activa
+        </button>
+      </div>
+
+      <div class="section-title" style="margin-top: 15px;">2. Estructura</div>
+      
+      <div class="input-field">
+        <input type="number" name="numCol" value="1" min="1" step="1" id="numCol" class="validate">
+        <label class="active" for="numCol">Nº columnas fijas a la izquierda</label>
+        <div class="helper-text">Columnas que no se pivotarán.</div>
+      </div>
+      
+      <div class="input-field">
+        <textarea id="encabezados" name="encabezados" class="materialize-textarea" placeholder="Etiqueta 1&#10;Etiqueta 2..."></textarea>
+        <label class="active" for="encabezados">Nuevos encabezados (uno por línea)</label>
+        <div class="helper-text">Opcional. Si se omite, se usará "Columna n".</div>
+      </div>
+    </form>
+
+    <div class="footer center-align">
+      <button id="btn-ejecutar" class="btn waves-effect waves-light blue btn-small" onclick="ejecutar()">
+        <i class="material-icons left">table_chart</i>Consolidar ahora
+      </button>
+      
+      <div class="progress" id="progress-bar">
+        <div class="indeterminate"></div>
+      </div>
+      
+      <div id="status-box" class="status-box"></div>
     </div>
 
-    <div id="spinner"class="progress hide">
-      <div class="indeterminate" id="barra_actividad"></div>
-    </div>
-    
-    <!-- Incluir js -->
-    <?!= HtmlService.createHtmlOutputFromFile('panelUnpivot_js').getContent(); ?>
-  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        M.AutoInit();
+        M.textareaAutoResize(document.getElementById('encabezados'));
+        
+        // Carga inicial de rango si hay algo seleccionado
+        leerReferencia('rango');
+      });
+
+      function leerReferencia(modo) {
+        google.script.run
+          .withSuccessHandler(valor => {
+            if (valor.startsWith('¡')) {
+              M.toast({html: valor});
+            } else {
+              const id = (modo === 'rango') ? 'rango' : 'destino';
+              const input = document.getElementById(id);
+              input.value = valor;
+              M.updateTextFields();
+            }
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+          })
+          .unpivot_capturarRango(modo);
+      }
+
+      function ejecutar() {
+        const form = document.getElementById('formConsolidar');
+        const rango = document.getElementById('rango').value;
+        const destino = document.getElementById('destino').value;
+        const numCol = document.getElementById('numCol').value;
+
+        if (!rango || !destino || numCol < 1) {
+          M.toast({html: '⚠️ Completa todos los campos obligatorios'});
+          return;
+        }
+
+        toggleLoading(true);
+        showStatus(null);
+
+        // Obtener datos del formulario de forma nativa
+        const formData = {
+          rango: rango,
+          destino: destino,
+          numCol: numCol,
+          encabezados: document.getElementById('encabezados').value
+        };
+
+        google.script.run
+          .withSuccessHandler(() => {
+            M.toast({html: '✅ Consolidación finalizada', displayLength: 10000});
+            showStatus('✅ Operación completada con éxito.');
+            toggleLoading(false);
+            // Opcionalmente cerrar: google.script.host.close();
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .unpivot_core(formData);
+      }
+
+      function toggleLoading(val) {
+        document.getElementById('btn-ejecutar').disabled = val;
+        document.getElementById('progress-bar').style.display = val ? 'block' : 'none';
+        document.getElementById('ui-freeze-overlay').style.display = val ? 'block' : 'none';
+      }
+
+      function showStatus(msg) {
+        const box = document.getElementById('status-box');
+        if (!msg) {
+          box.style.display = 'none';
+          return;
+        }
+        box.textContent = msg;
+        box.className = 'status-box status-success';
+        box.style.display = 'block';
+      }
+    </script>
   </body>
-
 </html>

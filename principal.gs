@@ -240,7 +240,7 @@ function unpivot_capturarRango(modo) {
     }
   }
   else if (modo == 'celda') {
-    return hdc.getName() + '!' + hdc.getActiveCell().getA1Notation();
+    return hdc.getName() + '!' + hdc.getCurrentCell().getA1Notation();
   }
   
 }
