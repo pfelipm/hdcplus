@@ -11,7 +11,7 @@
       .section-title { font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #2196F3; display: inline-block; color: #2196F3; padding-bottom: 2px; }
       .input-field { margin-top: 10px !important; margin-bottom: 30px !important; }
       .input-field input, .input-field textarea { margin-bottom: 8px !important; }
-      .helper-text { font-size: 11px; color: #757575; margin-bottom: 10px; font-style: italic; margin-top: -20px; display: block; }
+      .helper-text { font-size: 11px; color: #757575; margin-bottom: 15px; font-style: italic; display: block; padding-top: 5px; }
       .footer { margin-top: 30px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
       .btn-small { width: 100%; text-transform: none; display: flex; align-items: center; justify-content: center; height: 36px; margin-bottom: 10px; }
       .btn-ref { width: auto; font-size: 11px; height: 28px; line-height: 28px; padding: 0 10px; margin-bottom: 0px; position: relative; top: -5px; }
@@ -20,6 +20,11 @@
       .status-box { font-size: 12px; margin-top: 10px; padding: 8px; border-radius: 4px; display: none; line-height: 1.4; }
       .status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
       
+      /* Micro spinners */
+      .mini-spinner { display: none; width: 16px; height: 16px; border: 2px solid #ccc; border-top: 2px solid #2196F3; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-left: 10px; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      .btn-container { display: flex; align-items: center; }
+
       /* Ajuste específico para el textarea para evitar que se corte el placeholder */
       #encabezados { min-height: 60px; }
       
@@ -36,17 +41,23 @@
       <div class="input-field">
         <input placeholder="Selecciona rango y clic en botón" id="rango" name="rango" type="text" class="validate">
         <label class="active" for="rango">Rango a consolidar (con encabezados)</label>
-        <button type="button" onclick="leerReferencia('rango')" class="btn-small btn-ref waves-effect waves-light grey darken-1">
-          <i class="material-icons left tiny">grid_on</i>Usar selección
-        </button>
+        <div class="btn-container">
+          <button type="button" id="btn-rango" onclick="leerReferencia('rango')" class="btn-small btn-ref waves-effect waves-light grey darken-1">
+            <i class="material-icons left tiny">grid_on</i>Usar selección
+          </button>
+          <div id="spinner-rango" class="mini-spinner"></div>
+        </div>
       </div>
       
       <div class="input-field">
         <input placeholder="Selecciona celda y clic en botón" id="destino" name="destino" type="text" class="validate">
         <label class="active" for="destino">Celda destino</label>
-        <button type="button" onclick="leerReferencia('celda')" class="btn-small btn-ref waves-effect waves-light grey darken-1">
-          <i class="material-icons left tiny">near_me</i>Usar celda activa
-        </button>
+        <div class="btn-container">
+          <button type="button" id="btn-celda" onclick="leerReferencia('celda')" class="btn-small btn-ref waves-effect waves-light grey darken-1">
+            <i class="material-icons left tiny">near_me</i>Usar celda activa
+          </button>
+          <div id="spinner-celda" class="mini-spinner"></div>
+        </div>
       </div>
 
       <div class="section-title" style="margin-top: 5px;">2. Estructura</div>
@@ -87,8 +98,16 @@
       });
 
       function leerReferencia(modo) {
+        const spinner = document.getElementById('spinner-' + modo);
+        const btn = document.getElementById('btn-' + modo);
+        
+        spinner.style.display = 'inline-block';
+        btn.disabled = true;
+
         google.script.run
           .withSuccessHandler(valor => {
+            spinner.style.display = 'none';
+            btn.disabled = false;
             if (valor.startsWith('¡')) {
               M.toast({html: valor});
             } else {
@@ -99,6 +118,8 @@
             }
           })
           .withFailureHandler(err => {
+            spinner.style.display = 'none';
+            btn.disabled = false;
             M.toast({html: '❌ Error: ' + err.message});
           })
           .unpivot_capturarRango(modo);
