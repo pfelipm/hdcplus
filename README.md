@@ -108,7 +108,7 @@ Herramientas para el control dimensional de tus hojas de cálculo:
 *   **✂️ Eliminar filas/columnas sobrantes:** Interfaz gráfica (panel interactivo) para recortar de forma avanzada el exceso de celdas en blanco alrededor de tus datos.
 
 <p align="center">
-  <img src="assets/panel-elimiinar-filas-columnas-sobrantes.webp" alt="Eliminar sobrantes">
+  <img src="assets/panel-eliminar-filas-columnas-sobrantes.webp" alt="Eliminar sobrantes">
 </p>
 
 *   **➕ Insertar más filas/columnas:** Añade bloques de celdas en posiciones específicas mediante un panel interactivo.
