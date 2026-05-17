@@ -25,8 +25,11 @@
       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
       .btn-container { display: flex; align-items: center; }
 
-      /* Ajuste específico para el textarea para evitar que se corte el placeholder */
-      #encabezados { min-height: 60px; }
+      /* Ajuste específico para el textarea */
+      #encabezados { min-height: 80px; }
+      .textarea-wrapper { position: relative; }
+      .clear-textarea { position: absolute; right: 0; top: 0; cursor: pointer; color: #9e9e9e; font-size: 18px; padding: 5px; }
+      .clear-textarea:hover { color: #ef5350; }
       
       /* Toasts personalizados */
       .toast { border-radius: 25px !important; min-height: 40px !important; justify-content: center !important; text-align: center !important; }
@@ -71,10 +74,11 @@
         <div class="helper-text">Columnas que no se pivotarán.</div>
       </div>
       
-      <div class="input-field" style="margin-top: 20px !important;">
-        <textarea id="encabezados" name="encabezados" class="materialize-textarea" placeholder="Etiqueta 1&#10;Etiqueta 2..."></textarea>
+      <div class="input-field textarea-wrapper" style="margin-top: 20px !important;">
+        <i class="material-icons clear-textarea" title="Limpiar etiquetas" onclick="limpiarEncabezados()">close</i>
+        <textarea id="encabezados" name="encabezados" class="materialize-textarea" placeholder="Etiqueta 1&#10;Etiqueta 2&#10;Etiqueta 3..."></textarea>
         <label class="active" for="encabezados">Nuevos encabezados (uno por línea)</label>
-        <div class="helper-text">Opcional. Si se omite, se usará "Columna n".</div>
+        <div class="helper-text">Opcional. Si se omite, se usarán los originales.</div>
       </div>
     </form>
 
@@ -99,6 +103,13 @@
         // Carga inicial de rango si hay algo seleccionado
         leerReferencia('rango');
       });
+
+      function limpiarEncabezados() {
+        const txt = document.getElementById('encabezados');
+        txt.value = '';
+        M.textareaAutoResize(txt);
+        M.updateTextFields();
+      }
 
       function leerReferencia(modo) {
         const spinner = document.getElementById('spinner-' + modo);
@@ -152,7 +163,6 @@
 
         google.script.run
           .withSuccessHandler(() => {
-            M.toast({html: '✅ Consolidación finalizada', displayLength: 10000});
             showStatus('✅ Operación completada con éxito.');
             toggleLoading(false);
           })

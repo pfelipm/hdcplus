@@ -264,38 +264,30 @@ function unpivot_core(e) {
   // Todo en bloque try..catch para cazar problemas
   
   try {
-    
-    // Construir vector de encabezados, primero tomamos los introducidos por el usuario
-    // Se trata el caso de que el usuario haya introducido intros de más en caja de texto
-    
-    for (i = 0; i < nEncabezadosSplit && i < nEncabezados; i++) {
-      if (encabezados[i].length == 0) {
-        encabezadosUnpivot.push('Columna ' + (i + 1));
-      }
-      else {
-        encabezadosUnpivot.push(encabezados[i]);
-      }
-    }
-    
-    // Si faltan, completamos con "Columna n"
-    
-    for (i = nEncabezadosSplit; i < nEncabezados; i++) {
-      encabezadosUnpivot.push('Columna ' + (i + 1));
-    }
-    
-    // UNPIVOT espera un vector fila con los encabezados
-    
-    var encabezadosUnpivotH = [];
-    encabezadosUnpivotH.push(encabezadosUnpivot);
-    
-    // Aplicar UNPIVOT
-    
-    matrizConsolidada = UNPIVOT(rango.getValues(), colFijas, encabezadosUnpivotH);
-   
-    // Expandir rango destino para recibir tabla consolidada y rellenar celdas
-    
-    destino.offset(0, 0, matrizConsolidada.length, matrizConsolidada[0].length).setValues(matrizConsolidada);
 
+    // Si el usuario ha introducido encabezados, los limpiamos y preparamos
+    // Si no, pasamos null para que UNPIVOT use las cabeceras originales
+
+    var encabezadosUnpivotH = null;
+
+    if (e.encabezados.trim().length > 0) {
+      var lineas = e.encabezados.split('\n');
+      var filtrados = [];
+      for (i = 0; i < lineas.length; i++) {
+        if (lineas[i].trim().length > 0) {
+          filtrados.push(lineas[i].trim());
+        }
+      }
+      if (filtrados.length > 0) {
+        encabezadosUnpivotH = [filtrados];
+      }
+    }
+
+    // Aplicar UNPIVOT
+    matrizConsolidada = UNPIVOT(rango.getValues(), colFijas, encabezadosUnpivotH);
+
+    // Expandir rango destino para recibir tabla consolidada y rellenar celdas
+    destino.offset(0, 0, matrizConsolidada.length, matrizConsolidada[0].length).setValues(matrizConsolidada);
   }
 
   catch(e) {
