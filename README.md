@@ -114,7 +114,7 @@ Herramientas para el control dimensional de tus hojas de cálculo:
 *   **➕ Insertar más filas/columnas:** Añade bloques de celdas en posiciones específicas mediante un panel interactivo.
 
 <p align="center">
-  <img src="assets/panel-.insertar-filas-columnas.webp" alt="Insertar filas/columnas">
+  <img src="assets/panel-insertar-filas-columnas.webp" alt="Insertar filas/columnas">
 </p>
 
 ### ✨ Generar datos falsos
