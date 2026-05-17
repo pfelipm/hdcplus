@@ -222,7 +222,7 @@ function unpivot_() {
 
   var ui = HtmlService.createTemplateFromFile('panelUnpivot')
       .evaluate()
-      .setTitle('Consolidar dimensiones');
+      .setTitle('Consolidar dimensiones (unpivot)');
   SpreadsheetApp.getUi().showSidebar(ui);
 }
 
