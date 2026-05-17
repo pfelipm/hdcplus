@@ -13,6 +13,8 @@
  * @return vector fila, columna o matriz
  *
  * @customfunction
+ * 
+ * @deprecated Esta función ha sido superada por la función nativa de Google Sheets MAKEARRAY().
  *
  * (c) Pablo Felip @pfelipm GNU GPL v3
  */
@@ -50,11 +52,11 @@ function RELLENAR(elemento, nfilas, ncolumnas) {
   // Los parámetros parecen correctos ¡adelante!
 
   for (i = 0; i < ncolumnas; i++) {
-    resultadoC.push (elemento);
+    resultadoC.push(elemento);
   } 
   
   for (i = 0; i < nfilas; i++) {          
-    resultado.push (resultadoC);
+    resultado.push([...resultadoC]); // Se crea una copia para evitar referencias compartidas
   }
   
   return resultado;   
@@ -76,6 +78,8 @@ function RELLENAR(elemento, nfilas, ncolumnas) {
  * @return vector fila o columna
  *
  * @customfunction
+ * 
+ * @deprecated Esta función ha sido superada por la función nativa de Google Sheets MAKEARRAY().
  *
  * (c) Pablo Felip @pfelipm GNU GPL v3
  */
@@ -111,9 +115,9 @@ function REPETIRFC(elemento, veces, modo) {
       
     case 'fil':
       
-      resultado =[];     
+      resultado = [];     
       for (i = 0; i < veces; i++) {          
-        resultado.push (elemento);
+        resultado.push(elemento);
       }
       break;
       
@@ -121,9 +125,9 @@ function REPETIRFC(elemento, veces, modo) {
       
     case 'col':
       
-      resultado =[[]];      
+      resultado = [[]];      
       for (i = 0; i < veces; i++) {
-        resultado[0].push (elemento);
+        resultado[0].push(elemento);
       } 
       break;
       

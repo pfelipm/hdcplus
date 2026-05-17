@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Importar Iconos de Google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      body { padding: 15px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; background-color: #ffffff; overflow-x: hidden; }
+      .section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 2px solid #2196F3; display: inline-block; color: #2196F3; padding-bottom: 2px; }
+      
+      /* Grid de colores idéntico al gestor */
+      .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px; background: #fafafa; margin-bottom: 15px; }
+      .color-opt { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden; }
+      .color-opt:hover { transform: scale(1.2); }
+      .color-opt.selected { border: 2px solid #2196F3; box-shadow: 0 0 5px rgba(33,150,243,0.5); }
+      .color-opt i { font-size: 16px; position: absolute; top: 4px; left: 4px; color: #757575; }
+      #custom-color-input { position: absolute; top: -100px; left: -100px; visibility: hidden; }
+
+      .row-params { display: flex; gap: 15px; margin-top: 5px; margin-bottom: 5px; }
+      .input-field { margin-top: 0 !important; margin-bottom: 0 !important; flex: 1; }
+      .input-field input { height: 2.5rem !important; margin-bottom: 0 !important; }
+      
+      .options-box { border: 1px solid #e0e0e0; padding: 12px; border-radius: 4px; background: #fafafa; margin-top: 5px; }
+      .options-box label { display: block; margin-bottom: 8px; color: #424242; }
+      .padding-control { display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-left: 30px; }
+      .padding-control input { width: 50px !important; height: 1.5rem !important; text-align: center; }
+
+      /* Estilos para Toasts centrados y redondeados */
+      #toast-container { top: 30px !important; right: auto !important; left: 50% !important; transform: translateX(-50%) !important; }
+      .toast { border-radius: 25px !important; background-color: rgba(50, 50, 50, 0.9) !important; justify-content: center !important; min-width: 200px !important; text-align: center !important; }
+
+      .footer { margin-top: 25px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
+      .btn-small { width: 100%; text-transform: none; display: flex; align-items: center; justify-content: center; height: 36px; }
+      #progress-bar { display: none; margin-top: 15px; }
+      #ui-freeze-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.1); z-index: 9999; display: none; cursor: wait; }
+    </style>
+  </head>
+  <body>
+    <div id="ui-freeze-overlay"></div>
+
+    <div class="section-title">1. Color del marco</div>
+    <div class="color-grid" id="color-grid"></div>
+    <input type="color" id="custom-color-input" onchange="seleccionarColorManual(this.value)">
+
+    <div class="section-title" style="margin-top: 5px;">2. Dimensiones del borde</div>
+    
+    <div style="margin-top: 5px;">
+      <label>
+        <input type="checkbox" id="mantenerTamano" class="filled-in" onchange="toggleInputsTamano(this.checked)" checked />
+        <span>Mantener tamaño predeterminado</span>
+      </label>
+    </div>
+
+    <div class="row-params" id="inputs-tamano" style="opacity: 0.4; pointer-events: none; margin-top: 15px;">
+      <div class="input-field">
+        <input type="number" id="ancho" value="21" min="1" max="100">
+        <label class="active">Anchura (px)</label>
+      </div>
+      <div class="input-field">
+        <input type="number" id="alto" value="21" min="1" max="100">
+        <label class="active">Altura (px)</label>
+      </div>
+    </div>
+
+    <div class="options-box">
+      <label>
+        <input type="checkbox" id="conPadding" class="filled-in" onchange="togglePadding(this.checked)" />
+        <span>Incluir margen interior en blanco</span>
+      </label>
+      <div id="padding-wrapper" style="opacity: 0.4; pointer-events: none;">
+        <div class="padding-control" style="margin-bottom: 8px;">
+          <label>
+            <input type="checkbox" id="syncPadding" class="filled-in" checked />
+            <span id="label-sync" style="font-size: 12px;">Sincronizar tamaño con el borde</span>
+          </label>
+        </div>
+        <div class="padding-control" id="custom-padding-wrapper">
+          <span style="font-size: 12px;">Grosor (nº celdas):</span>
+          <input type="number" id="padding" value="1" min="1" max="5">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top: 20px;">3. Combinación y Alcance</div>
+    <div class="options-box">
+      <label>
+        <input type="checkbox" id="soloDataRange" class="filled-in" onchange="toggleSoloDataRange(this.checked)" checked />
+        <span>Aplicar solo alrededor de los datos (Data Range)</span>
+      </label>
+      
+      <div id="encuadre-wrapper" style="padding-left: 30px; margin-top: 5px;">
+        <label style="display: block; margin-bottom: 5px;">
+          <input type="checkbox" id="encuadreAnterior" class="filled-in" checked />
+          <span style="font-size: 12px;">Encuadre anterior (eliminar vacíos arriba/izq)</span>
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" id="encuadrePosterior" class="filled-in" checked />
+          <span style="font-size: 12px;">Encuadre posterior (eliminar vacíos abajo/der)</span>
+        </label>
+      </div>
+      
+      <p style="margin-top: 15px; margin-bottom: 5px;">
+        <label>
+          <input type="checkbox" id="combinar" class="filled-in" checked onchange="toggleDominancia(this.checked)" />
+          <span>Combinar celdas del marco</span>
+        </label>
+      </p>
+      <div id="dominancia-wrapper" style="margin-top: 5px; padding-left: 30px;">
+        <label style="font-size: 11px; margin-bottom: 5px;">Dominancia en esquinas:</label>
+        <label style="display: inline-block; margin-right: 15px;">
+          <input name="dominancia" type="radio" value="horizontal" checked />
+          <span>Horizontal</span>
+        </label>
+        <label style="display: inline-block;">
+          <input name="dominancia" type="radio" value="vertical" />
+          <span>Vertical</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="footer center-align">
+      <button id="btn-aplicar" class="btn waves-effect waves-light blue btn-small" onclick="ejecutar()">
+        <i class="material-icons left">border_outer</i>Aplicar Marco
+      </button>
+      <div class="progress" id="progress-bar">
+        <div class="indeterminate"></div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      let colorSeleccionado = '#00FF00'; // Verde HdC+ por defecto
+      const COLORES = [
+        { hex: '#FFFFFF', nombre: 'Sin color' },
+        { hex: '#0000FF', nombre: 'Azul HdC+' },
+        { hex: '#9900FF', nombre: 'Morado HdC+' },
+        { hex: '#00FF00', nombre: 'Verde HdC+' },
+        { hex: '#FF9900', nombre: 'Naranja HdC+' },
+        { hex: '#FF0000', nombre: 'Rojo HdC+' },
+        { hex: '#4285F4', nombre: 'Azul Google' },
+        { hex: '#0F9D58', nombre: 'Verde Google' },
+        { hex: '#F4B400', nombre: 'Amarillo Google' },
+        { hex: '#00ACC1', nombre: 'Cian Material' },
+        { hex: '#E91E63', nombre: 'Rosa Material' }
+      ];
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('color-grid');
+        COLORES.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'color-opt';
+          div.style.background = c.hex === '#FFFFFF' ? '#f5f5f5' : c.hex;
+          div.title = c.nombre;
+          if (c.hex === colorSeleccionado) div.classList.add('selected');
+          div.onclick = () => seleccionarColor(c.hex, div);
+          grid.appendChild(div);
+        });
+
+        const custom = document.createElement('div');
+        custom.className = 'color-opt';
+        custom.id = 'custom-color-picker';
+        custom.innerHTML = '<i class="material-icons">colorize</i>';
+        custom.title = 'Color personalizado... (Botón derecho para truco)';
+        custom.onclick = () => document.getElementById('custom-color-input').click();
+        // Easter Egg: Botón derecho para alternar con Verde Google Sheets
+        custom.oncontextmenu = (e) => {
+          e.preventDefault();
+          const esVerdeSheets = custom.dataset.verde === 'true';
+          if (!esVerdeSheets) {
+            custom.style.background = '#0F9D58';
+            custom.innerHTML = '';
+            custom.dataset.verde = 'true';
+            custom.title = 'Verde Google Sheets (#0F9D58)';
+
+            // Efecto visual: Pulso
+            custom.animate([
+              { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(15, 157, 88, 0.7)' },
+              { transform: 'scale(1.2)', boxShadow: '0 0 0 10px rgba(15, 157, 88, 0)' },
+              { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(15, 157, 88, 0)' }
+            ], { duration: 600, iterations: 1 });
+
+            M.toast({html: '<span>¡Verde Google Sheets activado! 🟢✨</span>', displayLength: 3000});
+            seleccionarColor('#0F9D58', custom);
+          } else {
+            custom.style.background = '#e0e0e0';
+            custom.innerHTML = '<i class="material-icons">colorize</i>';
+            custom.dataset.verde = 'false';
+            custom.title = 'Color personalizado...';
+          }
+        };
+        
+        grid.appendChild(custom);
+      });
+
+      function seleccionarColor(hex, el) {
+        colorSeleccionado = hex;
+        document.querySelectorAll('.color-opt').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+      }
+
+      function seleccionarColorManual(hex) {
+        colorSeleccionado = hex;
+        document.querySelectorAll('.color-opt').forEach(opt => opt.classList.remove('selected'));
+        M.toast({html: 'Color personalizado: ' + hex});
+      }
+
+      function toggleSoloDataRange(checked) {
+        const wrapper = document.getElementById('encuadre-wrapper');
+        wrapper.style.opacity = checked ? '1' : '0.4';
+        wrapper.style.pointerEvents = checked ? 'auto' : 'none';
+        
+        // Al activar/desactivar el padre, sincronizamos el estado de los hijos por defecto
+        document.getElementById('encuadreAnterior').checked = checked;
+        document.getElementById('encuadrePosterior').checked = checked;
+      }
+
+      function toggleInputsTamano(checked) {
+        const wrapper = document.getElementById('inputs-tamano');
+        wrapper.style.opacity = checked ? '0.4' : '1';
+        wrapper.style.pointerEvents = checked ? 'none' : 'auto';
+        
+        // El check de sincronizar solo tiene sentido con tamaño personalizado
+        const sync = document.getElementById('syncPadding');
+        sync.disabled = checked;
+        document.getElementById('label-sync').style.opacity = checked ? '0.4' : '1';
+      }
+
+      function togglePadding(checked) {
+        const wrapper = document.getElementById('padding-wrapper');
+        wrapper.style.opacity = checked ? '1' : '0.4';
+        wrapper.style.pointerEvents = checked ? 'auto' : 'none';
+        
+        // Refrescar estado de syncPadding según el check de tamaño general
+        if (checked) {
+           const mantTam = document.getElementById('mantenerTamano').checked;
+           document.getElementById('syncPadding').disabled = mantTam;
+           document.getElementById('label-sync').style.opacity = mantTam ? '0.4' : '1';
+        }
+      }
+
+      function togglePaddingInput(enabled) {
+        // Esta función ya no se usa para bloquear el input de número
+      }
+
+      function toggleDominancia(checked) {
+        const wrapper = document.getElementById('dominancia-wrapper');
+        wrapper.style.opacity = checked ? '1' : '0.4';
+        wrapper.style.pointerEvents = checked ? 'auto' : 'none';
+      }
+
+      function ejecutar() {
+        const config = {
+          color: colorSeleccionado,
+          ancho: document.getElementById('ancho').value,
+          alto: document.getElementById('alto').value,
+          mantenerTamano: document.getElementById('mantenerTamano').checked,
+          conPadding: document.getElementById('conPadding').checked,
+          syncPadding: document.getElementById('syncPadding').checked,
+          padding: document.getElementById('padding').value,
+          soloDataRange: document.getElementById('soloDataRange').checked,
+          encuadreAnterior: document.getElementById('encuadreAnterior').checked,
+          encuadrePosterior: document.getElementById('encuadrePosterior').checked,
+          combinar: document.getElementById('combinar').checked,
+          dominancia: document.querySelector('input[name="dominancia"]:checked').value
+        };
+
+        toggleLoading(true);
+
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: res});
+            toggleLoading(false);
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .aplicarMarcoColor(config);
+      }
+
+      function toggleLoading(val) {
+        document.getElementById('btn-aplicar').disabled = val;
+        document.getElementById('progress-bar').style.display = val ? 'block' : 'none';
+        document.getElementById('ui-freeze-overlay').style.display = val ? 'block' : 'none';
+      }
+    </script>
+  </body>
+</html>

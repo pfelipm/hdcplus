@@ -2,51 +2,213 @@
 <html>
   <head>
     <base target="_top">
-
-    <!-- Incluir css -->
-    <?!= HtmlService.createHtmlOutputFromFile('panelLateral_css').getContent(); ?>
-    
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Importar Iconos de Google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      body { padding: 15px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; background-color: #ffffff; }
+      .section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 2px solid #ef5350; display: inline-block; color: #ef5350; padding-bottom: 2px; }
+      .radio-group { margin-top: 5px; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px; background: #fafafa; }
+      .radio-group label { display: block; margin-bottom: 8px; color: #424242; }
+      .radio-group label:last-child { margin-bottom: 0; }
+      .options-group { margin-top: 0; padding: 0; }
+      .options-group p { margin: 5px 0 10px 0 !important; }
+      .footer { margin-top: 20px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
+      .footer .btn-small { width: 100%; text-transform: none; display: flex; align-items: center; justify-content: center; height: 36px; }
+      #progress-bar { display: none; margin-top: 15px; }
+      #ui-freeze-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.1); z-index: 9999; display: none; cursor: wait; }
+      .status-box { font-size: 12px; margin-top: 10px; padding: 8px; border-radius: 4px; display: none; line-height: 1.4; }
+      .status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+      .status-info { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+      .warning-text { font-size: 11px; color: #757575; font-style: italic; margin-top: 2px; padding-left: 35px; }
+      
+      /* Estilos para el modal personalizado */
+      .modal-custom { max-width: 350px !important; border-radius: 8px !important; overflow: hidden; }
+      .modal-custom .modal-content { padding: 20px !important; }
+      .modal-custom .modal-footer { padding: 0 15px 15px !important; height: auto !important; display: flex; justify-content: flex-end; gap: 10px; }
+      .modal-custom h6 { font-weight: bold; margin-bottom: 15px; }
+      .modal-custom p { font-size: 13px; color: #616161; margin-bottom: 20px; line-height: 1.4; }
+      .modal-custom .btn-small { width: auto !important; }
+    </style>
   </head>
- 
   <body>
-    <div class="row"> 
-      <form class="col s12" id="formEliminarFC">
-       
-        <div class="row">
-        <div class="input-field col s12">
-          <select name="modo">
-            <option value="" disabled>Escoge una opción</option>
-            <option value="1">Columnas sobrantes</option>
-            <option value="2">Filas sobrantes</option>
-            <option selected="selected" value="3">Filas y columnas sobrantes</option>
-          </select>
-          <label>Modo de eliminación</label>
-        </div>
-        </div>
-        
-        <div class="row">
-        <div class="input-field col s12">
-          <label>
-            <input name = "global" type="checkbox" class="filled-in" />
-            <span>Aplicar a todas las hojas</span>
-          </label>
-        </div>
-        </div>        
-        
-      </form>
-    </div>
+    <div id="ui-freeze-overlay"></div>
     
-    <div class="row center-align">
-      <button id="botonEliminarFC" class="btn waves-effect waves-light">Eliminar<i class="material-icons right">delete_forever</i></button>
-    </div>
+    <div class="section-title">1. Modo de recorte</div>
     
-    <div id="spinner"class="progress hide">
-      <div class="indeterminate" id="barra_actividad"></div>
+    <div class="radio-group">
+      <label>
+        <input name="modo" type="radio" value="1" />
+        <span>Solo columnas sobrantes</span>
+      </label>
+      <label>
+        <input name="modo" type="radio" value="2" />
+        <span>Solo filas sobrantes</span>
+      </label>
+      <label>
+        <input name="modo" type="radio" value="3" checked />
+        <span>Filas y columnas sobrantes</span>
+      </label>
     </div>
-    
-    <!-- Incluir js -->
-    <?!= HtmlService.createHtmlOutputFromFile('panelEliminarFyC_js').getContent(); ?>
-  
-  </body>
 
+    <div class="section-title" style="margin-top: 15px; border-bottom-color: #2196F3; color: #2196F3;">2. Ajustes avanzados</div>
+    
+    <div class="options-group">
+      <p>
+        <label>
+          <input type="checkbox" id="encuadre" name="encuadre" class="filled-in" />
+          <span>Encuadre total</span>
+        </label>
+        <div class="warning-text">Elimina también huecos por arriba e izquierda.</div>
+      </p>
+      
+      <p>
+        <label>
+          <input type="checkbox" id="global" name="global" class="filled-in" />
+          <span>Aplicar a todas las pestañas</span>
+        </label>
+      </p>
+    </div>
+
+    <div class="footer center-align">
+      <button id="btn-ejecutar" class="btn waves-effect waves-light red lighten-1 btn-small" onclick="prepararAccion()">
+        <i class="material-icons left">content_cut</i>Recortar ahora
+      </button>
+      
+      <div class="progress" id="progress-bar">
+        <div class="indeterminate"></div>
+      </div>
+      
+      <div id="status-box" class="status-box"></div>
+    </div>
+
+    <!-- Modal de confirmación personalizado -->
+    <div id="modal-confirm" class="modal modal-custom">
+      <div class="modal-content">
+        <h6 id="confirm-title">Confirmar recorte</h6>
+        <p id="confirm-body"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cancelar</button>
+        <button id="btn-confirm-ok" class="btn red lighten-1 white-text btn-small" style="width: auto;">Aceptar</button>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      let colaHojas = [];
+      let totalHojasInicial = 0;
+      let paramsAccion = {};
+
+      document.addEventListener('DOMContentLoaded', function() {
+        M.AutoInit();
+      });
+
+      function prepararAccion() {
+        const global = document.getElementById('global').checked;
+        const msg = global 
+          ? '¿Estás seguro de recortar TODAS las pestañas del documento? Esta acción eliminará las filas y columnas vacías de forma inmediata.' 
+          : '¿Deseas recortar la pestaña actual? Se eliminarán todas las filas y columnas sobrantes.';
+        
+        abrirConfirmacion('Confirmar recorte', msg, iniciarProceso);
+      }
+
+      function abrirConfirmacion(titulo, mensaje, callback) {
+        document.getElementById('confirm-title').textContent = titulo;
+        document.getElementById('confirm-body').textContent = mensaje;
+        const btnOk = document.getElementById('btn-confirm-ok');
+        const inst = M.Modal.getInstance(document.getElementById('modal-confirm'));
+        
+        btnOk.onclick = function() {
+          inst.close();
+          callback();
+        };
+        inst.open();
+      }
+
+      function iniciarProceso() {
+        const global = document.getElementById('global').checked;
+        paramsAccion = {
+          modo: document.querySelector('input[name="modo"]:checked').value,
+          encuadre: document.getElementById('encuadre').checked ? 'on' : 'off'
+        };
+
+        if (global) {
+          showStatus('Cargando lista de pestañas...', false, true);
+          toggleLoading(true);
+          google.script.run
+            .withSuccessHandler(hojas => {
+              colaHojas = hojas.map(h => h.nombre);
+              totalHojasInicial = colaHojas.length;
+              procesarSiguienteHoja();
+            })
+            .getHojasParaPanel();
+        } else {
+          ejecutarIndividual();
+        }
+      }
+
+      function ejecutarIndividual() {
+        toggleLoading(true);
+        showStatus('Recortando pestaña actual...', false, true);
+
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: '✅ Recorte finalizado'});
+            showStatus('✅ Operación completada con éxito.');
+            toggleLoading(false);
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .eliminarFyC_core(paramsAccion);
+      }
+
+      function procesarSiguienteHoja() {
+        if (colaHojas.length === 0) {
+          showStatus(`✅ Acción completada en las ${totalHojasInicial} pestañas.`);
+          toggleLoading(false);
+          M.toast({html: '✅ Recorte masivo finalizado'});
+          return;
+        }
+
+        const nombreHoja = colaHojas.shift();
+        const numActual = totalHojasInicial - colaHojas.length;
+        
+        showStatus(`⌛ Procesando pestaña ${numActual}/${totalHojasInicial}: [${nombreHoja}]...`, false, true);
+
+        google.script.run
+          .withSuccessHandler(() => {
+            procesarSiguienteHoja();
+          })
+          .withFailureHandler(err => {
+            showStatus(`❌ Error en pestaña ${nombreHoja}: ` + err.message, true);
+            toggleLoading(false);
+          })
+          .eliminarFyC_core({
+            ...paramsAccion,
+            nombreHoja: nombreHoja
+          });
+      }
+
+      function toggleLoading(val) {
+        document.getElementById('btn-ejecutar').disabled = val;
+        document.getElementById('progress-bar').style.display = val ? 'block' : 'none';
+        document.getElementById('ui-freeze-overlay').style.display = val ? 'block' : 'none';
+      }
+
+      function showStatus(msg, isError, isInfo) {
+        const box = document.getElementById('status-box');
+        if (!msg) {
+          box.style.display = 'none';
+          return;
+        }
+        box.textContent = msg;
+        box.className = 'status-box ' + (isError ? 'status-error' : (isInfo ? 'status-info' : 'status-success'));
+        box.style.display = 'block';
+      }
+    </script>
+  </body>
 </html>

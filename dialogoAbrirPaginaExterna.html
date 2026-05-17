@@ -2,17 +2,26 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+      html, body {
+        overflow: hidden !important;
+      }
+      #mensaje {
+        padding: 15px;
+      }
+    </style>
   </head>
   <body>
-    <div id="mensaje" style="visibility:hidden;">
-      <p>Parece que tu navegador está bloqueando ventanas emergentes, considera 
+    <div id="mensaje" style="display:none;">
+      <p>Parece que tu navegador está bloqueando ventanas emergentes. Considera 
          modificar sus ajustes para permitirlas en este sitio.</p>
       <p>Haz clic <a href="<?= url; ?>" target="_blank">aquí</a> para abrir la página externa.</p>
+    </div>
   </body>
   <script>
     const windowReference = window.open('<?= url; ?>', '_blank');
     if (windowReference != null) google.script.host.close();
-    // Se hace visible el enlace en el caso de que el navegador haya bloqueado la apertura
-    document.getElementById("mensaje").style.visibility = 'visible'; 
+    // Se muestra el aviso si el popup ha sido bloqueado
+    document.getElementById("mensaje").style.display = 'block'; 
   </script>
 </html>

@@ -115,9 +115,8 @@ function ordenarHojasApi(ascendente = true) {
   }
 
 }
-
 /**
- * Desordena las hojas de un libro de cálculo de forma aleatoria
+ * Desordena las hojas de una hoja de cálculo de forma aleatoria
  * utilizando el servicio integrado de hojas de cálculo.
  * Mantiene el estado de visibilidad de las hojas y restaura la hoja activa.
  *
@@ -281,10 +280,11 @@ function eliminarHojasColor(color) {
     if (numHojasColorVisibles > 0) mensajeResultado.push(`${numHojasColorVisibles} hojas visibles`);
     if (numHojasColorOcultas > 0) mensajeResultado.push(`${numHojasColorOcultas} hojas ocultas`);
 
-    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar hojas de color ${color.nombre}?`,
-      `${color.icono} Se van a eliminar ${mensajeResultado.join(' y ')} de color ${color.nombre}.
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar hojas de color ${color.nombre}?
 
-      Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
+${color.icono} Se van a eliminar ${mensajeResultado.join(' y ')} de color ${color.nombre}.
+
+Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasColorEliminar.forEach(hoja => hdc.deleteSheet(hoja));
 
   } catch (e) {
@@ -308,10 +308,11 @@ function eliminarHojasOcultas() {
   else try {
     // Se usa try para fallar graciosamente cuando en un escenario de concurrencia se eliminan
     // algunas de las hojas mientras el usuario visualiza la alerta de confirmación
-    if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Eliminar hojas ocultas?',
-      `Se van a eliminar ${hojasEliminar.length} hojas no visibles de la hoja de cálculo.
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar hojas ocultas?
 
-      Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
+Se van a eliminar ${hojasEliminar.length} hojas no visibles de la hoja de cálculo.
+
+Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
   } catch (e) {
     ui.alert(ENCABEZADO_ALERTAS, `Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
@@ -333,10 +334,11 @@ function eliminarHojas() {
 
   if (hojasEliminar.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No hay más hojas que puedan eliminarse.', ui.ButtonSet.OK);
   else try {
-    if (ui.alert(ENCABEZADO_ALERTAS, '⚠️ ¿Eliminar otras hojas?',
-      `Se van a eliminar ${hojasEliminar.length} hojas de la hoja de cálculo.
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Eliminar otras hojas?
 
-      Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
+Se van a eliminar ${hojasEliminar.length} hojas de la hoja de cálculo.
+
+Puedes revertir el proceso utilizando el comando deshacer tantas veces como sea necesario.`,
       ui.ButtonSet.OK_CANCEL) == ui.Button.OK) hojasEliminar.forEach(hoja => hdc.deleteSheet(hoja));
   } catch (e) {
     ui.alert(ENCABEZADO_ALERTAS, `Se ha producido un error inesperado al eliminar las hojas, inténtalo de nuevo.
@@ -435,7 +437,7 @@ function conmutarVisibilidadHojas() {
   const hojasVisibles = hojas.filter(hoja => !hoja.isSheetHidden());
 
   if (hojasVisibles.length == 1 && hojasOcultas.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No es posible ocultar la única hoja existente.', ui.ButtonSet.OK);
-  if (hojasOcultas.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
+  else if (hojasOcultas.length == 0) ui.alert(ENCABEZADO_ALERTAS, 'No hay hojas ocultas que mostrar.', ui.ButtonSet.OK);
 
   else try {
     hojasOcultas.forEach(hoja => hoja.showSheet());
@@ -448,4 +450,394 @@ function conmutarVisibilidadHojas() {
       ⚠️ ${e.message}`, ui.ButtonSet.OK);
   }
 
+}
+
+// --- FUNCIONES PARA LA CONSOLA DE PESTAÑAS (GESTIÓN AVANZADA) ---
+
+/**
+ * Abre el diálogo de gestión avanzada de hojas
+ */
+function abrirConsolaPestañas() {
+  const html = HtmlService.createTemplateFromFile('dialogoGestionarHojas')
+    .evaluate()
+    .setWidth(750)
+    .setHeight(600)
+    .setTitle('📁 Consola de Pestañas | HdC+');
+  SpreadsheetApp.getUi().showModalDialog(html, ' ');
+}
+
+/**
+ * Abre el diálogo modal para crear marcos de color
+ */
+function abrirDialogoMarcoColor() {
+  const html = HtmlService.createTemplateFromFile('dialogoMarcoColor')
+    .evaluate()
+    .setWidth(450)
+    .setHeight(800)
+    .setTitle('🖼️ Crear marco de color | HdC+');
+  SpreadsheetApp.getUi().showModalDialog(html, ' ');
+}
+
+/**
+ * Aplica un marco de color a la hoja activa basándose en la configuración
+ */
+function aplicarMarcoColor(config) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = hdc.getActiveSheet();
+  
+  // 1. Parámetros de la configuración
+  const color = config.color;
+  const pixelAncho = config.mantenerTamano ? 21 : (parseInt(config.ancho) || 21);
+  const pixelAlto = config.mantenerTamano ? 21 : (parseInt(config.alto) || 21);
+  const numPadding = config.conPadding ? (parseInt(config.padding) || 0) : 0;
+
+  if (color === '#FFFFFF') {
+    return "💡 Utiliza el comando 'Recortar' para eliminar marcos existentes.";
+  }
+
+  // 2. ENCUADRE PREVIO (Si se solicita y estamos en modo Data Range)
+  if (config.soloDataRange) {
+    const modoRecorte = config.encuadrePosterior ? 3 : 0; // 3 = Filas y columnas sobrantes, 0 = nada
+    const encuadreAnterior = config.encuadreAnterior;
+    
+    if (modoRecorte > 0 || encuadreAnterior) {
+      procesarRecorteHoja_(hoja, modoRecorte, encuadreAnterior);
+      SpreadsheetApp.flush();
+    }
+  }
+
+  // 3. Definir área de aplicación (Toda la hoja o Data Range actualizado)
+  let rowInit, rowEnd, colInit, colEnd;
+  
+  if (config.soloDataRange) {
+    const range = hoja.getDataRange();
+    rowInit = range.getRow();
+    rowEnd = range.getLastRow();
+    colInit = range.getColumn();
+    colEnd = range.getLastColumn();
+  } else {
+    rowInit = 1;
+    rowEnd = hoja.getMaxRows();
+    colInit = 1;
+    colEnd = hoja.getMaxColumns();
+  }
+
+  // 3. Inserciones geométricas (1 celda para el borde + N celdas para padding)
+  const totalInsert = 1 + numPadding;
+
+  // Filas (Arriba y Abajo del área seleccionada)
+  hoja.insertRowsBefore(rowInit, totalInsert);
+  hoja.insertRowsAfter(rowEnd + totalInsert, totalInsert); // +totalInsert porque la hoja se ha desplazado
+
+  // Columnas (Izquierda y Derecha)
+  hoja.insertColumnsBefore(colInit, totalInsert);
+  hoja.insertColumnsAfter(colEnd + totalInsert, totalInsert);
+
+  SpreadsheetApp.flush();
+
+  // 4. Ajustar tamaños y aplicar Colores
+  const maxR = hoja.getMaxRows();
+  const maxC = hoja.getMaxColumns();
+  
+  // Coordenadas del borde exterior (son la primera y última fila/columna del área expandida)
+  const bFilSup = rowInit;
+  const bFilInf = rowEnd + (totalInsert * 2);
+  const bColIzq = colInit;
+  const bColDer = colEnd + (totalInsert * 2);
+
+  // Aplicar tamaños en píxeles al borde
+  hoja.setRowHeight(bFilSup, pixelAlto);
+  hoja.setRowHeight(bFilInf, pixelAlto);
+  hoja.setColumnWidth(bColIzq, pixelAncho);
+  hoja.setColumnWidth(bColDer, pixelAncho);
+
+  // Si hay margen sincronizado, aplicar también el tamaño a las filas de padding
+  if (config.conPadding && config.syncPadding) {
+    for (let i = 1; i <= numPadding; i++) {
+      hoja.setRowHeight(bFilSup + i, pixelAlto);
+      hoja.setRowHeight(bFilInf - i, pixelAlto);
+      hoja.setColumnWidth(bColIzq + i, pixelAncho);
+      hoja.setColumnWidth(bColDer - i, pixelAncho);
+    }
+  }
+
+  // 5. Aplicar fondos de color al borde
+  // Superior e Inferior
+  hoja.getRange(bFilSup, bColIzq, 1, bColDer - bColIzq + 1).setBackground(color);
+  hoja.getRange(bFilInf, bColIzq, 1, bColDer - bColIzq + 1).setBackground(color);
+  // Laterales (ajustados para no solapar)
+  hoja.getRange(bFilSup + 1, bColIzq, bFilInf - bFilSup - 1, 1).setBackground(color);
+  hoja.getRange(bFilSup + 1, bColDer, bFilInf - bFilSup - 1, 1).setBackground(color);
+
+  // 6. Combinación (Merge)
+  if (config.combinar) {
+    if (config.dominancia === 'horizontal') {
+      hoja.getRange(bFilSup, bColIzq, 1, bColDer - bColIzq + 1).merge();
+      hoja.getRange(bFilInf, bColIzq, 1, bColDer - bColIzq + 1).merge();
+      hoja.getRange(bFilSup + 1, bColIzq, bFilInf - bFilSup - 1, 1).merge();
+      hoja.getRange(bFilSup + 1, bColDer, bFilInf - bFilSup - 1, 1).merge();
+    } else {
+      hoja.getRange(bFilSup, bColIzq, bFilInf - bFilSup + 1, 1).merge();
+      hoja.getRange(bFilSup, bColDer, bFilInf - bFilSup + 1, 1).merge();
+      hoja.getRange(bFilSup, bColIzq + 1, 1, bColDer - bColIzq - 1).merge();
+      hoja.getRange(bFilInf, bColIzq + 1, 1, bColDer - bColIzq - 1).merge();
+    }
+  }
+
+  return "✅ Marco de color aplicado correctamente.";
+}
+
+
+
+
+/**
+ * Obtiene metadatos de todas las hojas incluyendo su pertenencia a grupos
+ */
+function getHojasMetaData() {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const grupos = JSON.parse(PropertiesService.getDocumentProperties().getProperty('HDC_GRUPOS_HOJAS') || '{}');
+  
+  // Mapeo inverso de ID de hoja a nombre de grupo
+  const idAGrupo = {};
+  for (const nombreGrupo in grupos) {
+    if (Array.isArray(grupos[nombreGrupo])) {
+      grupos[nombreGrupo].forEach(id => idAGrupo[id] = nombreGrupo);
+    }
+  }
+
+  return hojas.map(h => {
+    const id = h.getSheetId();
+    let color = '#FFFFFF';
+    const colorObj = h.getTabColorObject();
+    if (colorObj.getColorType() === SpreadsheetApp.ColorType.RGB) {
+      color = colorObj.asRgbColor().asHexString();
+    }
+    
+    return {
+      id: id,
+      nombre: h.getName(),
+      oculta: h.isSheetHidden(),
+      color: color,
+      grupo: idAGrupo[id] || '',
+      activa: h.getName() === hdc.getActiveSheet().getName()
+    };
+  });
+}
+
+/**
+ * Guarda la configuración de grupos
+ * @param {Object} grupos { "NombreGrupo": [id1, id2], ... }
+ */
+function guardarGruposHojas(grupos) {
+  PropertiesService.getDocumentProperties().setProperty('HDC_GRUPOS_HOJAS', JSON.stringify(grupos));
+  return "✅ Grupos guardados correctamente.";
+}
+
+/**
+ * Aplica cambios masivos desde la consola (visibilidad, color, grupos, orden)
+ */
+function aplicarCambiosConsola(cambios) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const hojasMap = hojas.reduce((acc, h) => { acc[h.getSheetId()] = h; return acc; }, {});
+  
+  let hojaActual = hdc.getActiveSheet();
+  const idActiva = hojaActual.getSheetId();
+
+  // 1. Gestión de seguridad: Si la activa se va a ocultar, buscamos sustituta visible
+  const cambioActiva = cambios.hojas ? cambios.hojas.find(c => c.id == idActiva) : null;
+  if (cambioActiva && cambioActiva.oculta) {
+    const sustituta = hojas.find(h => {
+      const c = cambios.hojas.find(ch => ch.id == h.getSheetId());
+      return c ? !c.oculta : !h.isSheetHidden();
+    });
+    if (sustituta) {
+      hdc.setActiveSheet(sustituta);
+      hojaActual = sustituta; // La nueva activa para la restauración final
+    }
+  }
+
+  // 2. Aplicar visibilidad y color
+  if (cambios.hojas) {
+    cambios.hojas.forEach(c => {
+      const hoja = hojasMap[c.id];
+      if (hoja) {
+        if (c.oculta !== undefined) c.oculta ? hoja.hideSheet() : hoja.showSheet();
+        if (c.color !== undefined) hoja.setTabColor(c.color === '#FFFFFF' ? null : c.color);
+      }
+    });
+  }
+
+  // 3. Aplicar orden (si se proporciona)
+  if (cambios.ordenIds && cambios.ordenIds.length > 0) {
+    cambios.ordenIds.forEach((id, pos) => {
+      const hoja = hojasMap[id];
+      if (hoja) {
+        hdc.setActiveSheet(hoja);
+        hdc.moveActiveSheet(pos + 1);
+      }
+    });
+    // Restaurar la que definimos como activa (sea la original o la sustituta)
+    hdc.setActiveSheet(hojaActual);
+  }
+
+  // 4. Guardar grupos
+  if (cambios.grupos) guardarGruposHojas(cambios.grupos);
+
+  SpreadsheetApp.flush();
+  return "✅ Cambios aplicados con éxito.";
+}
+
+/**
+ * Elimina las hojas seleccionadas por ID
+ */
+function eliminarHojasPorId(ids) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  const aEliminar = hojas.filter(h => ids.includes(h.getSheetId()));
+  
+  if (aEliminar.length >= hojas.length) {
+    throw new Error("No puedes eliminar todas las hojas del documento.");
+  }
+  
+  aEliminar.forEach(h => hdc.deleteSheet(h));
+  return `✅ Se han eliminado ${aEliminar.length} hojas.`;
+}
+
+/**
+ * Activa una hoja específica por su ID
+ */
+function activarHojaPorId(id) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = hdc.getSheets().find(h => h.getSheetId() == id);
+  if (hoja) {
+    hdc.setActiveSheet(hoja);
+    return `Pestaña "${hoja.getName()}" activada.`;
+  }
+  throw new Error("No se pudo encontrar la pestaña.");
+}
+
+// --- GENERADOR DE ÍNDICES ---
+
+/**
+ * Genera un índice completo en una pestaña dedicada 'Índice HdC+'
+ */
+function generarIndiceCompleto() {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const ui = SpreadsheetApp.getUi();
+  
+  let hojaIndice = hdc.getSheetByName(NOMBRE_INDICE);
+
+  // Advertir sobre la sobreescritura total si la pestaña ya existe
+  if (hojaIndice) {
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Actualizar pestaña de índice?
+
+Se va a sobreescribir por completo el contenido y el formato de la pestaña [${NOMBRE_INDICE}].`, ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) {
+      return;
+    }
+    hojaIndice.clear().clearNotes();
+  } else {
+    hojaIndice = hdc.insertSheet(NOMBRE_INDICE, 0);
+  }
+
+  const cabeceras = [['Pestaña', 'Estado', 'Grupo']];
+  const datos = obtenerDatosIndice_(true);
+  
+  if (datos.length === 0) {
+    ui.alert(ENCABEZADO_ALERTAS, 'No hay otras pestañas para indexar.', ui.ButtonSet.OK);
+    return;
+  }
+
+  // Escribir cabeceras
+  hojaIndice.getRange(1, 1, 1, 3).setValues(cabeceras).setFontWeight('bold').setBackground('#f3f3f3');
+  
+  // Escribir datos (nombres/enlaces en la columna 1, metadatos en 2 y 3)
+  const nombresRichText = datos.map(fila => [fila[0]]);
+  const metadatos = datos.map(fila => [fila[1], fila[2]]);
+  
+  hojaIndice.getRange(2, 1, datos.length, 1).setRichTextValues(nombresRichText);
+  hojaIndice.getRange(2, 2, datos.length, 2).setValues(metadatos);
+  
+  // Formato
+  hojaIndice.autoResizeColumns(1, 3);
+  hojaIndice.getRange('A1').setNote(`Última actualización: ${new Date().toLocaleString()}`);
+  
+  hdc.toast('Índice generado con éxito.', '📑 HdC+', 5);
+}
+
+/**
+ * Inserta un índice ligero (solo enlaces) a partir de la celda activa
+ */
+function insertarIndiceLigero() {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const celdaActiva = hdc.getActiveCell();
+  const ui = SpreadsheetApp.getUi();
+  
+  const datos = obtenerDatosIndice_(false);
+  
+  if (datos.length === 0) {
+    ui.alert(ENCABEZADO_ALERTAS, 'No hay otras pestañas para indexar.', ui.ButtonSet.OK);
+    return;
+  }
+
+  // Comprobar si hay riesgo de sobreescribir datos
+  const rangoDestino = celdaActiva.offset(0, 0, datos.length, 1);
+  const valoresExistentes = rangoDestino.getValues();
+  const tieneDatos = valoresExistentes.some(fila => fila[0] !== '');
+  
+  if (tieneDatos) {
+    if (ui.alert(ENCABEZADO_ALERTAS, `⚠️ ¿Sobreescribir datos?
+
+El rango donde se insertará el índice ya contiene información. ¿Deseas continuar?`, ui.ButtonSet.OK_CANCEL) !== ui.Button.OK) {
+      return;
+    }
+  }
+
+  rangoDestino.setRichTextValues(datos.map(fila => [fila[0]]));
+  hdc.toast('Índice insertado.', '📌 HdC+', 5);
+}
+
+/**
+ * Función interna para recopilar datos de pestañas y generar enlaces RichText
+ * @private
+ */
+function obtenerDatosIndice_(incluirMetadatos) {
+  const hdc = SpreadsheetApp.getActiveSpreadsheet();
+  const hojas = hdc.getSheets();
+  
+  // Obtener grupos para los metadatos
+  let idAGrupo = {};
+  if (incluirMetadatos) {
+    const grupos = JSON.parse(PropertiesService.getDocumentProperties().getProperty('HDC_GRUPOS_HOJAS') || '{}');
+    for (const nombreGrupo in grupos) {
+      if (Array.isArray(grupos[nombreGrupo])) {
+        grupos[nombreGrupo].forEach(id => idAGrupo[id] = nombreGrupo);
+      }
+    }
+  }
+
+  const filas = [];
+  hojas.forEach(hoja => {
+    if (hoja.getName() !== NOMBRE_INDICE) {
+      const id = hoja.getSheetId();
+      const nombre = hoja.getName();
+      
+      // Crear valor RichText con enlace nativo (#gid=ID)
+      const rt = SpreadsheetApp.newRichTextValue()
+        .setText(nombre)
+        .setLinkUrl(`#gid=${id}`)
+        .build();
+      
+      if (incluirMetadatos) {
+        const estado = hoja.isSheetHidden() ? '🙈 Oculta' : '👁️ Visible';
+        const grupo = idAGrupo[id] || '-';
+        filas.push([rt, estado, grupo]);
+      } else {
+        filas.push([rt]);
+      }
+    }
+  });
+  
+  return filas;
 }

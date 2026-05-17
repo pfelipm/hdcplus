@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      body { padding: 0; margin: 0; overflow: hidden; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
+      .main-container { display: flex; height: 100vh; flex-direction: column; }
+      .header { padding: 10px 20px; background: #2196F3; color: white; display: flex; align-items: center; justify-content: space-between; }
+      .header h5 { margin: 0; font-size: 1.2rem; }
+      .content { display: flex; flex: 1; overflow: hidden; }
+      
+      /* Sidebar de Grupos */
+      .sidebar { width: 180px; border-right: 1px solid #e0e0e0; background: #f5f5f5; display: flex; flex-direction: column; }
+      .sidebar-title { padding: 10px; font-weight: bold; background: #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+      .group-list { flex: 1; overflow-y: auto; padding: 0; margin: 0; list-style: none; }
+      .group-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; transition: background 0.2s; }
+      .group-item:hover { background: #eeeeee; }
+      .group-item.active { background: #bbdefb; border-left: 4px solid #1976d2; }
+      .group-item i { font-size: 18px; margin-right: 8px; }
+      .group-item .delete-group { margin-left: auto; color: #bdbdbd; font-size: 16px; display: none; }
+      .group-item:hover .delete-group { display: block; }
+      .group-item .delete-group:hover { color: #ef5350; }
+      
+      .group-divider { height: 1px; background: #e0e0e0; margin: 5px 0; }
+      .group-header { padding: 12px 12px 4px; font-size: 10px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
+      
+      /* Colores de iconos de sistema */
+      .icon-all { color: #2196F3; }
+      .icon-visible { color: #4CAF50; }
+      .icon-hidden { color: #FF9800; }
+      .icon-none { color: #9E9E9E; }
+      .icon-user { color: #7986CB; }
+      
+      /* Lista de Hojas */
+      .sheet-area { flex: 1; display: flex; flex-direction: column; background: white; }
+      .controls { padding: 10px 15px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px; background: #fafafa; }
+      .search-wrapper { flex: 1; position: relative; }
+      .search-wrapper i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #9e9e9e; pointer-events: none; }
+      .search-wrapper .clear-search { position: absolute; right: 10px; left: auto; top: 50%; transform: translateY(-50%); color: #9e9e9e; cursor: pointer; display: none; pointer-events: auto; }
+      .search-wrapper .clear-search:hover { color: #ef5350; }
+      .search-wrapper input { margin: 0 !important; padding: 0 35px !important; height: 32px !important; border: 1px solid #ddd !important; border-radius: 20px !important; background: white !important; width: 100% !important; box-sizing: border-box !important; line-height: 32px !important; }
+      
+      .sheet-list-container { flex: 1; overflow-y: auto; padding: 0; }
+      #sheet-list { margin: 0; padding: 0; }
+      .sheet-row { display: flex; align-items: center; padding: 8px 15px; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; cursor: default; height: 40px; box-sizing: border-box; }
+      .sheet-row:hover { background: #f9f9f9; }
+      .sheet-row.ghost { opacity: 0.4; background: #e3f2fd; }
+      .drag-handle { cursor: grab; color: #ccc; margin-right: 10px; }
+      .sheet-checkbox { margin-right: 15px !important; height: 18px; display: flex; align-items: center; transform: translateY(-2px); }
+      .sheet-checkbox input[type="checkbox"] + span { height: 18px; padding-left: 20px; line-height: 18px; }
+      
+      .btn-activate { color: #bdbdbd; cursor: pointer; margin-right: 10px; transition: color 0.2s; visibility: hidden; }
+      .sheet-row:hover .btn-activate { visibility: visible; }
+      .btn-activate:hover { color: #2196F3; }
+
+      .sheet-color { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #ddd; margin-right: 12px; }
+      .sheet-name { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sheet-name.active { color: #1976d2; font-weight: bold; }
+      .sheet-name.hidden { opacity: 0.5; font-style: italic; }
+      .sheet-meta { display: flex; align-items: center; gap: 10px; color: #9e9e9e; }
+      .sheet-group-badge { font-size: 10px; padding: 1px 6px; border-radius: 10px; background: #e0e0e0; color: #616161; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+      
+      /* Footer de Acciones */
+      .footer { padding: 10px 20px; border-top: 1px solid #e0e0e0; background: #f5f5f5; display: flex; align-items: center; justify-content: space-between; }
+      .action-btns { display: flex; gap: 15px; align-items: center; }
+      .btn-flat-small { height: 32px; line-height: 32px; padding: 0 10px; text-transform: none; font-size: 12px; }
+      .btn-small { height: 32px; line-height: 32px; text-transform: none; font-size: 12px; }
+      
+      #progress-bar { position: absolute; top: 0; left: 0; width: 100%; margin: 0; display: none; }
+      
+      /* Dropdown estilización */
+      .dropdown-content { min-width: 180px !important; }
+      .dropdown-content li { min-height: 40px !important; }
+      .dropdown-content li > a, .dropdown-content li > span { 
+        font-size: 13px !important; 
+        color: #424242 !important; 
+        padding: 10px 16px !important; 
+        display: flex !important; 
+        align-items: center !important;
+        line-height: 1 !important;
+      }
+      .dropdown-content li > a > i { 
+        margin: 0 12px 0 0 !important; 
+        font-size: 20px !important;
+        float: none !important;
+        width: auto !important;
+        height: auto !important;
+        line-height: inherit !important;
+      }
+
+      /* Estilos para el selector de color */
+      .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 10px; }
+      .color-opt { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden; }
+      .color-opt:hover { transform: scale(1.2); }
+      .color-opt i { font-size: 16px; position: absolute; top: 4px; left: 4px; color: #757575; }
+      #custom-color-input { position: absolute; top: -100px; left: -100px; visibility: hidden; }
+
+      /* Modales personalizados */
+      .modal-custom { max-width: 350px !important; border-radius: 8px !important; }
+      .modal-custom .modal-content { padding: 20px !important; }
+      .modal-custom h6 { font-weight: bold; margin-bottom: 15px; }
+      .modal-custom p { font-size: 13px; color: #616161; margin-bottom: 20px; }
+
+      /* Switch Modo Live */
+      .switch label { font-size: 12px; font-weight: 500; color: #616161; }
+      .switch label input[type=checkbox]:checked + .lever { background-color: #bbdefb; }
+      .switch label input[type=checkbox]:checked + .lever:after { background-color: #2196F3; }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div id="ui-freeze-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.1); z-index: 9999; display: none; cursor: wait;"></div>
+      <div class="progress" id="progress-bar"><div class="indeterminate"></div></div>
+      
+      <div class="header">
+        <h5><i class="material-icons left">layers</i> Administración de Pestañas</h5>
+        <div id="status-text" style="font-size: 11px; opacity: 0.8;">Cargando...</div>
+      </div>
+
+      <div class="content">
+        <!-- Sidebar de Grupos -->
+        <div class="sidebar">
+          <div class="sidebar-title">
+            <span>Grupos</span>
+            <a href="#" onclick="abrirModalNuevoGrupo()" title="Nuevo Grupo"><i class="material-icons tiny">add</i></a>
+          </div>
+          <ul class="group-list" id="group-list">
+            <li class="group-item active" onclick="filtrarGrupo(null, this)">
+              <i class="material-icons icon-all">all_inclusive</i> Todas
+            </li>
+            <li class="group-item" onclick="filtrarGrupo('_visibles', this)">
+              <i class="material-icons icon-visible">visibility</i> Visibles
+            </li>
+            <li class="group-item" onclick="filtrarGrupo('_ocultas', this)">
+              <i class="material-icons icon-hidden">visibility_off</i> Ocultas
+            </li>
+            <li class="group-item" onclick="filtrarGrupo('_sin_grupo', this)">
+              <i class="material-icons icon-none">label_off</i> Sin grupo
+            </li>
+          </ul>
+        </div>
+
+        <!-- Área de Hojas -->
+        <div class="sheet-area">
+          <div class="controls">
+            <div class="search-wrapper">
+              <i class="material-icons">search</i>
+              <input type="text" id="search-input" placeholder="Buscar pestaña..." oninput="actualizarFiltros()">
+              <i class="material-icons clear-search" id="btn-clear-search" onclick="limpiarBusqueda()">cancel</i>
+            </div>
+            <div style="display: flex; gap: 5px;">
+              <a href="#" onclick="seleccionarTodo(true)" style="font-size: 11px;">Todas</a>
+              <span style="color:#ccc">|</span>
+              <a href="#" onclick="seleccionarTodo(false)" style="font-size: 11px;">Ninguna</a>
+            </div>
+          </div>
+
+          <div class="sheet-list-container">
+            <div id="sheet-list">
+              <!-- Cargando... -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="action-btns">
+          <button class="btn-flat btn-flat-small dropdown-trigger grey-text text-darken-2" data-target="dropdown-acciones">
+            Acciones <i class="material-icons right">arrow_drop_down</i>
+          </button>
+          
+          <div class="switch" title="Sincronizar cambios instantáneamente sin guardar">
+            <label>
+              Modo Live
+              <input type="checkbox" id="switch-live" onchange="toggleModoLive()">
+              <span class="lever"></span>
+            </label>
+          </div>
+
+          <!-- Dropdown Structure -->
+          <ul id="dropdown-acciones" class="dropdown-content">
+            <li><a href="#" onclick="accionMasiva('mostrar')"><i class="material-icons">visibility</i>Mostrar</a></li>
+            <li><a href="#" onclick="accionMasiva('ocultar')"><i class="material-icons">visibility_off</i>Ocultar</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onclick="accionMasiva('mostrarSolo')"><i class="material-icons">filter_list</i>Mostrar solo seleccionadas</a></li>
+            <li><a href="#" onclick="accionMasiva('mostrarResto')"><i class="material-icons">flip</i>Mostrar todas menos seleccionadas</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onclick="abrirModalColor()"><i class="material-icons">palette</i>Cambiar color</a></li>
+            <li><a href="#" onclick="abrirModalGrupo()"><i class="material-icons">label</i>Asignar grupo</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onclick="solicitarConfirmacionEliminar()" class="red-text"><i class="material-icons red-text">delete</i>Eliminar</a></li>
+          </ul>
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-flat btn-flat-small" onclick="google.script.host.close()">Cancelar</button>
+          <button id="btn-guardar" class="btn blue btn-small" onclick="guardarTodo()">
+            <i class="material-icons left">save</i>Guardar Cambios
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modales -->
+    <div id="modal-color" class="modal modal-custom" style="max-width: 250px !important;">
+      <div class="modal-content">
+        <h6>Seleccionar color</h6>
+        <div class="color-grid" id="color-grid">
+          <!-- Dinámico -->
+        </div>
+        <input type="color" id="custom-color-input" onchange="aplicarColorMasivo(this.value)">
+      </div>
+    </div>
+
+    <div id="modal-grupo" class="modal modal-custom">
+      <div class="modal-content">
+        <h6>Asignar a grupo</h6>
+        <div class="input-field" style="margin-top: 20px;">
+          <select id="select-grupo-asignar">
+            <option value="" disabled selected>Elegir grupo...</option>
+            <option value="_ninguno">-- Quitar grupo --</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cerrar</button>
+        <button class="btn blue btn-small" onclick="confirmarAsignarGrupo()">Asignar</button>
+      </div>
+    </div>
+
+    <div id="modal-confirm" class="modal modal-custom">
+      <div class="modal-content">
+        <h6 id="confirm-title">Confirmar acción</h6>
+        <p id="confirm-body"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cancelar</button>
+        <button id="btn-confirm-ok" class="btn blue btn-small">Aceptar</button>
+      </div>
+    </div>
+
+    <div id="modal-nuevo-grupo" class="modal modal-custom">
+      <div class="modal-content">
+        <h6>Crear nuevo grupo</h6>
+        <div class="input-field">
+          <input type="text" id="input-nuevo-grupo" placeholder="Nombre del grupo">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close btn-flat">Cancelar</button>
+        <button class="btn blue btn-small" onclick="confirmarNuevoGrupo()">Crear</button>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+      let hojasMeta = [];
+      let grupos = {};
+      let filtroActual = null;
+      let sortable = null;
+      let modoLive = false;
+
+      const COLORES_PREDEF = [
+        { hex: '#FFFFFF', nombre: 'Sin color' },
+        { hex: '#0000FF', nombre: 'Azul HdC+' },
+        { hex: '#9900FF', nombre: 'Morado HdC+' },
+        { hex: '#00FF00', nombre: 'Verde HdC+' },
+        { hex: '#FF9900', nombre: 'Naranja HdC+' },
+        { hex: '#FF0000', nombre: 'Rojo HdC+' },
+        { hex: '#4285F4', nombre: 'Azul Google' },
+        { hex: '#0F9D58', nombre: 'Verde Google' },
+        { hex: '#F4B400', nombre: 'Amarillo Google' },
+        { hex: '#00ACC1', nombre: 'Cian Material' },
+        { hex: '#E91E63', nombre: 'Rosa Material' }
+      ];
+
+      document.addEventListener('DOMContentLoaded', function() {
+        M.AutoInit();
+        inicializarColorGrid();
+        cargarDatos();
+      });
+
+      function inicializarColorGrid() {
+        const grid = document.getElementById('color-grid');
+        grid.innerHTML = '';
+        
+        COLORES_PREDEF.forEach(c => {
+          const opt = document.createElement('div');
+          opt.className = 'color-opt';
+          opt.style.background = c.hex === '#FFFFFF' ? '#f5f5f5' : c.hex;
+          opt.title = c.nombre;
+          opt.onclick = () => aplicarColorMasivo(c.hex);
+          grid.appendChild(opt);
+        });
+
+        // Añadir botón de color personalizado
+        const custom = document.createElement('div');
+        custom.className = 'color-opt';
+        custom.style.background = '#e0e0e0';
+        custom.title = 'Color personalizado...';
+        custom.innerHTML = '<i class="material-icons">colorize</i>';
+        custom.onclick = () => document.getElementById('custom-color-input').click();
+        grid.appendChild(custom);
+      }
+
+      function cargarDatos() {
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            hojasMeta = res;
+            obtenerGrupos();
+          })
+          .withFailureHandler(err => {
+            M.toast({html: 'Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .getHojasMetaData();
+      }
+
+      function obtenerGrupos() {
+        const groupSet = new Set();
+        hojasMeta.forEach(h => { if(h.grupo) groupSet.add(h.grupo); });
+        
+        const list = document.getElementById('group-list');
+        while(list.children.length > 4) list.removeChild(list.lastChild);
+        
+        if (groupSet.size > 0) {
+          const divider = document.createElement('li');
+          divider.className = 'group-divider';
+          list.appendChild(divider);
+          
+          const header = document.createElement('li');
+          header.className = 'group-header';
+          header.textContent = 'Mis Grupos';
+          list.appendChild(header);
+        }
+
+        groupSet.forEach(g => {
+          const li = document.createElement('li');
+          li.className = 'group-item';
+          li.onclick = (e) => {
+            if (e.target.classList.contains('delete-group')) return;
+            filtrarGrupo(g, li);
+          };
+          li.innerHTML = `
+            <i class="material-icons icon-user">folder</i> 
+            <span>${g}</span>
+            <i class="material-icons delete-group" title="Eliminar grupo" onclick="solicitarEliminarGrupo('${g}')">delete</i>
+          `;
+          list.appendChild(li);
+        });
+        
+        renderList();
+        toggleLoading(false);
+        updateStatus();
+      }
+
+      function solicitarEliminarGrupo(nombre) {
+        abrirConfirmacion(
+          '¿Eliminar grupo?',
+          `¿Deseas eliminar el grupo "${nombre}"? Las pestañas asociadas no se eliminarán, solo se les quitará la etiqueta de grupo.`,
+          () => ejecutarEliminarGrupo(nombre)
+        );
+      }
+
+      function ejecutarEliminarGrupo(nombre) {
+        hojasMeta.forEach(h => {
+          if (h.grupo === nombre) h.grupo = '';
+        });
+        obtenerGrupos();
+        if (modoLive) syncAuto();
+        else M.toast({html: `Grupo "${nombre}" eliminado localmente`});
+      }
+
+      function renderList() {
+        const container = document.getElementById('sheet-list');
+        container.innerHTML = '';
+        
+        const searchTxt = document.getElementById('search-input').value.toLowerCase();
+        
+        hojasMeta.forEach((h, index) => {
+          let visible = true;
+          if (searchTxt && !h.nombre.toLowerCase().includes(searchTxt)) visible = false;
+          if (filtroActual === '_visibles' && h.oculta) visible = false;
+          if (filtroActual === '_ocultas' && !h.oculta) visible = false;
+          if (filtroActual === '_sin_grupo' && h.grupo) visible = false;
+          if (filtroActual && !filtroActual.startsWith('_') && h.grupo !== filtroActual) visible = false;
+          
+          if (!visible) return;
+
+          const row = document.createElement('div');
+          row.className = 'sheet-row';
+          row.dataset.id = h.id;
+          
+          row.innerHTML = `
+            <i class="material-icons drag-handle">drag_indicator</i>
+            <i class="material-icons btn-activate" title="Activar esta pestaña" onclick="activarHoja(${h.id})">launch</i>
+            <label class="sheet-checkbox">
+              <input type="checkbox" class="filled-in row-cb" data-id="${h.id}" />
+              <span></span>
+            </label>
+            <div class="sheet-color" style="background: ${h.color || '#fff'}"></div>
+            <div class="sheet-name ${h.activa ? 'active' : ''} ${h.oculta ? 'hidden' : ''}">
+              ${h.nombre}
+            </div>
+            <div class="sheet-meta">
+              ${h.grupo ? `<span class="sheet-group-badge">${h.grupo}</span>` : ''}
+              <i class="material-icons tiny">${h.oculta ? 'visibility_off' : 'visibility'}</i>
+            </div>
+          `;
+          container.appendChild(row);
+        });
+
+        if (sortable) sortable.destroy();
+        sortable = new Sortable(container, {
+          handle: '.drag-handle',
+          ghostClass: 'ghost',
+          animation: 150,
+          onEnd: function() {
+            reordenarMemoria();
+          }
+        });
+      }
+
+      function reordenarMemoria() {
+        const newOrderIds = Array.from(document.querySelectorAll('.sheet-row')).map(r => parseInt(r.dataset.id));
+        if (newOrderIds.length === 0) return;
+
+        const newMeta = [];
+        newOrderIds.forEach(id => {
+          const item = hojasMeta.find(h => h.id === id);
+          if (item) newMeta.push(item);
+        });
+        
+        hojasMeta.forEach(h => {
+          if (!newOrderIds.includes(h.id)) newMeta.push(h);
+        });
+        hojasMeta = newMeta;
+        
+        if (modoLive) syncAuto();
+      }
+
+      function activarHoja(id) {
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: res});
+            hojasMeta.forEach(h => h.activa = (h.id == id));
+            renderList();
+            toggleLoading(false);
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .activarHojaPorId(id);
+      }
+
+      function limpiarBusqueda() {
+        document.getElementById('search-input').value = '';
+        actualizarFiltros();
+      }
+
+      function actualizarFiltros() {
+        const input = document.getElementById('search-input');
+        document.getElementById('btn-clear-search').style.display = input.value ? 'block' : 'none';
+        renderList();
+      }
+
+      function filtrarGrupo(grupo, element) {
+        filtroActual = grupo;
+        document.querySelectorAll('.group-item').forEach(li => li.classList.remove('active'));
+        element.classList.add('active');
+        renderList();
+      }
+
+      function seleccionarTodo(val) {
+        document.querySelectorAll('.row-cb').forEach(cb => cb.checked = val);
+      }
+
+      function getSeleccionadas() {
+        const ids = [];
+        document.querySelectorAll('.row-cb:checked').forEach(cb => ids.push(parseInt(cb.dataset.id)));
+        return ids;
+      }
+
+      function abrirConfirmacion(titulo, mensaje, callback) {
+        document.getElementById('confirm-title').textContent = titulo;
+        document.getElementById('confirm-body').textContent = mensaje;
+        const btnOk = document.getElementById('btn-confirm-ok');
+        const inst = M.Modal.getInstance(document.getElementById('modal-confirm'));
+        
+        btnOk.onclick = function() {
+          inst.close();
+          callback();
+        };
+        inst.open();
+      }
+
+      function solicitarConfirmacionEliminar() {
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length === 0) {
+          M.toast({html: '⚠️ Selecciona al menos una pestaña'});
+          return;
+        }
+        
+        abrirConfirmacion(
+          '¿Eliminar pestañas?', 
+          `¿Estás seguro de eliminar las ${seleccionadas.length} pestañas seleccionadas? Esta acción es inmediata y no se puede deshacer desde HdC+, pero es posible revertir el proceso utilizando el comando deshacer de la hoja de cálculo tantas veces como sea necesario.`,
+          ejecutarEliminacion
+        );
+      }
+
+      function ejecutarEliminacion() {
+        const seleccionadas = getSeleccionadas();
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: res});
+            cargarDatos();
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .eliminarHojasPorId(seleccionadas);
+      }
+
+      function accionMasiva(accion) {
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length === 0) {
+          M.toast({html: '⚠️ Selecciona al menos una pestaña'});
+          return;
+        }
+
+        if (accion === 'eliminar') {
+          solicitarConfirmacionEliminar();
+          return;
+        }
+
+        if (accion === 'mostrarSolo') {
+          hojasMeta.forEach(h => h.oculta = !seleccionadas.includes(h.id));
+        } else if (accion === 'mostrarResto') {
+          if (seleccionadas.length === hojasMeta.length) {
+            M.toast({html: '⚠️ No puedes ocultar todas las pestañas'});
+            return;
+          }
+          hojasMeta.forEach(h => h.oculta = seleccionadas.includes(h.id));
+        } else {
+          hojasMeta.forEach(h => {
+            if (seleccionadas.includes(h.id)) {
+              if (accion === 'mostrar') h.oculta = false;
+              if (accion === 'ocultar') h.oculta = true;
+            }
+          });
+        }
+        renderList();
+        if (modoLive) syncAuto();
+      }
+
+      function abrirModalColor() {
+        const inst = M.Modal.getInstance(document.getElementById('modal-color'));
+        inst.open();
+      }
+
+      function aplicarColorMasivo(hex) {
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length === 0) {
+          M.toast({html: '⚠️ Selecciona pestañas primero'});
+          return;
+        }
+        hojasMeta.forEach(h => {
+          if (seleccionadas.includes(h.id)) h.color = hex;
+        });
+        M.Modal.getInstance(document.getElementById('modal-color')).close();
+        renderList();
+        if (modoLive) syncAuto();
+      }
+
+      function abrirModalGrupo() {
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length === 0) {
+          M.toast({html: '⚠️ Selecciona al menos una pestaña'});
+          return;
+        }
+        const select = document.getElementById('select-grupo-asignar');
+        while(select.options.length > 2) select.remove(2);
+        const groupSet = new Set();
+        hojasMeta.forEach(h => { if(h.grupo) groupSet.add(h.grupo); });
+        groupSet.forEach(g => {
+          const opt = document.createElement('option');
+          opt.value = g;
+          opt.textContent = g;
+          select.appendChild(opt);
+        });
+        const inst = M.Modal.getInstance(document.getElementById('modal-grupo'));
+        M.FormSelect.init(select);
+        inst.open();
+      }
+
+      function abrirModalNuevoGrupo() {
+        const inst = M.Modal.getInstance(document.getElementById('modal-nuevo-grupo'));
+        document.getElementById('input-nuevo-grupo').value = '';
+        inst.open();
+      }
+
+      function confirmarNuevoGrupo() {
+        const nombre = document.getElementById('input-nuevo-grupo').value.trim();
+        if (!nombre) {
+          M.toast({html: '⚠️ Introduce un nombre para el grupo'});
+          return;
+        }
+        const seleccionadas = getSeleccionadas();
+        if (seleccionadas.length > 0) {
+          hojasMeta.forEach(h => {
+            if (seleccionadas.includes(h.id)) h.grupo = nombre;
+          });
+          M.Modal.getInstance(document.getElementById('modal-nuevo-grupo')).close();
+          obtenerGrupos();
+          if (modoLive) syncAuto();
+        } else {
+          M.toast({html: '⚠️ Selecciona hojas para crear el grupo con ellas'});
+        }
+      }
+
+      function confirmarAsignarGrupo() {
+        const val = document.getElementById('select-grupo-asignar').value;
+        const seleccionadas = getSeleccionadas();
+        hojasMeta.forEach(h => {
+          if (seleccionadas.includes(h.id)) h.grupo = (val === '_ninguno' ? '' : val);
+        });
+        M.Modal.getInstance(document.getElementById('modal-grupo')).close();
+        obtenerGrupos();
+        if (modoLive) syncAuto();
+      }
+
+      function toggleModoLive() {
+        modoLive = document.getElementById('switch-live').checked;
+        document.getElementById('btn-guardar').disabled = modoLive;
+        if (modoLive) {
+          M.toast({html: '⚡ Modo Live activado'});
+          syncAuto();
+        }
+      }
+
+      function syncAuto() {
+        if (!modoLive) return;
+        
+        const cambios = {
+          hojas: hojasMeta.map(h => ({ id: h.id, oculta: h.oculta, color: h.color })),
+          ordenIds: hojasMeta.map(h => h.id),
+          grupos: {}
+        };
+        
+        hojasMeta.forEach(h => {
+          if (h.grupo) {
+            if (!cambios.grupos[h.grupo]) cambios.grupos[h.grupo] = [];
+            cambios.grupos[h.grupo].push(h.id);
+          }
+        });
+
+        toggleLoading(true);
+        google.script.run
+          .withSuccessHandler(res => {
+            toggleLoading(false);
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error Sinc: ' + err.message});
+            toggleLoading(false);
+          })
+          .aplicarCambiosConsola(cambios);
+      }
+
+      function guardarTodo() {
+        toggleLoading(true);
+        const cambios = {
+          hojas: hojasMeta.map(h => ({ id: h.id, oculta: h.oculta, color: h.color })),
+          ordenIds: hojasMeta.map(h => h.id),
+          grupos: {}
+        };
+        hojasMeta.forEach(h => {
+          if (h.grupo) {
+            if (!cambios.grupos[h.grupo]) cambios.grupos[h.grupo] = [];
+            cambios.grupos[h.grupo].push(h.id);
+          }
+        });
+        google.script.run
+          .withSuccessHandler(res => {
+            M.toast({html: res});
+            toggleLoading(false);
+            google.script.host.close();
+          })
+          .withFailureHandler(err => {
+            M.toast({html: '❌ Error: ' + err.message});
+            toggleLoading(false);
+          })
+          .aplicarCambiosConsola(cambios);
+      }
+
+      function toggleLoading(val) {
+        document.getElementById('progress-bar').style.display = val ? 'block' : 'none';
+        document.getElementById('ui-freeze-overlay').style.display = val ? 'block' : 'none';
+        document.getElementById('status-text').textContent = val ? 'Procesando...' : 'Listo';
+      }
+
+      function updateStatus() {
+        const total = hojasMeta.length;
+        const ocultas = hojasMeta.filter(h => h.oculta).length;
+        document.getElementById('status-text').textContent = `${total} pestañas (${ocultas} ocultas)`;
+      }
+    </script>
+  </body>
+</html>
