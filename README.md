@@ -18,6 +18,14 @@ Hoy en día, HdC+ ha evolucionado hasta convertirse en una potente colección de
 
 Esta versión 2.0 representa un salto cualitativo en rendimiento, usabilidad y estética, transformando el complemento en una suite profesional de utilidades para el tratamiento de datos y la gestión de documentos complejos.
 
+<p align="center">
+  <a href="https://youtu.be/WUn6SBX9hUU">
+    <img src="https://img.youtube.com/vi/WUn6SBX9hUU/0.jpg" alt="Video de presentación de HdC+">
+  </a>
+  <br>
+  🎬 <i>Haz clic en la imagen para ver el video explicativo del proyecto</i>
+</p>
+
 ## 🚀 Novedades de la v2.0
 *   **Consola de pestañas avanzada:** Gestiona todas las hojas del documento desde una interfaz centralizada con reordenación drag & drop, creación de grupos, eliminación masiva y el revolucionario **Modo Live** para sincronización en tiempo real.
 *   **Marcos de color:** Mejora la estética de tus informes generando bordes coloreados automáticos con control total sobre grosores, márgenes y combinaciones de celdas.
